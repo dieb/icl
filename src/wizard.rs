@@ -17,6 +17,7 @@ use crate::output::OutputMode;
 pub enum WizardResult {
     Command(String, OutputMode),
     Chain(String),  // Chain to another config
+    Back,           // Go back to previous wizard in chain
     Quit,
 }
 
@@ -40,21 +41,33 @@ pub struct Wizard {
     toggle_value: bool,
     text_buffer: String,
     multi_selected: Vec<bool>,
+    // Container selection for docker logs
+    containers: Vec<(String, String)>, // (name, id) pairs
+    container_index: usize,
 }
 
 impl Wizard {
     pub fn new(config: Config, base_command: Vec<String>) -> Self {
+        // Skip menu phase if there are no presets - go directly to steps
+        let phase = if config.presets.is_empty() {
+            Phase::Steps
+        } else {
+            Phase::Menu
+        };
+
         Self {
             config,
             base_command,
             answers: HashMap::new(),
             current_step: 0,
-            phase: Phase::Menu,
+            phase,
             menu_index: 0,
             choice_index: 0,
             toggle_value: false,
             text_buffer: String::new(),
             multi_selected: Vec::new(),
+            containers: Vec::new(),
+            container_index: 0,
         }
     }
 
@@ -221,11 +234,18 @@ impl Wizard {
         let visible = self.visible_steps();
         if self.current_step + 1 >= visible.len() {
             self.phase = Phase::Confirm;
+            self.prepare_confirm_phase();
         } else {
             self.current_step += 1;
             self.init_step();
         }
         None
+    }
+
+    fn prepare_confirm_phase(&mut self) {
+        if self.should_show_container_selection() {
+            self.fetch_containers();
+        }
     }
 
     fn prev_step(&mut self) {
@@ -333,6 +353,45 @@ impl Wizard {
             })
             .collect()
     }
+
+    fn is_docker_logs_command(&self) -> bool {
+        self.base_command.len() >= 2
+            && self.base_command[0] == "docker"
+            && self.base_command[1] == "logs"
+    }
+
+    fn has_container_placeholder(&self) -> bool {
+        self.current_command().contains("<container>")
+    }
+
+    fn should_show_container_selection(&self) -> bool {
+        self.is_docker_logs_command() && self.has_container_placeholder()
+    }
+
+    fn fetch_containers(&mut self) {
+        self.containers.clear();
+        self.container_index = 0;
+
+        let output = std::process::Command::new("docker")
+            .args(["ps", "--format", "{{.Names}}\t{{.ID}}"])
+            .output();
+
+        if let Ok(output) = output {
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                for line in stdout.lines() {
+                    let parts: Vec<&str> = line.split('\t').collect();
+                    if parts.len() == 2 {
+                        self.containers.push((parts[0].to_string(), parts[1].to_string()));
+                    }
+                }
+            }
+        }
+    }
+
+    fn command_with_container(&self, container_name: &str) -> String {
+        self.current_command().replace("<container>", container_name)
+    }
 }
 
 pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult> {
@@ -354,7 +413,8 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
         if let Event::Key(key) = event::read()? {
             match wizard.phase {
                 Phase::Menu => match key.code {
-                    KeyCode::Esc | KeyCode::Char('q') => break Ok(WizardResult::Quit),
+                    KeyCode::Esc => break Ok(WizardResult::Back),
+                    KeyCode::Char('q') => break Ok(WizardResult::Quit),
                     KeyCode::Up | KeyCode::Char('k') => {
                         if wizard.menu_index > 0 {
                             wizard.menu_index -= 1;
@@ -373,6 +433,7 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         } else {
                             // Preset selected - go straight to confirm
                             wizard.phase = Phase::Confirm;
+                            wizard.prepare_confirm_phase();
                         }
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
@@ -393,8 +454,13 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                     match key.code {
                         KeyCode::Esc => {
                             if wizard.current_step == 0 {
-                                wizard.phase = Phase::Menu;
-                                wizard.answers.clear();
+                                if wizard.config.presets.is_empty() {
+                                    // No menu to go back to, go back to previous wizard
+                                    break Ok(WizardResult::Back);
+                                } else {
+                                    wizard.phase = Phase::Menu;
+                                    wizard.answers.clear();
+                                }
                             } else {
                                 wizard.prev_step();
                             }
@@ -459,8 +525,24 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         }
                     }
                     KeyCode::Char('q') => break Ok(WizardResult::Quit),
+                    KeyCode::Up | KeyCode::Char('k') => {
+                        if !wizard.containers.is_empty() && wizard.container_index > 0 {
+                            wizard.container_index -= 1;
+                        }
+                    }
+                    KeyCode::Down | KeyCode::Char('j') => {
+                        if wizard.container_index + 1 < wizard.containers.len() {
+                            wizard.container_index += 1;
+                        }
+                    }
                     KeyCode::Enter => {
-                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Execute));
+                        let cmd = if wizard.should_show_container_selection() && !wizard.containers.is_empty() {
+                            let container_name = &wizard.containers[wizard.container_index].0;
+                            wizard.command_with_container(container_name)
+                        } else {
+                            wizard.current_command()
+                        };
+                        break Ok(WizardResult::Command(cmd, OutputMode::Execute));
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                         break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Clipboard));
@@ -565,7 +647,9 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
         }
         Phase::Confirm => {
             let cmd = wizard.current_command();
-            let content = vec![
+            let show_containers = wizard.should_show_container_selection();
+
+            let mut content = vec![
                 Line::from(""),
                 Line::from(Span::styled(
                     "Your command:",
@@ -576,11 +660,44 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 Line::from(""),
             ];
 
+            if show_containers {
+                if wizard.containers.is_empty() {
+                    content.push(Line::from(Span::styled(
+                        "No running containers found.",
+                        Style::default().fg(Color::Yellow),
+                    )));
+                } else {
+                    content.push(Line::from(Span::styled(
+                        "Run on:",
+                        Style::default().fg(Color::DarkGray),
+                    )));
+                    for (i, (name, id)) in wizard.containers.iter().enumerate() {
+                        let is_selected = i == wizard.container_index;
+                        let marker = if is_selected { "● " } else { "○ " };
+                        let style = if is_selected {
+                            Style::default().fg(Color::Cyan).bold()
+                        } else {
+                            Style::default()
+                        };
+                        let short_id = &id[..id.len().min(12)];
+                        content.push(Line::from(Span::styled(
+                            format!("{}{} ({})", marker, name, short_id),
+                            style,
+                        )));
+                    }
+                }
+            }
+
             let block = Block::default().borders(Borders::ALL).title(title);
-            let paragraph = Paragraph::new(content).block(block).alignment(Alignment::Center);
+            let paragraph = Paragraph::new(content).block(block);
             f.render_widget(paragraph, chunks[0]);
 
-            let help = Paragraph::new("Enter run  ^C copy  ^P print  Esc back  q quit")
+            let help_text = if show_containers && !wizard.containers.is_empty() {
+                "↑↓ select  Enter run  ^C copy  Esc back  q quit"
+            } else {
+                "^C copy  Esc back  q quit"
+            };
+            let help = Paragraph::new(help_text)
                 .style(Style::default().fg(Color::DarkGray))
                 .block(Block::default().borders(Borders::ALL));
             f.render_widget(help, chunks[1]);

@@ -24,6 +24,7 @@ fn main() {
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let mut command = args.command;
+    let mut history: Vec<Vec<String>> = Vec::new();
 
     loop {
         let config = config::Config::load(&command)?;
@@ -34,7 +35,15 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 break;
             }
             WizardResult::Chain(next_config) => {
+                history.push(command.clone());
                 command = next_config.split('-').map(String::from).collect();
+            }
+            WizardResult::Back => {
+                if let Some(prev_command) = history.pop() {
+                    command = prev_command;
+                } else {
+                    break;
+                }
             }
             WizardResult::Quit => break,
         }
