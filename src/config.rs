@@ -146,7 +146,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_config() {
+    fn test_parse_basic_config() {
         let json = r#"{
             "command": "ls",
             "description": "List files",
@@ -171,8 +171,283 @@ mod tests {
 
         let config: Config = serde_json::from_str(json).unwrap();
         assert_eq!(config._command, "ls");
+        assert_eq!(config._description, "List files");
         assert_eq!(config.steps.len(), 2);
         assert_eq!(config.steps[0].step_type, StepType::Choice);
         assert_eq!(config.steps[1].step_type, StepType::Toggle);
+    }
+
+    #[test]
+    fn test_parse_config_with_presets() {
+        let json = r#"{
+            "command": "docker",
+            "steps": [],
+            "presets": [
+                { "label": "Running containers", "flags": "ps" },
+                { "label": "All containers", "flags": "ps -a" }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.presets.len(), 2);
+        assert_eq!(config.presets[0].label, "Running containers");
+        assert_eq!(config.presets[0].flags, "ps");
+        assert_eq!(config.presets[1].label, "All containers");
+        assert_eq!(config.presets[1].flags, "ps -a");
+    }
+
+    #[test]
+    fn test_parse_config_with_placeholder_options() {
+        let json = r#"{
+            "command": "docker logs",
+            "steps": [],
+            "placeholder_options": {
+                "<container>": "docker ps --format '{{.Names}}\t{{.ID}}'"
+            }
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.placeholder_options.len(), 1);
+        assert!(config.placeholder_options.contains_key("<container>"));
+    }
+
+    #[test]
+    fn test_parse_text_step() {
+        let json = r#"{
+            "command": "git",
+            "steps": [
+                {
+                    "id": "message",
+                    "prompt": "Commit message:",
+                    "type": "text",
+                    "flag": "-m",
+                    "placeholder": "Enter your commit message"
+                }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.steps[0].step_type, StepType::Text);
+        assert_eq!(config.steps[0].flag, Some("-m".to_string()));
+        assert_eq!(
+            config.steps[0].placeholder,
+            Some("Enter your commit message".to_string())
+        );
+    }
+
+    #[test]
+    fn test_parse_multi_step() {
+        let json = r#"{
+            "command": "ls",
+            "steps": [
+                {
+                    "id": "options",
+                    "prompt": "Select options:",
+                    "type": "multi",
+                    "options": [
+                        { "label": "Long format", "flag": "-l" },
+                        { "label": "All files", "flag": "-a" },
+                        { "label": "Human readable", "flag": "-h" }
+                    ]
+                }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.steps[0].step_type, StepType::Multi);
+        assert_eq!(config.steps[0].options.len(), 3);
+    }
+
+    #[test]
+    fn test_parse_step_with_chain() {
+        let json = r#"{
+            "command": "docker",
+            "steps": [
+                {
+                    "id": "action",
+                    "prompt": "What to do?",
+                    "type": "choice",
+                    "options": [
+                        { "label": "Run container", "chain": "docker-run" },
+                        { "label": "List containers", "flag": "ps" }
+                    ]
+                }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.steps[0].options[0].chain, Some("docker-run".to_string()));
+        assert_eq!(config.steps[0].options[1].chain, None);
+    }
+
+    #[test]
+    fn test_parse_step_with_default() {
+        let json = r#"{
+            "command": "test",
+            "steps": [
+                {
+                    "id": "opt",
+                    "prompt": "Choose:",
+                    "type": "choice",
+                    "default": 2,
+                    "options": [
+                        { "label": "A" },
+                        { "label": "B" },
+                        { "label": "C" }
+                    ]
+                }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config.steps[0].default, Some(2));
+    }
+
+    #[test]
+    fn test_parse_conditional_step() {
+        let json = r#"{
+            "command": "test",
+            "steps": [
+                {
+                    "id": "mode",
+                    "prompt": "Mode:",
+                    "type": "choice",
+                    "options": [
+                        { "label": "Simple" },
+                        { "label": "Advanced" }
+                    ]
+                },
+                {
+                    "id": "advanced_opt",
+                    "prompt": "Advanced option:",
+                    "type": "toggle",
+                    "flag": "--verbose",
+                    "when": { "mode": "Advanced" }
+                }
+            ]
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert!(config.steps[1].when.is_some());
+        let when = config.steps[1].when.as_ref().unwrap();
+        assert_eq!(when.get("mode"), Some(&"Advanced".to_string()));
+    }
+
+    #[test]
+    fn test_step_type_deserialization() {
+        assert_eq!(
+            serde_json::from_str::<StepType>(r#""choice""#).unwrap(),
+            StepType::Choice
+        );
+        assert_eq!(
+            serde_json::from_str::<StepType>(r#""toggle""#).unwrap(),
+            StepType::Toggle
+        );
+        assert_eq!(
+            serde_json::from_str::<StepType>(r#""text""#).unwrap(),
+            StepType::Text
+        );
+        assert_eq!(
+            serde_json::from_str::<StepType>(r#""multi""#).unwrap(),
+            StepType::Multi
+        );
+    }
+
+    #[test]
+    fn test_config_error_display_not_found() {
+        let paths = vec![PathBuf::from(".i/foo.json"), PathBuf::from("/home/.config/i/foo.json")];
+        let err = ConfigError::NotFound("foo".to_string(), paths);
+        let display = format!("{}", err);
+        assert!(display.contains("No configuration found for 'foo'"));
+        assert!(display.contains(".i/foo.json"));
+    }
+
+    #[test]
+    fn test_config_error_display_read_error() {
+        let err = ConfigError::ReadError(
+            PathBuf::from("/path/to/config.json"),
+            "permission denied".to_string(),
+        );
+        let display = format!("{}", err);
+        assert!(display.contains("Failed to read"));
+        assert!(display.contains("permission denied"));
+    }
+
+    #[test]
+    fn test_config_error_display_parse_error() {
+        let err = ConfigError::ParseError(
+            PathBuf::from("/path/to/config.json"),
+            "unexpected token".to_string(),
+        );
+        let display = format!("{}", err);
+        assert!(display.contains("Failed to parse"));
+        assert!(display.contains("unexpected token"));
+    }
+
+    #[test]
+    fn test_config_paths_generates_local_path() {
+        let paths = config_paths("mycommand");
+        assert!(paths.iter().any(|p| p.ends_with(".i/mycommand.json")));
+    }
+
+    #[test]
+    fn test_config_paths_handles_compound_names() {
+        let paths = config_paths("docker-run");
+        assert!(paths.iter().any(|p| p.ends_with(".i/docker-run.json")));
+    }
+
+    #[test]
+    fn test_answer_variants() {
+        // Just verify we can create each Answer variant
+        let choice = Answer::Choice(0);
+        let toggle = Answer::Toggle(true);
+        let text = Answer::Text("hello".to_string());
+        let multi = Answer::Multi(vec![0, 2]);
+
+        match choice {
+            Answer::Choice(idx) => assert_eq!(idx, 0),
+            _ => panic!("Expected Choice"),
+        }
+        match toggle {
+            Answer::Toggle(val) => assert!(val),
+            _ => panic!("Expected Toggle"),
+        }
+        match text {
+            Answer::Text(s) => assert_eq!(s, "hello"),
+            _ => panic!("Expected Text"),
+        }
+        match multi {
+            Answer::Multi(indices) => assert_eq!(indices, vec![0, 2]),
+            _ => panic!("Expected Multi"),
+        }
+    }
+
+    #[test]
+    fn test_parse_config_minimal() {
+        let json = r#"{
+            "command": "test",
+            "steps": []
+        }"#;
+
+        let config: Config = serde_json::from_str(json).unwrap();
+        assert_eq!(config._command, "test");
+        assert_eq!(config._description, ""); // default
+        assert!(config.steps.is_empty());
+        assert!(config.presets.is_empty());
+        assert!(config.placeholder_options.is_empty());
+    }
+
+    #[test]
+    fn test_parse_invalid_json_fails() {
+        let json = r#"{ invalid json }"#;
+        let result: Result<Config, _> = serde_json::from_str(json);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_missing_required_field_fails() {
+        let json = r#"{ "description": "no command field" }"#;
+        let result: Result<Config, _> = serde_json::from_str(json);
+        assert!(result.is_err());
     }
 }

@@ -838,3 +838,840 @@ fn render_step(f: &mut Frame, area: Rect, step: &Step, wizard: &Wizard, title: &
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::{Config, Preset, Step, StepOption, StepType};
+
+    fn make_config(steps: Vec<Step>) -> Config {
+        Config {
+            _command: "test".to_string(),
+            _description: "".to_string(),
+            steps,
+            presets: vec![],
+            placeholder_options: HashMap::new(),
+        }
+    }
+
+    fn make_choice_step(id: &str, options: Vec<(&str, Option<&str>)>) -> Step {
+        Step {
+            id: id.to_string(),
+            prompt: format!("Choose {}:", id),
+            step_type: StepType::Choice,
+            options: options
+                .into_iter()
+                .map(|(label, flag)| StepOption {
+                    label: label.to_string(),
+                    flag: flag.map(|f| f.to_string()),
+                    chain: None,
+                })
+                .collect(),
+            flag: None,
+            default: None,
+            when: None,
+            placeholder: None,
+        }
+    }
+
+    fn make_toggle_step(id: &str, flag: &str) -> Step {
+        Step {
+            id: id.to_string(),
+            prompt: format!("Enable {}?", id),
+            step_type: StepType::Toggle,
+            options: vec![],
+            flag: Some(flag.to_string()),
+            default: None,
+            when: None,
+            placeholder: None,
+        }
+    }
+
+    fn make_text_step(id: &str, flag: Option<&str>) -> Step {
+        Step {
+            id: id.to_string(),
+            prompt: format!("Enter {}:", id),
+            step_type: StepType::Text,
+            options: vec![],
+            flag: flag.map(|f| f.to_string()),
+            default: None,
+            when: None,
+            placeholder: None,
+        }
+    }
+
+    fn make_multi_step(id: &str, options: Vec<(&str, &str)>) -> Step {
+        Step {
+            id: id.to_string(),
+            prompt: format!("Select {}:", id),
+            step_type: StepType::Multi,
+            options: options
+                .into_iter()
+                .map(|(label, flag)| StepOption {
+                    label: label.to_string(),
+                    flag: Some(flag.to_string()),
+                    chain: None,
+                })
+                .collect(),
+            flag: None,
+            default: None,
+            when: None,
+            placeholder: None,
+        }
+    }
+
+    // ===================
+    // build_command tests
+    // ===================
+
+    #[test]
+    fn test_build_command_empty() {
+        let config = make_config(vec![]);
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert_eq!(wizard.build_command(), "ls");
+    }
+
+    #[test]
+    fn test_build_command_choice_with_flag() {
+        let config = make_config(vec![make_choice_step(
+            "format",
+            vec![("List", Some("-l")), ("Grid", None)],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        // Select first option (has flag)
+        wizard.choice_index = 0;
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls -l");
+    }
+
+    #[test]
+    fn test_build_command_choice_without_flag() {
+        let config = make_config(vec![make_choice_step(
+            "format",
+            vec![("List", Some("-l")), ("Grid", None)],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        // Select second option (no flag)
+        wizard.choice_index = 1;
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls");
+    }
+
+    #[test]
+    fn test_build_command_toggle_enabled() {
+        let config = make_config(vec![make_toggle_step("hidden", "-a")]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.toggle_value = true;
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls -a");
+    }
+
+    #[test]
+    fn test_build_command_toggle_disabled() {
+        let config = make_config(vec![make_toggle_step("hidden", "-a")]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.toggle_value = false;
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls");
+    }
+
+    #[test]
+    fn test_build_command_text_with_flag() {
+        let config = make_config(vec![make_text_step("message", Some("-m"))]);
+        let mut wizard = Wizard::new(config, vec!["git".to_string(), "commit".to_string()]);
+
+        wizard.text_buffer = "my commit".to_string();
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "git commit -m my commit");
+    }
+
+    #[test]
+    fn test_build_command_text_without_flag() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.text_buffer = "/tmp".to_string();
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls /tmp");
+    }
+
+    #[test]
+    fn test_build_command_text_empty() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.text_buffer = "".to_string();
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls");
+    }
+
+    #[test]
+    fn test_build_command_multi_none_selected() {
+        let config = make_config(vec![make_multi_step(
+            "options",
+            vec![("Long", "-l"), ("All", "-a"), ("Human", "-h")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.multi_selected = vec![false, false, false];
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls");
+    }
+
+    #[test]
+    fn test_build_command_multi_some_selected() {
+        let config = make_config(vec![make_multi_step(
+            "options",
+            vec![("Long", "-l"), ("All", "-a"), ("Human", "-h")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.multi_selected = vec![true, false, true];
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls -l -h");
+    }
+
+    #[test]
+    fn test_build_command_multi_all_selected() {
+        let config = make_config(vec![make_multi_step(
+            "options",
+            vec![("Long", "-l"), ("All", "-a"), ("Human", "-h")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.multi_selected = vec![true, true, true];
+        wizard.save_answer();
+        assert_eq!(wizard.build_command(), "ls -l -a -h");
+    }
+
+    #[test]
+    fn test_build_command_multiple_steps() {
+        let config = make_config(vec![
+            make_choice_step("format", vec![("List", Some("-l")), ("Grid", None)]),
+            make_toggle_step("hidden", "-a"),
+            make_toggle_step("human", "-h"),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        // Select List format
+        wizard.choice_index = 0;
+        wizard.save_answer();
+
+        // Enable hidden
+        wizard.current_step = 1;
+        wizard.toggle_value = true;
+        wizard.save_answer();
+
+        // Disable human
+        wizard.current_step = 2;
+        wizard.toggle_value = false;
+        wizard.save_answer();
+
+        assert_eq!(wizard.build_command(), "ls -l -a");
+    }
+
+    // ========================
+    // should_show_step tests
+    // ========================
+
+    #[test]
+    fn test_should_show_step_no_condition() {
+        let step = make_toggle_step("hidden", "-a");
+        let config = make_config(vec![step.clone()]);
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        assert!(wizard.should_show_step(&step));
+    }
+
+    #[test]
+    fn test_should_show_step_choice_condition_met() {
+        let mut conditional_step = make_toggle_step("verbose", "-v");
+        let mut when = HashMap::new();
+        when.insert("mode".to_string(), "Advanced".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_choice_step("mode", vec![("Simple", None), ("Advanced", None)]),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        // Select "Advanced" (index 1)
+        wizard.choice_index = 1;
+        wizard.save_answer();
+
+        assert!(wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_choice_condition_not_met() {
+        let mut conditional_step = make_toggle_step("verbose", "-v");
+        let mut when = HashMap::new();
+        when.insert("mode".to_string(), "Advanced".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_choice_step("mode", vec![("Simple", None), ("Advanced", None)]),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        // Select "Simple" (index 0)
+        wizard.choice_index = 0;
+        wizard.save_answer();
+
+        assert!(!wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_toggle_condition_true() {
+        let mut conditional_step = make_text_step("level", Some("--level"));
+        let mut when = HashMap::new();
+        when.insert("debug".to_string(), "true".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_toggle_step("debug", "-d"),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.toggle_value = true;
+        wizard.save_answer();
+
+        assert!(wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_toggle_condition_false() {
+        let mut conditional_step = make_text_step("level", Some("--level"));
+        let mut when = HashMap::new();
+        when.insert("debug".to_string(), "false".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_toggle_step("debug", "-d"),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.toggle_value = false;
+        wizard.save_answer();
+
+        assert!(wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_missing_dependency() {
+        let mut conditional_step = make_toggle_step("verbose", "-v");
+        let mut when = HashMap::new();
+        when.insert("mode".to_string(), "Advanced".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![conditional_step.clone()]);
+        let wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        // No answer for "mode" exists
+        assert!(!wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_text_condition() {
+        let mut conditional_step = make_toggle_step("confirm", "-y");
+        let mut when = HashMap::new();
+        when.insert("name".to_string(), "admin".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_text_step("name", None),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.text_buffer = "admin".to_string();
+        wizard.save_answer();
+
+        assert!(wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_text_condition_not_met() {
+        let mut conditional_step = make_toggle_step("confirm", "-y");
+        let mut when = HashMap::new();
+        when.insert("name".to_string(), "admin".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_text_step("name", None),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.text_buffer = "user".to_string();
+        wizard.save_answer();
+
+        assert!(!wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_multi_condition_met() {
+        let mut conditional_step = make_toggle_step("confirm", "-y");
+        let mut when = HashMap::new();
+        when.insert("features".to_string(), "Logging".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_multi_step("features", vec![("Logging", "--log"), ("Debug", "--debug")]),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.multi_selected = vec![true, false]; // Logging selected
+        wizard.save_answer();
+
+        assert!(wizard.should_show_step(&conditional_step));
+    }
+
+    #[test]
+    fn test_should_show_step_multi_condition_not_met() {
+        let mut conditional_step = make_toggle_step("confirm", "-y");
+        let mut when = HashMap::new();
+        when.insert("features".to_string(), "Logging".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_multi_step("features", vec![("Logging", "--log"), ("Debug", "--debug")]),
+            conditional_step.clone(),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        wizard.multi_selected = vec![false, true]; // Only Debug selected
+        wizard.save_answer();
+
+        assert!(!wizard.should_show_step(&conditional_step));
+    }
+
+    // ====================
+    // visible_steps tests
+    // ====================
+
+    #[test]
+    fn test_visible_steps_all_unconditional() {
+        let config = make_config(vec![
+            make_toggle_step("a", "-a"),
+            make_toggle_step("b", "-b"),
+            make_toggle_step("c", "-c"),
+        ]);
+        let wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        assert_eq!(wizard.visible_steps().len(), 3);
+    }
+
+    #[test]
+    fn test_visible_steps_filters_conditional() {
+        let mut conditional_step = make_toggle_step("verbose", "-v");
+        let mut when = HashMap::new();
+        when.insert("mode".to_string(), "Advanced".to_string());
+        conditional_step.when = Some(when);
+
+        let config = make_config(vec![
+            make_choice_step("mode", vec![("Simple", None), ("Advanced", None)]),
+            conditional_step,
+            make_toggle_step("other", "-o"),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        // Before answering, conditional step is hidden (dependency not met)
+        assert_eq!(wizard.visible_steps().len(), 2);
+
+        // Select "Simple" - conditional still hidden
+        wizard.choice_index = 0;
+        wizard.save_answer();
+        assert_eq!(wizard.visible_steps().len(), 2);
+
+        // Change to "Advanced" - conditional now visible
+        wizard.choice_index = 1;
+        wizard.save_answer();
+        assert_eq!(wizard.visible_steps().len(), 3);
+    }
+
+    // ====================
+    // build_breadcrumb tests
+    // ====================
+
+    #[test]
+    fn test_build_breadcrumb_empty() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["test".to_string()]);
+
+        assert!(wizard.build_breadcrumb().is_empty());
+    }
+
+    #[test]
+    fn test_build_breadcrumb_choice() {
+        let config = make_config(vec![make_choice_step(
+            "format",
+            vec![("List", Some("-l")), ("Grid", None)],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.choice_index = 0;
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["List"]);
+    }
+
+    #[test]
+    fn test_build_breadcrumb_toggle() {
+        let config = make_config(vec![make_toggle_step("hidden", "-a")]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.toggle_value = true;
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["Yes"]);
+
+        wizard.toggle_value = false;
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["No"]);
+    }
+
+    #[test]
+    fn test_build_breadcrumb_text() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.text_buffer = "/tmp".to_string();
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["/tmp"]);
+    }
+
+    #[test]
+    fn test_build_breadcrumb_text_empty_excluded() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.text_buffer = "".to_string();
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert!(crumbs.is_empty());
+    }
+
+    #[test]
+    fn test_build_breadcrumb_multi() {
+        let config = make_config(vec![make_multi_step(
+            "options",
+            vec![("Long", "-l"), ("All", "-a"), ("Human", "-h")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.multi_selected = vec![true, false, true];
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["Long, Human"]);
+    }
+
+    #[test]
+    fn test_build_breadcrumb_multi_empty_excluded() {
+        let config = make_config(vec![make_multi_step(
+            "options",
+            vec![("Long", "-l"), ("All", "-a")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.multi_selected = vec![false, false];
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert!(crumbs.is_empty());
+    }
+
+    #[test]
+    fn test_build_breadcrumb_multiple_steps() {
+        let config = make_config(vec![
+            make_choice_step("format", vec![("List", Some("-l")), ("Grid", None)]),
+            make_toggle_step("hidden", "-a"),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        wizard.choice_index = 1;
+        wizard.save_answer();
+
+        wizard.current_step = 1;
+        wizard.toggle_value = true;
+        wizard.save_answer();
+
+        let crumbs = wizard.build_breadcrumb();
+        assert_eq!(crumbs, vec!["Grid", "Yes"]);
+    }
+
+    // ====================
+    // Navigation tests
+    // ====================
+
+    #[test]
+    fn test_init_step_choice_default() {
+        let mut step = make_choice_step("opt", vec![("A", None), ("B", None), ("C", None)]);
+        step.default = Some(2);
+
+        let config = make_config(vec![step]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+
+        assert_eq!(wizard.choice_index, 2);
+    }
+
+    #[test]
+    fn test_init_step_toggle() {
+        let config = make_config(vec![make_toggle_step("opt", "-o")]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.toggle_value = true; // Set to true first
+        wizard.init_step();
+
+        assert!(!wizard.toggle_value); // Should be reset to false
+    }
+
+    #[test]
+    fn test_init_step_text() {
+        let config = make_config(vec![make_text_step("opt", None)]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.text_buffer = "something".to_string();
+        wizard.init_step();
+
+        assert!(wizard.text_buffer.is_empty());
+    }
+
+    #[test]
+    fn test_init_step_multi() {
+        let config = make_config(vec![make_multi_step(
+            "opt",
+            vec![("A", "-a"), ("B", "-b"), ("C", "-c")],
+        )]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+
+        assert_eq!(wizard.multi_selected, vec![false, false, false]);
+    }
+
+    #[test]
+    fn test_next_step_advances() {
+        let config = make_config(vec![
+            make_toggle_step("a", "-a"),
+            make_toggle_step("b", "-b"),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+
+        assert_eq!(wizard.current_step, 0);
+        wizard.next_step();
+        assert_eq!(wizard.current_step, 1);
+    }
+
+    #[test]
+    fn test_next_step_goes_to_confirm() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+
+        wizard.next_step();
+        assert_eq!(wizard.phase, Phase::Confirm);
+    }
+
+    #[test]
+    fn test_prev_step_goes_back() {
+        let config = make_config(vec![
+            make_toggle_step("a", "-a"),
+            make_toggle_step("b", "-b"),
+        ]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+        wizard.next_step();
+
+        assert_eq!(wizard.current_step, 1);
+        wizard.prev_step();
+        assert_eq!(wizard.current_step, 0);
+    }
+
+    #[test]
+    fn test_prev_step_from_confirm() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let mut wizard = Wizard::new(config, vec!["test".to_string()]);
+        wizard.init_step();
+        wizard.next_step(); // Goes to confirm
+
+        assert_eq!(wizard.phase, Phase::Confirm);
+        wizard.prev_step();
+        assert_eq!(wizard.phase, Phase::Steps);
+    }
+
+    // ====================
+    // Placeholder tests
+    // ====================
+
+    #[test]
+    fn test_has_placeholder_options() {
+        let mut config = make_config(vec![make_text_step("container", None)]);
+        config.placeholder_options.insert(
+            "<container>".to_string(),
+            "docker ps --format '{{.Names}}'".to_string(),
+        );
+
+        let mut wizard = Wizard::new(config, vec!["docker".to_string(), "logs".to_string()]);
+        wizard.text_buffer = "<container>".to_string();
+        wizard.save_answer();
+
+        assert!(wizard.has_placeholder_options());
+    }
+
+    #[test]
+    fn test_has_placeholder_options_none() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+        wizard.text_buffer = "/tmp".to_string();
+        wizard.save_answer();
+
+        assert!(!wizard.has_placeholder_options());
+    }
+
+    #[test]
+    fn test_command_with_placeholder() {
+        let mut config = make_config(vec![make_text_step("container", None)]);
+        config.placeholder_options.insert(
+            "<container>".to_string(),
+            "docker ps".to_string(),
+        );
+
+        let mut wizard = Wizard::new(config, vec!["docker".to_string(), "logs".to_string()]);
+        wizard.text_buffer = "<container>".to_string();
+        wizard.save_answer();
+        wizard.active_placeholder = Some("<container>".to_string());
+
+        let cmd = wizard.command_with_placeholder("my_container");
+        assert_eq!(cmd, "docker logs my_container");
+    }
+
+    #[test]
+    fn test_command_with_placeholder_no_active() {
+        let config = make_config(vec![make_text_step("path", None)]);
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+        wizard.text_buffer = "/tmp".to_string();
+        wizard.save_answer();
+
+        let cmd = wizard.command_with_placeholder("ignored");
+        assert_eq!(cmd, "ls /tmp");
+    }
+
+    // ====================
+    // Preset tests
+    // ====================
+
+    #[test]
+    fn test_wizard_with_presets_starts_in_menu() {
+        let mut config = make_config(vec![make_toggle_step("a", "-a")]);
+        config.presets = vec![Preset {
+            label: "Quick".to_string(),
+            flags: "-la".to_string(),
+        }];
+
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert_eq!(wizard.phase, Phase::Menu);
+    }
+
+    #[test]
+    fn test_wizard_without_presets_starts_in_steps() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert_eq!(wizard.phase, Phase::Steps);
+    }
+
+    #[test]
+    fn test_build_preset_command() {
+        let mut config = make_config(vec![]);
+        config.presets = vec![
+            Preset {
+                label: "Quick".to_string(),
+                flags: "-la".to_string(),
+            },
+            Preset {
+                label: "Verbose".to_string(),
+                flags: "-lah".to_string(),
+            },
+        ];
+
+        let mut wizard = Wizard::new(config, vec!["ls".to_string()]);
+
+        // Select first preset
+        wizard.menu_index = 1;
+        assert_eq!(wizard.build_preset_command(), Some("ls -la".to_string()));
+
+        // Select second preset
+        wizard.menu_index = 2;
+        assert_eq!(wizard.build_preset_command(), Some("ls -lah".to_string()));
+    }
+
+    #[test]
+    fn test_menu_item_count() {
+        let mut config = make_config(vec![]);
+        config.presets = vec![
+            Preset {
+                label: "A".to_string(),
+                flags: "-a".to_string(),
+            },
+            Preset {
+                label: "B".to_string(),
+                flags: "-b".to_string(),
+            },
+        ];
+
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert_eq!(wizard.menu_item_count(), 3); // wizard + 2 presets
+    }
+
+    // ====================
+    // Chain tests
+    // ====================
+
+    #[test]
+    fn test_get_current_chain() {
+        let mut step = make_choice_step("action", vec![("Run", None), ("Build", None)]);
+        step.options[0].chain = Some("docker-run".to_string());
+
+        let config = make_config(vec![step]);
+        let mut wizard = Wizard::new(config, vec!["docker".to_string()]);
+        wizard.init_step();
+
+        // Select "Run" which has a chain
+        wizard.choice_index = 0;
+        assert_eq!(wizard.get_current_chain(), Some("docker-run".to_string()));
+
+        // Select "Build" which has no chain
+        wizard.choice_index = 1;
+        assert_eq!(wizard.get_current_chain(), None);
+    }
+
+    #[test]
+    fn test_next_step_returns_chain() {
+        let mut step = make_choice_step("action", vec![("Run", None), ("Build", None)]);
+        step.options[0].chain = Some("docker-run".to_string());
+
+        let config = make_config(vec![step]);
+        let mut wizard = Wizard::new(config, vec!["docker".to_string()]);
+        wizard.init_step();
+        wizard.choice_index = 0;
+
+        let chain = wizard.next_step();
+        assert_eq!(chain, Some("docker-run".to_string()));
+    }
+}
