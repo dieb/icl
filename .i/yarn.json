@@ -1,0 +1,80 @@
+{
+  "command": "yarn",
+  "description": "Fast, reliable dependency management",
+  "presets": [
+    {
+      "label": "Install all",
+      "flags": "install"
+    },
+    {
+      "label": "Add dependency",
+      "flags": "add <package>"
+    },
+    {
+      "label": "Add dev dependency",
+      "flags": "add -D <package>"
+    },
+    {
+      "label": "Upgrade interactive",
+      "flags": "upgrade-interactive"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install dependencies", "flag": "install" },
+        { "label": "Add package", "flag": "add" },
+        { "label": "Remove package", "flag": "remove" },
+        { "label": "Run script", "flag": "run" },
+        { "label": "Upgrade packages", "flag": "upgrade" },
+        { "label": "Check outdated", "flag": "outdated" },
+        { "label": "Audit security", "flag": "audit" }
+      ]
+    },
+    {
+      "id": "package",
+      "prompt": "Package name",
+      "type": "text",
+      "placeholder": "lodash",
+      "when": { "action": "Add package" }
+    },
+    {
+      "id": "remove_package",
+      "prompt": "Package to remove",
+      "type": "text",
+      "placeholder": "lodash",
+      "when": { "action": "Remove package" }
+    },
+    {
+      "id": "script",
+      "prompt": "Script name",
+      "type": "text",
+      "placeholder": "dev",
+      "when": { "action": "Run script" }
+    },
+    {
+      "id": "dev",
+      "prompt": "Save as dev dependency?",
+      "type": "toggle",
+      "flag": "-D",
+      "when": { "action": "Add package" }
+    },
+    {
+      "id": "exact",
+      "prompt": "Save exact version?",
+      "type": "toggle",
+      "flag": "--exact",
+      "when": { "action": "Add package" }
+    },
+    {
+      "id": "frozen",
+      "prompt": "Use frozen lockfile (CI)?",
+      "type": "toggle",
+      "flag": "--frozen-lockfile",
+      "when": { "action": "Install dependencies" }
+    }
+  ]
+}

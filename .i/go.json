@@ -1,0 +1,107 @@
+{
+  "command": "go",
+  "description": "Go programming language tool",
+  "presets": [
+    {
+      "label": "Run file",
+      "flags": "run ."
+    },
+    {
+      "label": "Build binary",
+      "flags": "build -o app ."
+    },
+    {
+      "label": "Run tests",
+      "flags": "test ./..."
+    },
+    {
+      "label": "Tidy modules",
+      "flags": "mod tidy"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run program", "flag": "run" },
+        { "label": "Build binary", "flag": "build" },
+        { "label": "Run tests", "flag": "test" },
+        { "label": "Get package", "flag": "get" },
+        { "label": "Manage modules", "flag": "mod" },
+        { "label": "Format code", "flag": "fmt" },
+        { "label": "Vet code", "flag": "vet" },
+        { "label": "Generate code", "flag": "generate" }
+      ]
+    },
+    {
+      "id": "run_target",
+      "prompt": "File or package to run",
+      "type": "text",
+      "placeholder": ".",
+      "when": { "action": "Run program" }
+    },
+    {
+      "id": "build_output",
+      "prompt": "Output binary name",
+      "type": "text",
+      "flag": "-o",
+      "placeholder": "myapp",
+      "when": { "action": "Build binary" }
+    },
+    {
+      "id": "build_target",
+      "prompt": "Package to build",
+      "type": "text",
+      "placeholder": ".",
+      "when": { "action": "Build binary" }
+    },
+    {
+      "id": "test_target",
+      "prompt": "Package to test",
+      "type": "text",
+      "placeholder": "./...",
+      "when": { "action": "Run tests" }
+    },
+    {
+      "id": "package",
+      "prompt": "Package to get",
+      "type": "text",
+      "placeholder": "github.com/user/repo@latest",
+      "when": { "action": "Get package" }
+    },
+    {
+      "id": "mod_action",
+      "prompt": "Module action",
+      "type": "choice",
+      "options": [
+        { "label": "Initialize module", "flag": "init" },
+        { "label": "Tidy dependencies", "flag": "tidy" },
+        { "label": "Download modules", "flag": "download" },
+        { "label": "Verify modules", "flag": "verify" }
+      ],
+      "when": { "action": "Manage modules" }
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "race",
+      "prompt": "Enable race detector?",
+      "type": "toggle",
+      "flag": "-race",
+      "when": { "action": "Run tests" }
+    },
+    {
+      "id": "cover",
+      "prompt": "Enable coverage?",
+      "type": "toggle",
+      "flag": "-cover",
+      "when": { "action": "Run tests" }
+    }
+  ]
+}

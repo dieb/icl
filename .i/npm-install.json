@@ -1,0 +1,73 @@
+{
+  "command": "npm install",
+  "description": "Install packages",
+  "presets": [
+    {
+      "label": "Install all dependencies",
+      "flags": ""
+    },
+    {
+      "label": "Install as dev dependency",
+      "flags": "--save-dev <package>"
+    },
+    {
+      "label": "Install globally",
+      "flags": "-g <package>"
+    },
+    {
+      "label": "Clean install (CI)",
+      "flags": "--ci"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What do you want to install?",
+      "type": "choice",
+      "options": [
+        { "label": "All dependencies from package.json", "flag": null },
+        { "label": "Specific package", "flag": null },
+        { "label": "Clean install (lockfile only)", "flag": "ci" }
+      ]
+    },
+    {
+      "id": "package",
+      "prompt": "Package name",
+      "type": "text",
+      "placeholder": "lodash@latest",
+      "when": { "mode": "Specific package" }
+    },
+    {
+      "id": "save_type",
+      "prompt": "Save as",
+      "type": "choice",
+      "options": [
+        { "label": "Production dependency", "flag": null },
+        { "label": "Dev dependency", "flag": "--save-dev" },
+        { "label": "Optional dependency", "flag": "--save-optional" },
+        { "label": "Don't save", "flag": "--no-save" }
+      ],
+      "when": { "mode": "Specific package" }
+    },
+    {
+      "id": "exact",
+      "prompt": "Save exact version?",
+      "type": "toggle",
+      "flag": "--save-exact",
+      "when": { "mode": "Specific package" }
+    },
+    {
+      "id": "global",
+      "prompt": "Install globally?",
+      "type": "toggle",
+      "flag": "-g",
+      "when": { "mode": "Specific package" }
+    },
+    {
+      "id": "legacy_peer",
+      "prompt": "Use legacy peer deps (for compatibility)?",
+      "type": "toggle",
+      "flag": "--legacy-peer-deps"
+    }
+  ]
+}

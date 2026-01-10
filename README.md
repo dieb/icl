@@ -68,7 +68,19 @@ i docker run      # Jump directly to docker run
 
 ## Available Configs
 
-See the [.i](.i/) directory for included configs (ls, docker, etc).
+Supported tools:
+
+- **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [make](.i/make.json)
+- **Version Control**: [git](.i/git.json)
+- **Containers**: [docker](.i/docker.json)
+- **Node.js**: [npm](.i/npm.json), [yarn](.i/yarn.json), [pnpm](.i/pnpm.json)
+- **Python**: [pip](.i/pip.json)
+- **Rust**: [cargo](.i/cargo.json)
+- **Go**: [go](.i/go.json)
+- **Crystal**: [crystal](.i/crystal.json), [shards](.i/shards.json)
+- **HTTP**: [curl](.i/curl.json)
+
+See the [.i](.i/) directory for included configs:
 
 ## Creating Your Own Configs
 

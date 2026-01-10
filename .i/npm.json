@@ -1,0 +1,22 @@
+{
+  "command": "npm",
+  "description": "Node package manager",
+  "presets": [],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install packages", "chain": "npm-install" },
+        { "label": "Run a script", "chain": "npm-run" },
+        { "label": "Initialize project", "flag": "init" },
+        { "label": "Update packages", "flag": "update" },
+        { "label": "Check outdated", "flag": "outdated" },
+        { "label": "Audit security", "flag": "audit" },
+        { "label": "Publish package", "flag": "publish" },
+        { "label": "List installed", "flag": "list" }
+      ]
+    }
+  ]
+}

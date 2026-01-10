@@ -1,0 +1,86 @@
+{
+  "command": "pip",
+  "description": "Python package installer",
+  "presets": [
+    {
+      "label": "Install package",
+      "flags": "install <package>"
+    },
+    {
+      "label": "Install from requirements",
+      "flags": "install -r requirements.txt"
+    },
+    {
+      "label": "Upgrade package",
+      "flags": "install --upgrade <package>"
+    },
+    {
+      "label": "Freeze to requirements",
+      "flags": "freeze > requirements.txt"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install package", "flag": "install" },
+        { "label": "Uninstall package", "flag": "uninstall" },
+        { "label": "List installed", "flag": "list" },
+        { "label": "Show package info", "flag": "show" },
+        { "label": "Freeze requirements", "flag": "freeze" },
+        { "label": "Check dependencies", "flag": "check" }
+      ]
+    },
+    {
+      "id": "package",
+      "prompt": "Package name",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "uninstall_package",
+      "prompt": "Package to uninstall",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Uninstall package" }
+    },
+    {
+      "id": "show_package",
+      "prompt": "Package to show",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Show package info" }
+    },
+    {
+      "id": "requirements",
+      "prompt": "Install from requirements file?",
+      "type": "toggle",
+      "flag": "-r requirements.txt",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "upgrade",
+      "prompt": "Upgrade if already installed?",
+      "type": "toggle",
+      "flag": "--upgrade",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "user",
+      "prompt": "Install for user only?",
+      "type": "toggle",
+      "flag": "--user",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "outdated",
+      "prompt": "Show outdated only?",
+      "type": "toggle",
+      "flag": "--outdated",
+      "when": { "action": "List installed" }
+    }
+  ]
+}
