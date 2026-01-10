@@ -221,6 +221,28 @@ When you select "Follow logs", instead of just showing `docker logs -f <containe
 
 This works for any placeholder — not just containers. For example, you could fetch git branches, kubernetes pods, or any other dynamic list.
 
+### User-Input Placeholders in Presets
+
+When a preset contains a placeholder like `<url>` or `<message>` that isn't configured in `placeholder_options`, the wizard will prompt you to enter a value.
+
+```json
+{
+  "command": "curl",
+  "presets": [
+    { "label": "GET JSON", "flags": "-s -H 'Accept: application/json' '<url>'" },
+    { "label": "POST JSON", "flags": "-X POST -H 'Content-Type: application/json' -d '<data>' '<url>'" }
+  ]
+}
+```
+
+When you select "POST JSON", the wizard will:
+1. Prompt you to enter a value for `<data>`
+2. Prompt you to enter a value for `<url>`
+3. Show the final command with your values substituted
+4. Execute when you confirm
+
+This is useful for presets that need user-specific values like URLs, commit messages, or file paths.
+
 ## License
 
 MIT

@@ -47,9 +47,9 @@ pub struct Wizard {
     placeholder_index: usize,
     active_placeholder: Option<String>, // The placeholder key being resolved
     // Preset user-input placeholders (e.g., <url>, <data>)
-    preset_placeholders: Vec<String>,           // List of placeholders to fill
+    preset_placeholders: Vec<String>, // List of placeholders to fill
     preset_placeholder_values: HashMap<String, String>, // Filled values
-    preset_placeholder_index: usize,            // Current placeholder being edited
+    preset_placeholder_index: usize,  // Current placeholder being edited
 }
 
 impl Wizard {
@@ -75,6 +75,76 @@ impl Wizard {
             placeholder_values: Vec::new(),
             placeholder_index: 0,
             active_placeholder: None,
+            preset_placeholders: Vec::new(),
+            preset_placeholder_values: HashMap::new(),
+            preset_placeholder_index: 0,
+        }
+    }
+
+    /// Extract user-input placeholders (e.g., `<url>`, `<data>`) from preset flags.
+    /// Returns a deduplicated list preserving order of first occurrence.
+    fn extract_preset_placeholders(flags: &str) -> Vec<String> {
+        let mut placeholders = Vec::new();
+        let mut start = 0;
+
+        while let Some(open) = flags[start..].find('<') {
+            let open_idx = start + open;
+            if let Some(close) = flags[open_idx..].find('>') {
+                let placeholder = &flags[open_idx..=open_idx + close];
+                if !placeholders.contains(&placeholder.to_string()) {
+                    placeholders.push(placeholder.to_string());
+                }
+                start = open_idx + close + 1;
+            } else {
+                break;
+            }
+        }
+        placeholders
+    }
+
+    fn prepare_preset_input(&mut self) {
+        if let Some(preset) = self.selected_preset() {
+            self.preset_placeholders = Self::extract_preset_placeholders(&preset.flags);
+            self.preset_placeholder_values.clear();
+            self.preset_placeholder_index = 0;
+            self.text_buffer.clear();
+        }
+    }
+
+    fn current_preset_placeholder(&self) -> Option<&String> {
+        self.preset_placeholders.get(self.preset_placeholder_index)
+    }
+
+    fn save_preset_placeholder(&mut self) {
+        if let Some(placeholder) = self.current_preset_placeholder().cloned() {
+            self.preset_placeholder_values
+                .insert(placeholder, self.text_buffer.clone());
+        }
+    }
+
+    fn next_preset_placeholder(&mut self) -> bool {
+        self.save_preset_placeholder();
+        if self.preset_placeholder_index + 1 < self.preset_placeholders.len() {
+            self.preset_placeholder_index += 1;
+            self.text_buffer.clear();
+            false // More placeholders to fill
+        } else {
+            true // All done
+        }
+    }
+
+    fn prev_preset_placeholder(&mut self) -> bool {
+        self.save_preset_placeholder();
+        if self.preset_placeholder_index > 0 {
+            self.preset_placeholder_index -= 1;
+            self.text_buffer = self
+                .current_preset_placeholder()
+                .and_then(|p| self.preset_placeholder_values.get(p))
+                .cloned()
+                .unwrap_or_default();
+            false // Stay in PresetInput
+        } else {
+            true // Go back to Menu
         }
     }
 
@@ -91,8 +161,14 @@ impl Wizard {
     }
 
     fn build_preset_command(&self) -> Option<String> {
-        self.selected_preset()
-            .map(|preset| format!("{} {}", self.base_command.join(" "), preset.flags))
+        self.selected_preset().map(|preset| {
+            let mut flags = preset.flags.clone();
+            // Replace user-input placeholders with their values
+            for (placeholder, value) in &self.preset_placeholder_values {
+                flags = flags.replace(placeholder, value);
+            }
+            format!("{} {}", self.base_command.join(" "), flags)
+        })
     }
 
     fn current_command(&self) -> String {
@@ -456,9 +532,16 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                             wizard.phase = Phase::Steps;
                             wizard.init_step();
                         } else {
-                            // Preset selected - go straight to confirm
-                            wizard.phase = Phase::Confirm;
-                            wizard.prepare_confirm_phase();
+                            // Preset selected - check for user-input placeholders
+                            wizard.prepare_preset_input();
+                            if wizard.preset_placeholders.is_empty() {
+                                // No placeholders, go straight to confirm
+                                wizard.phase = Phase::Confirm;
+                                wizard.prepare_confirm_phase();
+                            } else {
+                                // Has placeholders, collect input first
+                                wizard.phase = Phase::PresetInput;
+                            }
                         }
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
@@ -539,10 +622,35 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         _ => {}
                     }
                 }
+                Phase::PresetInput => match key.code {
+                    KeyCode::Esc => {
+                        if wizard.prev_preset_placeholder() {
+                            wizard.phase = Phase::Menu;
+                        }
+                    }
+                    KeyCode::Char('q') => break Ok(WizardResult::Quit),
+                    KeyCode::Enter => {
+                        if wizard.next_preset_placeholder() {
+                            // All placeholders filled, go to confirm
+                            wizard.phase = Phase::Confirm;
+                            wizard.prepare_confirm_phase();
+                        }
+                    }
+                    KeyCode::Char(c) => {
+                        wizard.text_buffer.push(c);
+                    }
+                    KeyCode::Backspace => {
+                        wizard.text_buffer.pop();
+                    }
+                    _ => {}
+                },
                 Phase::Confirm => match key.code {
                     KeyCode::Esc => {
                         if wizard.menu_index == 0 {
                             wizard.prev_step();
+                        } else if !wizard.preset_placeholders.is_empty() {
+                            // Go back to last placeholder input
+                            wizard.phase = Phase::PresetInput;
                         } else {
                             wizard.phase = Phase::Menu;
                         }
@@ -620,6 +728,10 @@ fn calculate_content_height(wizard: &Wizard) -> u16 {
             } else {
                 1
             }
+        }
+        Phase::PresetInput => {
+            // Prompt + input + progress indicator
+            4
         }
         Phase::Confirm => {
             // 5 base lines + placeholder options if any
@@ -715,6 +827,55 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
             }
 
             let help = Paragraph::new("↑↓ select  Enter confirm  Esc back  q quit")
+                .style(Style::default().fg(Color::DarkGray))
+                .block(Block::default().borders(Borders::ALL));
+            f.render_widget(help, chunks[1]);
+        }
+        Phase::PresetInput => {
+            let placeholder = wizard
+                .current_preset_placeholder()
+                .map(|s| s.as_str())
+                .unwrap_or("<value>");
+
+            // Show placeholder name without angle brackets as prompt
+            let prompt_text = placeholder
+                .trim_matches(|c| c == '<' || c == '>')
+                .to_uppercase();
+
+            // Progress indicator
+            let progress = format!(
+                "{}/{}",
+                wizard.preset_placeholder_index + 1,
+                wizard.preset_placeholders.len()
+            );
+
+            let display = if wizard.text_buffer.is_empty() {
+                Span::styled(
+                    format!("Enter {}...", prompt_text.to_lowercase()),
+                    Style::default().fg(Color::DarkGray),
+                )
+            } else {
+                Span::styled(&wizard.text_buffer, Style::default())
+            };
+
+            let content = vec![
+                Line::from(""),
+                Line::from(vec![
+                    Span::styled(prompt_text, Style::default().bold()),
+                    Span::styled(
+                        format!("  ({})", progress),
+                        Style::default().fg(Color::DarkGray),
+                    ),
+                ]),
+                Line::from(""),
+                Line::from(vec![display, Span::raw("█")]),
+            ];
+
+            let block = Block::default().borders(Borders::ALL).title(title);
+            let paragraph = Paragraph::new(content).block(block);
+            f.render_widget(paragraph, chunks[0]);
+
+            let help = Paragraph::new("Enter confirm  Esc back  q quit")
                 .style(Style::default().fg(Color::DarkGray))
                 .block(Block::default().borders(Borders::ALL));
             f.render_widget(help, chunks[1]);
@@ -1721,5 +1882,96 @@ mod tests {
 
         let chain = wizard.next_step();
         assert_eq!(chain, Some("docker-run".to_string()));
+    }
+
+    // ==============================
+    // Preset placeholder tests
+    // ==============================
+
+    #[test]
+    fn test_extract_preset_placeholders_single() {
+        let placeholders = Wizard::extract_preset_placeholders("-s '<url>'");
+        assert_eq!(placeholders, vec!["<url>"]);
+    }
+
+    #[test]
+    fn test_extract_preset_placeholders_multiple() {
+        let placeholders = Wizard::extract_preset_placeholders("-d '<data>' '<url>'");
+        assert_eq!(placeholders, vec!["<data>", "<url>"]);
+    }
+
+    #[test]
+    fn test_extract_preset_placeholders_none() {
+        let placeholders = Wizard::extract_preset_placeholders("-v --silent");
+        assert!(placeholders.is_empty());
+    }
+
+    #[test]
+    fn test_extract_preset_placeholders_deduplicates() {
+        let placeholders = Wizard::extract_preset_placeholders("<url> <url>");
+        assert_eq!(placeholders, vec!["<url>"]);
+    }
+
+    #[test]
+    fn test_preset_placeholder_replacement() {
+        let mut config = make_config(vec![]);
+        config.presets = vec![Preset {
+            label: "GET".to_string(),
+            flags: "-s '<url>'".to_string(),
+        }];
+
+        let mut wizard = Wizard::new(config, vec!["curl".to_string()]);
+        wizard.menu_index = 1; // Select first preset
+        wizard
+            .preset_placeholder_values
+            .insert("<url>".to_string(), "https://example.com".to_string());
+
+        let cmd = wizard.build_preset_command();
+        assert_eq!(cmd, Some("curl -s 'https://example.com'".to_string()));
+    }
+
+    #[test]
+    fn test_preset_placeholder_navigation() {
+        let mut config = make_config(vec![]);
+        config.presets = vec![Preset {
+            label: "POST".to_string(),
+            flags: "-d '<data>' '<url>'".to_string(),
+        }];
+
+        let mut wizard = Wizard::new(config, vec!["curl".to_string()]);
+        wizard.menu_index = 1;
+        wizard.prepare_preset_input();
+
+        assert_eq!(wizard.preset_placeholders.len(), 2);
+        assert_eq!(wizard.preset_placeholder_index, 0);
+        assert_eq!(
+            wizard.current_preset_placeholder(),
+            Some(&"<data>".to_string())
+        );
+
+        // Fill first placeholder and advance
+        wizard.text_buffer = "hello".to_string();
+        let done = wizard.next_preset_placeholder();
+        assert!(!done); // Not done yet
+        assert_eq!(wizard.preset_placeholder_index, 1);
+        assert_eq!(
+            wizard.current_preset_placeholder(),
+            Some(&"<url>".to_string())
+        );
+
+        // Fill second placeholder and advance
+        wizard.text_buffer = "https://api.example.com".to_string();
+        let done = wizard.next_preset_placeholder();
+        assert!(done); // All done
+
+        // Verify values were saved
+        assert_eq!(
+            wizard.preset_placeholder_values.get("<data>"),
+            Some(&"hello".to_string())
+        );
+        assert_eq!(
+            wizard.preset_placeholder_values.get("<url>"),
+            Some(&"https://api.example.com".to_string())
+        );
     }
 }

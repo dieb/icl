@@ -1,0 +1,103 @@
+{
+  "command": "curl",
+  "description": "Transfer data from or to a server",
+  "presets": [
+    {
+      "label": "GET JSON",
+      "flags": "-s -H 'Accept: application/json' '<url>'"
+    },
+    {
+      "label": "POST JSON",
+      "flags": "-s -X POST -H 'Content-Type: application/json' -d '<data>' '<url>'"
+    },
+    {
+      "label": "Download file",
+      "flags": "-LO '<url>'"
+    },
+    {
+      "label": "HEAD request",
+      "flags": "-I '<url>'"
+    },
+    {
+      "label": "Verbose debug",
+      "flags": "-v '<url>'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "url",
+      "prompt": "URL",
+      "type": "text",
+      "placeholder": "https://api.example.com/data"
+    },
+    {
+      "id": "method",
+      "prompt": "HTTP method",
+      "type": "choice",
+      "options": [
+        { "label": "GET (default)", "flag": null },
+        { "label": "POST", "flag": "-X POST" },
+        { "label": "PUT", "flag": "-X PUT" },
+        { "label": "PATCH", "flag": "-X PATCH" },
+        { "label": "DELETE", "flag": "-X DELETE" },
+        { "label": "HEAD", "flag": "-I" }
+      ]
+    },
+    {
+      "id": "content_type",
+      "prompt": "Content type",
+      "type": "choice",
+      "options": [
+        { "label": "None", "flag": null },
+        { "label": "JSON", "flag": "-H 'Content-Type: application/json'" },
+        { "label": "Form data", "flag": "-H 'Content-Type: application/x-www-form-urlencoded'" },
+        { "label": "Multipart form", "flag": null }
+      ]
+    },
+    {
+      "id": "data",
+      "prompt": "Request body/data",
+      "type": "text",
+      "flag": "-d",
+      "placeholder": "{\"key\": \"value\"}"
+    },
+    {
+      "id": "header",
+      "prompt": "Custom header",
+      "type": "text",
+      "flag": "-H",
+      "placeholder": "Authorization: Bearer token"
+    },
+    {
+      "id": "output",
+      "prompt": "Save to file",
+      "type": "text",
+      "flag": "-o",
+      "placeholder": "response.json"
+    },
+    {
+      "id": "follow",
+      "prompt": "Follow redirects?",
+      "type": "toggle",
+      "flag": "-L"
+    },
+    {
+      "id": "silent",
+      "prompt": "Silent mode (no progress)?",
+      "type": "toggle",
+      "flag": "-s"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "insecure",
+      "prompt": "Allow insecure SSL?",
+      "type": "toggle",
+      "flag": "-k"
+    }
+  ]
+}
