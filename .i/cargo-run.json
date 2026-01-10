@@ -1,0 +1,59 @@
+{
+  "command": "cargo run",
+  "description": "Build and run the current package",
+  "presets": [
+    {
+      "label": "Run debug",
+      "flags": ""
+    },
+    {
+      "label": "Run release",
+      "flags": "--release"
+    },
+    {
+      "label": "Run example",
+      "flags": "--example <name>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "release",
+      "prompt": "Run in release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "bin",
+      "prompt": "Binary to run (for multi-binary crates)",
+      "type": "text",
+      "flag": "--bin",
+      "placeholder": "my-binary"
+    },
+    {
+      "id": "example",
+      "prompt": "Example to run",
+      "type": "text",
+      "flag": "--example",
+      "placeholder": "basic"
+    },
+    {
+      "id": "features",
+      "prompt": "Features to enable",
+      "type": "text",
+      "flag": "--features",
+      "placeholder": "feature1,feature2"
+    },
+    {
+      "id": "args",
+      "prompt": "Arguments to pass to the binary",
+      "type": "text",
+      "placeholder": "-- arg1 arg2"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Suppress cargo output?",
+      "type": "toggle",
+      "flag": "-q"
+    }
+  ]
+}

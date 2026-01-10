@@ -1,0 +1,65 @@
+{
+  "command": "cargo build",
+  "description": "Compile the current package",
+  "presets": [
+    {
+      "label": "Debug build",
+      "flags": ""
+    },
+    {
+      "label": "Release build",
+      "flags": "--release"
+    },
+    {
+      "label": "All targets",
+      "flags": "--all-targets"
+    }
+  ],
+  "steps": [
+    {
+      "id": "release",
+      "prompt": "Build in release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "all_targets",
+      "prompt": "Build all targets (lib, bins, tests, examples)?",
+      "type": "toggle",
+      "flag": "--all-targets"
+    },
+    {
+      "id": "features",
+      "prompt": "Features to enable (comma-separated)",
+      "type": "text",
+      "flag": "--features",
+      "placeholder": "feature1,feature2"
+    },
+    {
+      "id": "all_features",
+      "prompt": "Enable all features?",
+      "type": "toggle",
+      "flag": "--all-features"
+    },
+    {
+      "id": "target",
+      "prompt": "Target triple",
+      "type": "text",
+      "flag": "--target",
+      "placeholder": "x86_64-unknown-linux-musl"
+    },
+    {
+      "id": "jobs",
+      "prompt": "Number of parallel jobs",
+      "type": "text",
+      "flag": "-j",
+      "placeholder": "4"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}
