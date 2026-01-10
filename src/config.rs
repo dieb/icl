@@ -276,7 +276,10 @@ mod tests {
         }"#;
 
         let config: Config = serde_json::from_str(json).unwrap();
-        assert_eq!(config.steps[0].options[0].chain, Some("docker-run".to_string()));
+        assert_eq!(
+            config.steps[0].options[0].chain,
+            Some("docker-run".to_string())
+        );
         assert_eq!(config.steps[0].options[1].chain, None);
     }
 
@@ -355,7 +358,10 @@ mod tests {
 
     #[test]
     fn test_config_error_display_not_found() {
-        let paths = vec![PathBuf::from(".i/foo.json"), PathBuf::from("/home/.config/i/foo.json")];
+        let paths = vec![
+            PathBuf::from(".i/foo.json"),
+            PathBuf::from("/home/.config/i/foo.json"),
+        ];
         let err = ConfigError::NotFound("foo".to_string(), paths);
         let display = format!("{}", err);
         assert!(display.contains("No configuration found for 'foo'"));

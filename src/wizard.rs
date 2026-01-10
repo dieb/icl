@@ -16,8 +16,8 @@ use crate::output::OutputMode;
 
 pub enum WizardResult {
     Command(String, OutputMode),
-    Chain(String),  // Chain to another config
-    Back,           // Go back to previous wizard in chain
+    Chain(String), // Chain to another config
+    Back,          // Go back to previous wizard in chain
     Quit,
 }
 
@@ -86,9 +86,8 @@ impl Wizard {
     }
 
     fn build_preset_command(&self) -> Option<String> {
-        self.selected_preset().map(|preset| {
-            format!("{} {}", self.base_command.join(" "), preset.flags)
-        })
+        self.selected_preset()
+            .map(|preset| format!("{} {}", self.base_command.join(" "), preset.flags))
     }
 
     fn current_command(&self) -> String {
@@ -140,8 +139,8 @@ impl Wizard {
                     }
                 }
                 Answer::Toggle(val) => {
-                    let matches = (*val && expected_value == "true")
-                        || (!*val && expected_value == "false");
+                    let matches =
+                        (*val && expected_value == "true") || (!*val && expected_value == "false");
                     if !matches {
                         return false;
                     }
@@ -502,10 +501,8 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         },
                         KeyCode::Down | KeyCode::Char('j') => match step_type {
                             Some(StepType::Choice) | Some(StepType::Multi) => {
-                                let len = wizard
-                                    .current_step()
-                                    .map(|s| s.options.len())
-                                    .unwrap_or(0);
+                                let len =
+                                    wizard.current_step().map(|s| s.options.len()).unwrap_or(0);
                                 if wizard.choice_index + 1 < len {
                                     wizard.choice_index += 1;
                                 }
@@ -557,7 +554,9 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         }
                     }
                     KeyCode::Enter => {
-                        let cmd = if wizard.has_placeholder_options() && !wizard.placeholder_values.is_empty() {
+                        let cmd = if wizard.has_placeholder_options()
+                            && !wizard.placeholder_values.is_empty()
+                        {
                             let value = &wizard.placeholder_values[wizard.placeholder_index].0;
                             wizard.command_with_placeholder(value)
                         } else {
@@ -566,10 +565,16 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                         break Ok(WizardResult::Command(cmd, OutputMode::Execute));
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Clipboard));
+                        break Ok(WizardResult::Command(
+                            wizard.current_command(),
+                            OutputMode::Clipboard,
+                        ));
                     }
                     KeyCode::Char('p') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Print));
+                        break Ok(WizardResult::Command(
+                            wizard.current_command(),
+                            OutputMode::Print,
+                        ));
                     }
                     _ => {}
                 },
@@ -613,7 +618,11 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
             } else {
                 Style::default()
             };
-            let marker = if wizard.menu_index == 0 { "● " } else { "○ " };
+            let marker = if wizard.menu_index == 0 {
+                "● "
+            } else {
+                "○ "
+            };
             lines.push(Line::from(Span::styled(
                 format!("{}Interactive wizard...", marker),
                 wizard_style,
@@ -731,14 +740,16 @@ fn render_step(f: &mut Frame, area: Rect, step: &Step, wizard: &Wizard, title: &
         .direction(Direction::Vertical)
         .margin(1)
         .constraints([
-            Constraint::Length(2),  // Prompt
-            Constraint::Min(1),     // Options
-            Constraint::Length(1),  // Breadcrumb
+            Constraint::Length(2), // Prompt
+            Constraint::Min(1),    // Options
+            Constraint::Length(1), // Breadcrumb
         ])
         .split(area);
 
     // Draw border
-    let block = Block::default().borders(Borders::ALL).title(title.to_string());
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title(title.to_string());
     f.render_widget(block, area);
 
     // Prompt
@@ -1186,10 +1197,7 @@ mod tests {
         when.insert("name".to_string(), "admin".to_string());
         conditional_step.when = Some(when);
 
-        let config = make_config(vec![
-            make_text_step("name", None),
-            conditional_step.clone(),
-        ]);
+        let config = make_config(vec![make_text_step("name", None), conditional_step.clone()]);
         let mut wizard = Wizard::new(config, vec!["test".to_string()]);
 
         wizard.text_buffer = "admin".to_string();
@@ -1205,10 +1213,7 @@ mod tests {
         when.insert("name".to_string(), "admin".to_string());
         conditional_step.when = Some(when);
 
-        let config = make_config(vec![
-            make_text_step("name", None),
-            conditional_step.clone(),
-        ]);
+        let config = make_config(vec![make_text_step("name", None), conditional_step.clone()]);
         let mut wizard = Wizard::new(config, vec!["test".to_string()]);
 
         wizard.text_buffer = "user".to_string();
@@ -1548,10 +1553,9 @@ mod tests {
     #[test]
     fn test_command_with_placeholder() {
         let mut config = make_config(vec![make_text_step("container", None)]);
-        config.placeholder_options.insert(
-            "<container>".to_string(),
-            "docker ps".to_string(),
-        );
+        config
+            .placeholder_options
+            .insert("<container>".to_string(), "docker ps".to_string());
 
         let mut wizard = Wizard::new(config, vec!["docker".to_string(), "logs".to_string()]);
         wizard.text_buffer = "<container>".to_string();

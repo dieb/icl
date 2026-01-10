@@ -35,6 +35,14 @@ cargo run -- ls
 cargo run -- docker
 ```
 
+## Testing
+
+```bash
+cargo test
+```
+
+The test suite covers config parsing, command building, conditional step logic, breadcrumb generation, navigation, and output handling.
+
 ## Usage
 
 ```bash
