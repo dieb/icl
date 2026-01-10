@@ -23,9 +23,10 @@ pub enum WizardResult {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Phase {
-    Menu,    // Initial menu: wizard vs presets
-    Steps,   // Step-by-step wizard
-    Confirm, // Final confirmation
+    Menu,        // Initial menu: wizard vs presets
+    Steps,       // Step-by-step wizard
+    PresetInput, // Filling in preset placeholders
+    Confirm,     // Final confirmation
 }
 
 pub struct Wizard {
@@ -45,6 +46,10 @@ pub struct Wizard {
     placeholder_values: Vec<(String, String)>, // (name, id) pairs
     placeholder_index: usize,
     active_placeholder: Option<String>, // The placeholder key being resolved
+    // Preset user-input placeholders (e.g., <url>, <data>)
+    preset_placeholders: Vec<String>,           // List of placeholders to fill
+    preset_placeholder_values: HashMap<String, String>, // Filled values
+    preset_placeholder_index: usize,            // Current placeholder being edited
 }
 
 impl Wizard {
@@ -594,10 +599,49 @@ fn centered_rect(width: u16, height: u16, area: Rect) -> Rect {
     Rect::new(x, y, width.min(area.width), height.min(area.height))
 }
 
+fn calculate_content_height(wizard: &Wizard) -> u16 {
+    let content_lines = match wizard.phase {
+        Phase::Menu => {
+            // 1 empty line + 1 wizard option + separator lines + preset count
+            let preset_lines = if wizard.config.presets.is_empty() {
+                0
+            } else {
+                2 + wizard.config.presets.len() // 2 for empty + "Quick presets:" label
+            };
+            1 + 1 + preset_lines
+        }
+        Phase::Steps => {
+            if let Some(step) = wizard.current_step() {
+                match step.step_type {
+                    StepType::Choice | StepType::Multi => step.options.len(),
+                    StepType::Toggle => 1,
+                    StepType::Text => 1,
+                }
+            } else {
+                1
+            }
+        }
+        Phase::Confirm => {
+            // 5 base lines + placeholder options if any
+            5 + if wizard.has_placeholder_options() {
+                1 + wizard.placeholder_values.len().max(1)
+            } else {
+                0
+            }
+        }
+    };
+
+    // Add: 2 for borders, 2 for prompt, 1 for breadcrumb, 3 for help box
+    (content_lines as u16) + 8
+}
+
 fn ui(f: &mut Frame, wizard: &Wizard) {
-    // Center a box of fixed size
+    // Dynamic box sizing based on content
     let box_width = 60u16;
-    let box_height = 16u16;
+    let min_height = 10u16;
+    let max_height = f.area().height.saturating_sub(2); // Leave some margin
+    let content_height = calculate_content_height(wizard);
+    let box_height = content_height.clamp(min_height, max_height);
     let centered = centered_rect(box_width, box_height, f.area());
 
     let chunks = Layout::default()
