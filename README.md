@@ -1,10 +1,10 @@
 # icl
 
-Transform any CLI into a little interactive wizard. The binary is called `i` for quick access.
+Transform any CLI into a little interactive wizard.
 
-![CleanShot 2026-01-10 at 10 18 48](https://github.com/user-attachments/assets/00c6ccbb-8ffe-477f-907c-9b70c3d280fd)
+![output](https://github.com/user-attachments/assets/989b1208-9a9a-4baf-aad3-59c60bccdbf0)
 
-See the [.i](.i/) directory for included configs (ls, docker, etc).
+Run things like `i docker`, `i ls` to open their wizard. See the [.i](.i/) directory for included configs.
 
 ## Use Cases
 
