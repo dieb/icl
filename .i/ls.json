@@ -1,0 +1,63 @@
+{
+  "command": "ls",
+  "description": "List directory contents",
+  "presets": [
+    {
+      "label": "Detailed list with sizes",
+      "flags": "-lah"
+    },
+    {
+      "label": "Just names, one per line",
+      "flags": "-1"
+    },
+    {
+      "label": "Recently modified first",
+      "flags": "-lt"
+    }
+  ],
+  "steps": [
+    {
+      "id": "format",
+      "prompt": "How do you want to see files?",
+      "type": "choice",
+      "default": 0,
+      "options": [
+        { "label": "Detailed list", "flag": "-l" },
+        { "label": "Grid (default)", "flag": null },
+        { "label": "One per line", "flag": "-1" },
+        { "label": "Comma-separated", "flag": "-m" }
+      ]
+    },
+    {
+      "id": "sort",
+      "prompt": "Sort by?",
+      "type": "choice",
+      "options": [
+        { "label": "Name (default)", "flag": null },
+        { "label": "Newest first", "flag": "-t" },
+        { "label": "Oldest first", "flag": "-tr" },
+        { "label": "Largest first", "flag": "-S" },
+        { "label": "Extension", "flag": "-X" }
+      ]
+    },
+    {
+      "id": "hidden",
+      "prompt": "Show hidden files?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "human_sizes",
+      "prompt": "Human-readable sizes (KB, MB)?",
+      "type": "toggle",
+      "flag": "-h",
+      "when": { "format": "Detailed list" }
+    },
+    {
+      "id": "reverse",
+      "prompt": "Reverse order?",
+      "type": "toggle",
+      "flag": "-r"
+    }
+  ]
+}

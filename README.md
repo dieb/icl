@@ -1,8 +1,8 @@
 # i
 
-Transform any CLI into an interactive TUI.
+Interactive TUI for CLI commands.
 
-`i` parses the `--help` output of any command and presents its options in an interactive terminal interface. Select the options you need, provide values, and get your command ready to run.
+`i` provides a wizard-style interface for building command-line commands. Each command has a JSON config that defines the steps and options, making it easy to create curated experiences for any CLI tool.
 
 ## Installation
 
@@ -19,25 +19,109 @@ i <command>
 ### Examples
 
 ```bash
-# Interactively build a cargo command
-i cargo build
+# Interactive wizard for ls
+i ls
 
-# Explore git commit options
+# Configure a git commit
 i git commit
-
-# Configure an rsync command
-i rsync
 ```
 
 ## How It Works
 
-1. Runs `<command> --help` (or `-h` as fallback) to get the help text
-2. Parses options, flags, and their descriptions from the output
-3. Displays them in a TUI where you can:
-   - Toggle options on/off
-   - Enter values for options that require them
-   - Cycle through predefined choices (e.g., `--color auto|always|never`)
-4. Outputs the final command via print, clipboard, or direct execution
+When you run `i ls`, it:
+
+1. Loads the config file for `ls` (from `.i/ls.json`, `~/.config/i/ls.json`, or bundled)
+2. Shows a menu with quick presets and the interactive wizard
+3. Guides you through each option with a step-by-step wizard
+4. Outputs the final command (print, clipboard, or execute)
+
+## Config File Format
+
+Config files are JSON and define the command's options and presets:
+
+```json
+{
+  "command": "ls",
+  "description": "List directory contents",
+  "presets": [
+    {
+      "label": "Detailed list with sizes",
+      "flags": "-lah"
+    },
+    {
+      "label": "Recently modified first",
+      "flags": "-lt"
+    }
+  ],
+  "steps": [
+    {
+      "id": "format",
+      "prompt": "How do you want to see files?",
+      "type": "choice",
+      "options": [
+        { "label": "Detailed list", "flag": "-l" },
+        { "label": "Grid (default)", "flag": null },
+        { "label": "One per line", "flag": "-1" }
+      ]
+    },
+    {
+      "id": "hidden",
+      "prompt": "Show hidden files?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "human_sizes",
+      "prompt": "Human-readable sizes?",
+      "type": "toggle",
+      "flag": "-h",
+      "when": { "format": "Detailed list" }
+    }
+  ]
+}
+```
+
+### Step Types
+
+| Type | Description |
+|------|-------------|
+| `choice` | Single-select from a list of options |
+| `toggle` | Yes/No question |
+| `text` | Free-form text input |
+| `multi` | Multi-select from a list of options |
+
+### Conditional Steps
+
+Use `when` to show a step only when a previous answer matches:
+
+```json
+{
+  "id": "human_sizes",
+  "prompt": "Human-readable sizes?",
+  "type": "toggle",
+  "flag": "-h",
+  "when": { "format": "Detailed list" }
+}
+```
+
+### Presets
+
+Presets appear in the main menu for quick access to common flag combinations:
+
+```json
+"presets": [
+  { "label": "List all with sizes", "flags": "-lah" },
+  { "label": "Just names", "flags": "-1" }
+]
+```
+
+## Config Lookup Order
+
+1. `./.i/<command>.json` - Project-local configs
+2. `~/.config/i/<command>.json` - User configs
+3. Bundled configs
+
+For subcommands like `git commit`, use `git-commit.json`.
 
 ## Keybindings
 
@@ -45,30 +129,21 @@ i rsync
 |-----|--------|
 | `j` / `↓` | Move down |
 | `k` / `↑` | Move up |
-| `Space` | Toggle option |
-| `h` / `←` | Previous choice |
-| `l` / `→` | Next choice |
-| `e` | Edit value |
-| `Enter` | Print command to stdout |
+| `Space` | Toggle (for toggle/multi types) |
+| `Enter` | Confirm / Run command |
 | `Ctrl+C` | Copy command to clipboard |
-| `Ctrl+X` | Execute command |
-| `q` / `Esc` | Quit |
+| `Ctrl+P` | Print command to stdout |
+| `Esc` | Go back |
+| `q` | Quit |
 
-## Debugging
+## Creating Configs
 
-Use the `--debug` flag to see the parsed help text and extracted options:
+To add support for a new command:
 
-```bash
-i cargo build --debug
-```
-
-## Dependencies
-
-- [ratatui](https://github.com/ratatui-org/ratatui) - Terminal UI framework
-- [crossterm](https://github.com/crossterm-rs/crossterm) - Terminal manipulation
-- [arboard](https://github.com/1Password/arboard) - Clipboard access
-- [clap](https://github.com/clap-rs/clap) - Argument parsing
-- [regex](https://github.com/rust-lang/regex) - Help text parsing
+1. Create `.i/<command>.json` in your project, or `~/.config/i/<command>.json` for global use
+2. Define the steps based on the command's options
+3. Add common presets for quick access
+4. Run `i <command>` to test
 
 ## License
 
