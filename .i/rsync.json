@@ -1,0 +1,114 @@
+{
+  "command": "rsync",
+  "description": "Sync files and directories",
+  "presets": [
+    { "label": "Basic sync with progress", "flags": "-av --progress <source> <destination>" },
+    { "label": "Mirror (delete extra files)", "flags": "-av --delete <source> <destination>" },
+    { "label": "Dry run (preview changes)", "flags": "-avn --delete <source> <destination>" },
+    { "label": "Sync over SSH", "flags": "-avz -e ssh <source> <user>@<host>:<destination>" },
+    { "label": "Backup with timestamp", "flags": "-av --backup --backup-dir=backup_$(date +%Y%m%d) <source> <destination>" },
+    { "label": "Exclude common files", "flags": "-av --exclude='*.log' --exclude='.git' --exclude='node_modules' <source> <destination>" }
+  ],
+  "steps": [
+    {
+      "id": "source",
+      "prompt": "Source path",
+      "type": "text",
+      "flag": null,
+      "placeholder": "/path/to/source/"
+    },
+    {
+      "id": "destination",
+      "prompt": "Destination path",
+      "type": "text",
+      "flag": null,
+      "placeholder": "/path/to/destination/"
+    },
+    {
+      "id": "archive",
+      "prompt": "Archive mode (preserve permissions, timestamps)?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "progress",
+      "prompt": "Show progress?",
+      "type": "toggle",
+      "flag": "--progress"
+    },
+    {
+      "id": "compress",
+      "prompt": "Compress during transfer?",
+      "type": "toggle",
+      "flag": "-z"
+    },
+    {
+      "id": "delete",
+      "prompt": "Delete extraneous files from destination?",
+      "type": "toggle",
+      "flag": "--delete"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (show what would be done)?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "remote",
+      "prompt": "Syncing over SSH?",
+      "type": "toggle",
+      "flag": "-e ssh"
+    },
+    {
+      "id": "exclude",
+      "prompt": "Exclude patterns?",
+      "type": "choice",
+      "options": [
+        { "label": "No exclusions", "flag": null },
+        { "label": "Common dev files", "flag": "--exclude='*.log' --exclude='.git' --exclude='node_modules' --exclude='__pycache__'" },
+        { "label": "Custom pattern", "flag": null }
+      ]
+    },
+    {
+      "id": "exclude_custom",
+      "prompt": "Exclude pattern",
+      "type": "text",
+      "flag": "--exclude",
+      "placeholder": "*.log",
+      "when": { "exclude": "Custom pattern" }
+    },
+    {
+      "id": "backup",
+      "prompt": "Keep backup of modified files?",
+      "type": "toggle",
+      "flag": "--backup"
+    },
+    {
+      "id": "backup_dir",
+      "prompt": "Backup directory",
+      "type": "text",
+      "flag": "--backup-dir",
+      "placeholder": "./backups",
+      "when": { "backup": true }
+    },
+    {
+      "id": "checksum",
+      "prompt": "Use checksum instead of time/size?",
+      "type": "toggle",
+      "flag": "-c"
+    },
+    {
+      "id": "human_readable",
+      "prompt": "Human-readable sizes?",
+      "type": "toggle",
+      "flag": "-h"
+    }
+  ]
+}

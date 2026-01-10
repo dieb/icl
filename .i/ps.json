@@ -1,0 +1,80 @@
+{
+  "command": "ps",
+  "description": "List running processes",
+  "presets": [
+    { "label": "All processes (detailed)", "flags": "aux" },
+    { "label": "All processes (full format)", "flags": "-ef" },
+    { "label": "My processes only", "flags": "ux" },
+    { "label": "Process tree", "flags": "auxf" },
+    { "label": "Top CPU consumers", "flags": "aux --sort=-%cpu | head -20" },
+    { "label": "Top memory consumers", "flags": "aux --sort=-%mem | head -20" },
+    { "label": "Find process by name", "flags": "aux | grep <name>" }
+  ],
+  "steps": [
+    {
+      "id": "selection",
+      "prompt": "Which processes to show?",
+      "type": "choice",
+      "options": [
+        { "label": "All processes", "flag": "-e" },
+        { "label": "My processes only", "flag": null },
+        { "label": "By terminal", "flag": "-t" }
+      ]
+    },
+    {
+      "id": "terminal",
+      "prompt": "Terminal name",
+      "type": "text",
+      "flag": null,
+      "placeholder": "pts/0",
+      "when": { "selection": "By terminal" }
+    },
+    {
+      "id": "format",
+      "prompt": "Output format?",
+      "type": "choice",
+      "options": [
+        { "label": "BSD full (aux)", "flag": "u" },
+        { "label": "Standard full (-f)", "flag": "-f" },
+        { "label": "Long format (-l)", "flag": "-l" },
+        { "label": "Extra full (-F)", "flag": "-F" }
+      ]
+    },
+    {
+      "id": "tree",
+      "prompt": "Show process tree (forest)?",
+      "type": "toggle",
+      "flag": "f"
+    },
+    {
+      "id": "threads",
+      "prompt": "Show threads?",
+      "type": "toggle",
+      "flag": "-L"
+    },
+    {
+      "id": "sort",
+      "prompt": "Sort by?",
+      "type": "choice",
+      "options": [
+        { "label": "Default (PID)", "flag": null },
+        { "label": "CPU usage (descending)", "flag": "--sort=-%cpu" },
+        { "label": "Memory usage (descending)", "flag": "--sort=-%mem" },
+        { "label": "Start time", "flag": "--sort=start_time" },
+        { "label": "Command name", "flag": "--sort=comm" }
+      ]
+    },
+    {
+      "id": "headers",
+      "prompt": "Show headers?",
+      "type": "toggle",
+      "flag": "--headers"
+    },
+    {
+      "id": "wide",
+      "prompt": "Wide output (don't truncate)?",
+      "type": "toggle",
+      "flag": "ww"
+    }
+  ]
+}

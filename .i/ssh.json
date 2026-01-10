@@ -1,0 +1,120 @@
+{
+  "command": "ssh",
+  "description": "Connect to remote servers",
+  "presets": [
+    { "label": "Connect", "flags": "<user>@<host>" },
+    { "label": "Connect with key", "flags": "-i <keyfile> <user>@<host>" },
+    { "label": "Connect on custom port", "flags": "-p <port> <user>@<host>" },
+    { "label": "Forward local port", "flags": "-L <local_port>:localhost:<remote_port> <user>@<host>" },
+    { "label": "Forward remote port", "flags": "-R <remote_port>:localhost:<local_port> <user>@<host>" },
+    { "label": "SOCKS proxy", "flags": "-D <port> <user>@<host>" },
+    { "label": "Run remote command", "flags": "<user>@<host> '<command>'" },
+    { "label": "Verbose (debug connection)", "flags": "-vvv <user>@<host>" }
+  ],
+  "steps": [
+    {
+      "id": "host",
+      "prompt": "User@Host",
+      "type": "text",
+      "flag": null,
+      "placeholder": "user@hostname"
+    },
+    {
+      "id": "port",
+      "prompt": "Custom SSH port?",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "22"
+    },
+    {
+      "id": "identity",
+      "prompt": "Identity file (private key)?",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "~/.ssh/id_rsa"
+    },
+    {
+      "id": "forwarding",
+      "prompt": "Port forwarding?",
+      "type": "choice",
+      "options": [
+        { "label": "None", "flag": null },
+        { "label": "Local port forward (-L)", "flag": null },
+        { "label": "Remote port forward (-R)", "flag": null },
+        { "label": "Dynamic SOCKS proxy (-D)", "flag": null }
+      ]
+    },
+    {
+      "id": "local_forward",
+      "prompt": "Local forward (local:host:remote)",
+      "type": "text",
+      "flag": "-L",
+      "placeholder": "8080:localhost:80",
+      "when": { "forwarding": "Local port forward (-L)" }
+    },
+    {
+      "id": "remote_forward",
+      "prompt": "Remote forward (remote:host:local)",
+      "type": "text",
+      "flag": "-R",
+      "placeholder": "8080:localhost:80",
+      "when": { "forwarding": "Remote port forward (-R)" }
+    },
+    {
+      "id": "socks_port",
+      "prompt": "SOCKS proxy port",
+      "type": "text",
+      "flag": "-D",
+      "placeholder": "1080",
+      "when": { "forwarding": "Dynamic SOCKS proxy (-D)" }
+    },
+    {
+      "id": "compression",
+      "prompt": "Enable compression?",
+      "type": "toggle",
+      "flag": "-C"
+    },
+    {
+      "id": "x11",
+      "prompt": "Forward X11?",
+      "type": "toggle",
+      "flag": "-X"
+    },
+    {
+      "id": "agent",
+      "prompt": "Forward SSH agent?",
+      "type": "toggle",
+      "flag": "-A"
+    },
+    {
+      "id": "background",
+      "prompt": "Run in background?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "no_tty",
+      "prompt": "No TTY (for scripting)?",
+      "type": "toggle",
+      "flag": "-T"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose (debug)?",
+      "type": "choice",
+      "options": [
+        { "label": "Normal", "flag": null },
+        { "label": "Verbose (-v)", "flag": "-v" },
+        { "label": "Very verbose (-vv)", "flag": "-vv" },
+        { "label": "Debug (-vvv)", "flag": "-vvv" }
+      ]
+    },
+    {
+      "id": "command",
+      "prompt": "Remote command to run?",
+      "type": "text",
+      "flag": null,
+      "placeholder": "ls -la"
+    }
+  ]
+}

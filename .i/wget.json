@@ -1,0 +1,118 @@
+{
+  "command": "wget",
+  "description": "Download files from the web",
+  "presets": [
+    { "label": "Download file", "flags": "<url>" },
+    { "label": "Scrape website", "flags": "-m -p -k -E <url>" },
+    { "label": "Download with custom filename", "flags": "-O <filename> <url>" },
+    { "label": "Resume partial download", "flags": "-c <url>" },
+    { "label": "Download in background", "flags": "-b <url>" },
+    { "label": "Download with authentication", "flags": "--user=<username> --password=<password> <url>" }
+  ],
+  "steps": [
+    {
+      "id": "url",
+      "prompt": "URL to download",
+      "type": "text",
+      "flag": null,
+      "placeholder": "https://example.com/file.zip"
+    },
+    {
+      "id": "output",
+      "prompt": "Output options?",
+      "type": "choice",
+      "options": [
+        { "label": "Default filename", "flag": null },
+        { "label": "Custom filename", "flag": null },
+        { "label": "Output to directory", "flag": null }
+      ]
+    },
+    {
+      "id": "filename",
+      "prompt": "Save as filename",
+      "type": "text",
+      "flag": "-O",
+      "placeholder": "output.zip",
+      "when": { "output": "Custom filename" }
+    },
+    {
+      "id": "directory",
+      "prompt": "Save to directory",
+      "type": "text",
+      "flag": "-P",
+      "placeholder": "./downloads",
+      "when": { "output": "Output to directory" }
+    },
+    {
+      "id": "resume",
+      "prompt": "Resume partial download?",
+      "type": "toggle",
+      "flag": "-c"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode (no output)?",
+      "type": "toggle",
+      "flag": "-q"
+    },
+    {
+      "id": "background",
+      "prompt": "Download in background?",
+      "type": "toggle",
+      "flag": "-b"
+    },
+    {
+      "id": "recursive",
+      "prompt": "Recursive download?",
+      "type": "choice",
+      "options": [
+        { "label": "No", "flag": null },
+        { "label": "Yes (follow links)", "flag": "-r" },
+        { "label": "Mirror mode", "flag": "-m" }
+      ]
+    },
+    {
+      "id": "depth",
+      "prompt": "Maximum depth",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "2",
+      "when": { "recursive": "Yes (follow links)" }
+    },
+    {
+      "id": "convert",
+      "prompt": "Convert links for local viewing?",
+      "type": "toggle",
+      "flag": "-k",
+      "when": { "recursive": "Mirror mode" }
+    },
+    {
+      "id": "page_requisites",
+      "prompt": "Download page requisites (CSS, images)?",
+      "type": "toggle",
+      "flag": "-p",
+      "when": { "recursive": "Mirror mode" }
+    },
+    {
+      "id": "limit_rate",
+      "prompt": "Limit download speed?",
+      "type": "text",
+      "flag": "--limit-rate",
+      "placeholder": "100k"
+    },
+    {
+      "id": "retries",
+      "prompt": "Number of retries?",
+      "type": "text",
+      "flag": "-t",
+      "placeholder": "3"
+    },
+    {
+      "id": "user_agent",
+      "prompt": "Custom User-Agent?",
+      "type": "text",
+      "flag": "-U",
+      "placeholder": "Mozilla/5.0"
+    }
+  ]
+}

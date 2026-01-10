@@ -1,0 +1,81 @@
+{
+  "command": "tar",
+  "description": "Archive files and directories",
+  "presets": [
+    { "label": "Extract .tar.gz", "flags": "-xzvf <archive>" },
+    { "label": "Extract .tar.bz2", "flags": "-xjvf <archive>" },
+    { "label": "Extract .tar.xz", "flags": "-xJvf <archive>" },
+    { "label": "Extract to directory", "flags": "-xzvf <archive> -C <directory>" },
+    { "label": "Create .tar.gz", "flags": "-czvf <archive> <files>" },
+    { "label": "Create .tar.bz2", "flags": "-cjvf <archive> <files>" },
+    { "label": "List archive contents", "flags": "-tvf <archive>" }
+  ],
+  "steps": [
+    {
+      "id": "operation",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Extract archive", "flag": "-x" },
+        { "label": "Create archive", "flag": "-c" },
+        { "label": "List contents", "flag": "-t" },
+        { "label": "Append to archive", "flag": "-r" }
+      ]
+    },
+    {
+      "id": "compression",
+      "prompt": "Compression type?",
+      "type": "choice",
+      "options": [
+        { "label": "gzip (.tar.gz)", "flag": "-z" },
+        { "label": "bzip2 (.tar.bz2)", "flag": "-j" },
+        { "label": "xz (.tar.xz)", "flag": "-J" },
+        { "label": "No compression (.tar)", "flag": null }
+      ]
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show files being processed?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "archive",
+      "prompt": "Archive file",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "archive.tar.gz"
+    },
+    {
+      "id": "directory",
+      "prompt": "Extract to directory?",
+      "type": "text",
+      "flag": "-C",
+      "placeholder": "./output",
+      "when": { "operation": "Extract archive" }
+    },
+    {
+      "id": "files",
+      "prompt": "Files/directories to archive",
+      "type": "text",
+      "flag": null,
+      "placeholder": "file1 file2 dir/",
+      "when": { "operation": "Create archive" }
+    },
+    {
+      "id": "preserve",
+      "prompt": "Preserve permissions?",
+      "type": "toggle",
+      "flag": "-p",
+      "when": { "operation": "Extract archive" }
+    },
+    {
+      "id": "exclude",
+      "prompt": "Exclude pattern?",
+      "type": "text",
+      "flag": "--exclude",
+      "placeholder": "*.log",
+      "when": { "operation": "Create archive" }
+    }
+  ]
+}

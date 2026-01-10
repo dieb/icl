@@ -1,0 +1,155 @@
+{
+  "command": "find",
+  "description": "Search for files and directories",
+  "presets": [
+    { "label": "Find by name", "flags": "<path> -name '<pattern>'" },
+    { "label": "Find by name (case-insensitive)", "flags": "<path> -iname '<pattern>'" },
+    { "label": "Find files modified today", "flags": "<path> -type f -mtime 0" },
+    { "label": "Find files modified in last 7 days", "flags": "<path> -type f -mtime -7" },
+    { "label": "Find files larger than 100MB", "flags": "<path> -type f -size +100M" },
+    { "label": "Find empty files", "flags": "<path> -type f -empty" },
+    { "label": "Find empty directories", "flags": "<path> -type d -empty" },
+    { "label": "Find and delete", "flags": "<path> -name '<pattern>' -delete" },
+    { "label": "Find and execute command", "flags": "<path> -name '<pattern>' -exec <command> {} \\;" }
+  ],
+  "steps": [
+    {
+      "id": "path",
+      "prompt": "Search path",
+      "type": "text",
+      "flag": null,
+      "placeholder": "."
+    },
+    {
+      "id": "type",
+      "prompt": "What are you looking for?",
+      "type": "choice",
+      "options": [
+        { "label": "Files and directories", "flag": null },
+        { "label": "Files only", "flag": "-type f" },
+        { "label": "Directories only", "flag": "-type d" },
+        { "label": "Symbolic links", "flag": "-type l" }
+      ]
+    },
+    {
+      "id": "name_match",
+      "prompt": "Match by name?",
+      "type": "choice",
+      "options": [
+        { "label": "No name filter", "flag": null },
+        { "label": "By name (case-sensitive)", "flag": null },
+        { "label": "By name (case-insensitive)", "flag": null },
+        { "label": "By regex", "flag": null }
+      ]
+    },
+    {
+      "id": "name_pattern",
+      "prompt": "Name pattern",
+      "type": "text",
+      "flag": "-name",
+      "placeholder": "*.txt",
+      "when": { "name_match": "By name (case-sensitive)" }
+    },
+    {
+      "id": "iname_pattern",
+      "prompt": "Name pattern (case-insensitive)",
+      "type": "text",
+      "flag": "-iname",
+      "placeholder": "*.TXT",
+      "when": { "name_match": "By name (case-insensitive)" }
+    },
+    {
+      "id": "regex_pattern",
+      "prompt": "Regex pattern",
+      "type": "text",
+      "flag": "-regex",
+      "placeholder": ".*\\.txt$",
+      "when": { "name_match": "By regex" }
+    },
+    {
+      "id": "size_filter",
+      "prompt": "Filter by size?",
+      "type": "choice",
+      "options": [
+        { "label": "No size filter", "flag": null },
+        { "label": "Larger than", "flag": null },
+        { "label": "Smaller than", "flag": null }
+      ]
+    },
+    {
+      "id": "size_larger",
+      "prompt": "Larger than (e.g., 100M, 1G)",
+      "type": "text",
+      "flag": "-size +",
+      "placeholder": "100M",
+      "when": { "size_filter": "Larger than" }
+    },
+    {
+      "id": "size_smaller",
+      "prompt": "Smaller than (e.g., 100M, 1G)",
+      "type": "text",
+      "flag": "-size -",
+      "placeholder": "10M",
+      "when": { "size_filter": "Smaller than" }
+    },
+    {
+      "id": "time_filter",
+      "prompt": "Filter by modification time?",
+      "type": "choice",
+      "options": [
+        { "label": "No time filter", "flag": null },
+        { "label": "Modified today", "flag": "-mtime 0" },
+        { "label": "Modified in last N days", "flag": null },
+        { "label": "Older than N days", "flag": null }
+      ]
+    },
+    {
+      "id": "mtime_newer",
+      "prompt": "Modified in last N days",
+      "type": "text",
+      "flag": "-mtime -",
+      "placeholder": "7",
+      "when": { "time_filter": "Modified in last N days" }
+    },
+    {
+      "id": "mtime_older",
+      "prompt": "Older than N days",
+      "type": "text",
+      "flag": "-mtime +",
+      "placeholder": "30",
+      "when": { "time_filter": "Older than N days" }
+    },
+    {
+      "id": "empty",
+      "prompt": "Find empty files/directories?",
+      "type": "toggle",
+      "flag": "-empty"
+    },
+    {
+      "id": "maxdepth",
+      "prompt": "Maximum search depth?",
+      "type": "text",
+      "flag": "-maxdepth",
+      "placeholder": "2"
+    },
+    {
+      "id": "action",
+      "prompt": "Action to perform?",
+      "type": "choice",
+      "options": [
+        { "label": "Just list files", "flag": null },
+        { "label": "Print with null separator", "flag": "-print0" },
+        { "label": "Delete matches", "flag": "-delete" },
+        { "label": "Execute command", "flag": null }
+      ]
+    },
+    {
+      "id": "exec_command",
+      "prompt": "Command to execute ({} = file)",
+      "type": "text",
+      "flag": "-exec",
+      "placeholder": "rm -i {} \\;",
+      "when": { "action": "Execute command" }
+    }
+  ]
+}

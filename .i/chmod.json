@@ -1,0 +1,102 @@
+{
+  "command": "chmod",
+  "description": "Change file permissions",
+  "presets": [
+    { "label": "Executable script (755)", "flags": "755 <file>" },
+    { "label": "Private file (600)", "flags": "600 <file>" },
+    { "label": "Private directory (700)", "flags": "700 <file>" },
+    { "label": "Public readable file (644)", "flags": "644 <file>" },
+    { "label": "Public readable directory (755)", "flags": "755 <file>" },
+    { "label": "Read-only (444)", "flags": "444 <file>" },
+    { "label": "Add execute for user", "flags": "u+x <file>" },
+    { "label": "Remove write for others", "flags": "o-w <file>" },
+    { "label": "Recursive 755", "flags": "-R 755 <directory>" }
+  ],
+  "steps": [
+    {
+      "id": "mode_type",
+      "prompt": "How do you want to set permissions?",
+      "type": "choice",
+      "options": [
+        { "label": "Numeric mode (e.g., 755)", "flag": null },
+        { "label": "Symbolic mode (e.g., u+x)", "flag": null },
+        { "label": "Common presets", "flag": null }
+      ]
+    },
+    {
+      "id": "numeric",
+      "prompt": "Numeric mode (0-7 for owner, group, others)",
+      "type": "text",
+      "flag": null,
+      "placeholder": "755",
+      "when": { "mode_type": "Numeric mode (e.g., 755)" }
+    },
+    {
+      "id": "preset",
+      "prompt": "Choose permission preset",
+      "type": "choice",
+      "options": [
+        { "label": "755 - Executable (rwxr-xr-x)", "flag": "755" },
+        { "label": "644 - Regular file (rw-r--r--)", "flag": "644" },
+        { "label": "600 - Private file (rw-------)", "flag": "600" },
+        { "label": "700 - Private exec (rwx------)", "flag": "700" },
+        { "label": "444 - Read-only (r--r--r--)", "flag": "444" },
+        { "label": "777 - Full access (rwxrwxrwx)", "flag": "777" }
+      ],
+      "when": { "mode_type": "Common presets" }
+    },
+    {
+      "id": "symbolic_who",
+      "prompt": "Who to change permissions for?",
+      "type": "choice",
+      "options": [
+        { "label": "User (owner)", "flag": "u" },
+        { "label": "Group", "flag": "g" },
+        { "label": "Others", "flag": "o" },
+        { "label": "All", "flag": "a" }
+      ],
+      "when": { "mode_type": "Symbolic mode (e.g., u+x)" }
+    },
+    {
+      "id": "symbolic_op",
+      "prompt": "Operation?",
+      "type": "choice",
+      "options": [
+        { "label": "Add permission (+)", "flag": "+" },
+        { "label": "Remove permission (-)", "flag": "-" },
+        { "label": "Set exactly (=)", "flag": "=" }
+      ],
+      "when": { "mode_type": "Symbolic mode (e.g., u+x)" }
+    },
+    {
+      "id": "symbolic_perm",
+      "prompt": "Permission to change?",
+      "type": "multi",
+      "options": [
+        { "label": "Read (r)", "flag": "r" },
+        { "label": "Write (w)", "flag": "w" },
+        { "label": "Execute (x)", "flag": "x" }
+      ],
+      "when": { "mode_type": "Symbolic mode (e.g., u+x)" }
+    },
+    {
+      "id": "recursive",
+      "prompt": "Apply recursively to directories?",
+      "type": "toggle",
+      "flag": "-R"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show changes being made?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "file",
+      "prompt": "File or directory",
+      "type": "text",
+      "flag": null,
+      "placeholder": "file.sh"
+    }
+  ]
+}

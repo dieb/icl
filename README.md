@@ -70,7 +70,8 @@ i docker run      # Jump directly to docker run
 
 Supported tools:
 
-- **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [make](.i/make.json)
+- **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [find](.i/find.json), [make](.i/make.json), [tar](.i/tar.json), [chmod](.i/chmod.json), [ps](.i/ps.json)
+- **Networking**: [curl](.i/curl.json), [wget](.i/wget.json), [ssh](.i/ssh.json), [scp](.i/scp.json), [rsync](.i/rsync.json)
 - **Version Control**: [git](.i/git.json)
 - **Containers**: [docker](.i/docker.json)
 - **Node.js**: [npm](.i/npm.json), [yarn](.i/yarn.json), [pnpm](.i/pnpm.json)
@@ -79,7 +80,6 @@ Supported tools:
 - **Rust**: [cargo](.i/cargo.json)
 - **Go**: [go](.i/go.json)
 - **Crystal**: [crystal](.i/crystal.json), [shards](.i/shards.json)
-- **HTTP**: [curl](.i/curl.json)
 - **AI Tools**: [claude](.i/claude.json)
 - **ML/AI**: [hf](.i/hf.json)
 

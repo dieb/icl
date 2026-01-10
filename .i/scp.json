@@ -1,0 +1,106 @@
+{
+  "command": "scp",
+  "description": "Copy files over SSH",
+  "presets": [
+    { "label": "Copy file to remote", "flags": "<local_file> <user>@<host>:<remote_path>" },
+    { "label": "Copy file from remote", "flags": "<user>@<host>:<remote_file> <local_path>" },
+    { "label": "Copy directory to remote", "flags": "-r <local_dir> <user>@<host>:<remote_path>" },
+    { "label": "Copy directory from remote", "flags": "-r <user>@<host>:<remote_dir> <local_path>" },
+    { "label": "Copy with custom port", "flags": "-P <port> <local_file> <user>@<host>:<remote_path>" },
+    { "label": "Copy with key", "flags": "-i <keyfile> <local_file> <user>@<host>:<remote_path>" }
+  ],
+  "steps": [
+    {
+      "id": "direction",
+      "prompt": "Copy direction?",
+      "type": "choice",
+      "options": [
+        { "label": "Local to remote (upload)", "flag": null },
+        { "label": "Remote to local (download)", "flag": null }
+      ]
+    },
+    {
+      "id": "source_local",
+      "prompt": "Local file/directory",
+      "type": "text",
+      "flag": null,
+      "placeholder": "./file.txt",
+      "when": { "direction": "Local to remote (upload)" }
+    },
+    {
+      "id": "dest_remote",
+      "prompt": "Remote destination (user@host:path)",
+      "type": "text",
+      "flag": null,
+      "placeholder": "user@host:/path/to/dest",
+      "when": { "direction": "Local to remote (upload)" }
+    },
+    {
+      "id": "source_remote",
+      "prompt": "Remote source (user@host:path)",
+      "type": "text",
+      "flag": null,
+      "placeholder": "user@host:/path/to/file",
+      "when": { "direction": "Remote to local (download)" }
+    },
+    {
+      "id": "dest_local",
+      "prompt": "Local destination",
+      "type": "text",
+      "flag": null,
+      "placeholder": "./",
+      "when": { "direction": "Remote to local (download)" }
+    },
+    {
+      "id": "recursive",
+      "prompt": "Copy directories recursively?",
+      "type": "toggle",
+      "flag": "-r"
+    },
+    {
+      "id": "preserve",
+      "prompt": "Preserve modification times and modes?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "port",
+      "prompt": "Custom SSH port?",
+      "type": "text",
+      "flag": "-P",
+      "placeholder": "22"
+    },
+    {
+      "id": "identity",
+      "prompt": "Identity file (private key)?",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "~/.ssh/id_rsa"
+    },
+    {
+      "id": "compression",
+      "prompt": "Enable compression?",
+      "type": "toggle",
+      "flag": "-C"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode (no progress)?",
+      "type": "toggle",
+      "flag": "-q"
+    },
+    {
+      "id": "limit",
+      "prompt": "Limit bandwidth (Kbit/s)?",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "1000"
+    }
+  ]
+}
