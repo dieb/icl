@@ -14,6 +14,12 @@ use ratatui::{
 use crate::config::{Answer, Config, Step, StepType};
 use crate::output::OutputMode;
 
+pub enum WizardResult {
+    Command(String, OutputMode),
+    Chain(String),  // Chain to another config
+    Quit,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Phase {
     Menu,    // Initial menu: wizard vs presets
@@ -68,6 +74,14 @@ impl Wizard {
         self.selected_preset().map(|preset| {
             format!("{} {}", self.base_command.join(" "), preset.flags)
         })
+    }
+
+    fn current_command(&self) -> String {
+        if self.menu_index == 0 {
+            self.build_command()
+        } else {
+            self.build_preset_command().unwrap_or_default()
+        }
     }
 
     fn current_step(&self) -> Option<&Step> {
@@ -187,7 +201,21 @@ impl Wizard {
         self.answers.insert(step.id.clone(), answer);
     }
 
-    fn next_step(&mut self) {
+    fn get_current_chain(&self) -> Option<String> {
+        let step = self.current_step()?;
+        if step.step_type != StepType::Choice {
+            return None;
+        }
+        step.options.get(self.choice_index)?.chain.clone()
+    }
+
+    fn next_step(&mut self) -> Option<String> {
+        // Check for chain before saving
+        let chain = self.get_current_chain();
+        if chain.is_some() {
+            return chain;
+        }
+
         self.save_answer();
 
         let visible = self.visible_steps();
@@ -197,6 +225,7 @@ impl Wizard {
             self.current_step += 1;
             self.init_step();
         }
+        None
     }
 
     fn prev_step(&mut self) {
@@ -277,58 +306,39 @@ impl Wizard {
     }
 
     fn build_breadcrumb(&self) -> Vec<String> {
-        let mut crumbs = Vec::new();
-
-        for step in &self.config.steps {
-            let Some(answer) = self.answers.get(&step.id) else {
-                continue;
-            };
-
-            let label = match (&step.step_type, answer) {
-                (StepType::Choice, Answer::Choice(idx)) => {
-                    step.options.get(*idx).map(|opt| opt.label.clone())
-                }
-                (StepType::Toggle, Answer::Toggle(val)) => {
-                    if *val {
-                        Some("Yes".to_string())
-                    } else {
-                        Some("No".to_string())
+        self.config
+            .steps
+            .iter()
+            .filter_map(|step| {
+                let answer = self.answers.get(&step.id)?;
+                match (&step.step_type, answer) {
+                    (StepType::Choice, Answer::Choice(idx)) => {
+                        step.options.get(*idx).map(|opt| opt.label.clone())
                     }
-                }
-                (StepType::Text, Answer::Text(text)) => {
-                    if text.is_empty() {
-                        None
-                    } else {
-                        Some(text.clone())
+                    (StepType::Toggle, Answer::Toggle(val)) => {
+                        Some(if *val { "Yes" } else { "No" }.to_string())
                     }
-                }
-                (StepType::Multi, Answer::Multi(indices)) => {
-                    let labels: Vec<&str> = indices
-                        .iter()
-                        .filter_map(|i| step.options.get(*i).map(|o| o.label.as_str()))
-                        .collect();
-                    if labels.is_empty() {
-                        None
-                    } else {
-                        Some(labels.join(", "))
+                    (StepType::Text, Answer::Text(text)) => {
+                        (!text.is_empty()).then(|| text.clone())
                     }
+                    (StepType::Multi, Answer::Multi(indices)) => {
+                        let labels: Vec<&str> = indices
+                            .iter()
+                            .filter_map(|i| step.options.get(*i).map(|o| o.label.as_str()))
+                            .collect();
+                        (!labels.is_empty()).then(|| labels.join(", "))
+                    }
+                    _ => None,
                 }
-                _ => None,
-            };
-
-            if let Some(l) = label {
-                crumbs.push(l);
-            }
-        }
-
-        crumbs
+            })
+            .collect()
     }
 }
 
-pub fn run(config: Config, base_command: Vec<String>) -> io::Result<Option<(String, OutputMode)>> {
+pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult> {
     if config.steps.is_empty() {
         eprintln!("Config has no steps defined");
-        return Ok(None);
+        return Ok(WizardResult::Quit);
     }
 
     enable_raw_mode()?;
@@ -344,7 +354,7 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<Option<(Stri
         if let Event::Key(key) = event::read()? {
             match wizard.phase {
                 Phase::Menu => match key.code {
-                    KeyCode::Esc | KeyCode::Char('q') => break Ok(None),
+                    KeyCode::Esc | KeyCode::Char('q') => break Ok(WizardResult::Quit),
                     KeyCode::Up | KeyCode::Char('k') => {
                         if wizard.menu_index > 0 {
                             wizard.menu_index -= 1;
@@ -367,12 +377,12 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<Option<(Stri
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                         if let Some(cmd) = wizard.build_preset_command() {
-                            break Ok(Some((cmd, OutputMode::Clipboard)));
+                            break Ok(WizardResult::Command(cmd, OutputMode::Clipboard));
                         }
                     }
                     KeyCode::Char('x') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                         if let Some(cmd) = wizard.build_preset_command() {
-                            break Ok(Some((cmd, OutputMode::Execute)));
+                            break Ok(WizardResult::Command(cmd, OutputMode::Execute));
                         }
                     }
                     _ => {}
@@ -389,8 +399,12 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<Option<(Stri
                                 wizard.prev_step();
                             }
                         }
-                        KeyCode::Char('q') => break Ok(None),
-                        KeyCode::Enter => wizard.next_step(),
+                        KeyCode::Char('q') => break Ok(WizardResult::Quit),
+                        KeyCode::Enter => {
+                            if let Some(chain) = wizard.next_step() {
+                                break Ok(WizardResult::Chain(chain));
+                            }
+                        }
                         KeyCode::Up | KeyCode::Char('k') => match step_type {
                             Some(StepType::Choice) | Some(StepType::Multi) => {
                                 if wizard.choice_index > 0 {
@@ -444,30 +458,15 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<Option<(Stri
                             wizard.phase = Phase::Menu;
                         }
                     }
-                    KeyCode::Char('q') => break Ok(None),
+                    KeyCode::Char('q') => break Ok(WizardResult::Quit),
                     KeyCode::Enter => {
-                        let cmd = if wizard.menu_index == 0 {
-                            wizard.build_command()
-                        } else {
-                            wizard.build_preset_command().unwrap_or_default()
-                        };
-                        break Ok(Some((cmd, OutputMode::Execute)));
+                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Execute));
                     }
                     KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                        let cmd = if wizard.menu_index == 0 {
-                            wizard.build_command()
-                        } else {
-                            wizard.build_preset_command().unwrap_or_default()
-                        };
-                        break Ok(Some((cmd, OutputMode::Clipboard)));
+                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Clipboard));
                     }
                     KeyCode::Char('p') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                        let cmd = if wizard.menu_index == 0 {
-                            wizard.build_command()
-                        } else {
-                            wizard.build_preset_command().unwrap_or_default()
-                        };
-                        break Ok(Some((cmd, OutputMode::Print)));
+                        break Ok(WizardResult::Command(wizard.current_command(), OutputMode::Print));
                     }
                     _ => {}
                 },
@@ -565,11 +564,7 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
             f.render_widget(help, chunks[1]);
         }
         Phase::Confirm => {
-            let cmd = if wizard.menu_index == 0 {
-                wizard.build_command()
-            } else {
-                wizard.build_preset_command().unwrap_or_default()
-            };
+            let cmd = wizard.current_command();
             let content = vec![
                 Line::from(""),
                 Line::from(Span::styled(

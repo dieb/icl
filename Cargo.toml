@@ -1,7 +1,16 @@
 [package]
-name = "i"
+name = "icl"
 version = "0.1.0"
 edition = "2021"
+description = "Interactive TUI for building CLI commands"
+license = "MIT"
+readme = "README.md"
+keywords = ["cli", "tui", "interactive", "wizard", "terminal"]
+categories = ["command-line-interface", "command-line-utilities"]
+
+[[bin]]
+name = "i"
+path = "src/main.rs"
 
 [dependencies]
 ratatui = "0.29"

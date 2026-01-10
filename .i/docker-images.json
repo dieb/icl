@@ -1,0 +1,59 @@
+{
+  "command": "docker images",
+  "description": "List images",
+  "presets": [
+    {
+      "label": "All images",
+      "flags": "-a"
+    },
+    {
+      "label": "Dangling (untagged)",
+      "flags": "-f dangling=true"
+    },
+    {
+      "label": "Just IDs (for scripting)",
+      "flags": "-aq"
+    }
+  ],
+  "steps": [
+    {
+      "id": "all",
+      "prompt": "Show all images (including intermediates)?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Table (default)", "flag": null },
+        { "label": "Quiet (IDs only)", "flag": "-q" },
+        { "label": "JSON", "flag": "--format json" },
+        { "label": "Custom: repo, tag, size", "flag": "--format \"table {{.Repository}}\\t{{.Tag}}\\t{{.Size}}\"" }
+      ]
+    },
+    {
+      "id": "digests",
+      "prompt": "Show digests?",
+      "type": "toggle",
+      "flag": "--digests"
+    },
+    {
+      "id": "filter",
+      "prompt": "Filter (optional)",
+      "type": "choice",
+      "options": [
+        { "label": "None", "flag": null },
+        { "label": "Dangling (untagged)", "flag": "-f dangling=true" },
+        { "label": "Before specific image", "flag": null }
+      ]
+    },
+    {
+      "id": "repository",
+      "prompt": "Filter by repository name (optional)",
+      "type": "text",
+      "placeholder": "ubuntu"
+    }
+  ]
+}

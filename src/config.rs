@@ -5,11 +5,10 @@ use std::path::PathBuf;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
-    #[allow(dead_code)]
-    pub command: String,
-    #[allow(dead_code)]
-    #[serde(default)]
-    pub description: String,
+    #[serde(rename = "command")]
+    pub _command: String,
+    #[serde(default, rename = "description")]
+    pub _description: String,
     pub steps: Vec<Step>,
     #[serde(default)]
     pub presets: Vec<Preset>,
@@ -53,6 +52,8 @@ pub struct StepOption {
     pub label: String,
     #[serde(default)]
     pub flag: Option<String>,
+    #[serde(default)]
+    pub chain: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -136,6 +137,8 @@ impl std::fmt::Display for ConfigError {
     }
 }
 
+impl std::error::Error for ConfigError {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -165,7 +168,7 @@ mod tests {
         }"#;
 
         let config: Config = serde_json::from_str(json).unwrap();
-        assert_eq!(config.command, "ls");
+        assert_eq!(config._command, "ls");
         assert_eq!(config.steps.len(), 2);
         assert_eq!(config.steps[0].step_type, StepType::Choice);
         assert_eq!(config.steps[1].step_type, StepType::Toggle);

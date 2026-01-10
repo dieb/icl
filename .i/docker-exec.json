@@ -1,0 +1,63 @@
+{
+  "command": "docker exec",
+  "description": "Execute a command in a running container",
+  "presets": [
+    {
+      "label": "Interactive bash shell",
+      "flags": "-it <container> bash"
+    },
+    {
+      "label": "Interactive sh shell",
+      "flags": "-it <container> sh"
+    },
+    {
+      "label": "Run as root",
+      "flags": "-it -u root <container> bash"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive TTY", "flag": "-it" },
+        { "label": "Detached", "flag": "-d" },
+        { "label": "Non-interactive", "flag": null }
+      ]
+    },
+    {
+      "id": "user",
+      "prompt": "Run as user (optional)",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "root"
+    },
+    {
+      "id": "workdir",
+      "prompt": "Working directory (optional)",
+      "type": "text",
+      "flag": "-w",
+      "placeholder": "/app"
+    },
+    {
+      "id": "env",
+      "prompt": "Environment variable (optional)",
+      "type": "text",
+      "flag": "-e",
+      "placeholder": "DEBUG=1"
+    },
+    {
+      "id": "container",
+      "prompt": "Container name or ID",
+      "type": "text",
+      "placeholder": "my-container"
+    },
+    {
+      "id": "command",
+      "prompt": "Command to run",
+      "type": "text",
+      "placeholder": "bash"
+    }
+  ]
+}

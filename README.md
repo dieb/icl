@@ -1,13 +1,39 @@
-# i
+# icl
 
-Interactive TUI for CLI commands.
+Transform any CLI into a little interactive wizard.
 
-`i` provides a wizard-style interface for building command-line commands. Each command has a JSON config that defines the steps and options, making it easy to create curated experiences for any CLI tool.
+The binary is called `i` for quick access.
+
+<p align="center">
+  <img src="demo.gif" alt="i demo" width="600">
+</p>
+
+## Use Cases
+
+**Forgot which flags to use?** Run `i <command>` and pick your way through the wizard.
+
+**Same commands every day?** Add presets for one-keystroke access to common flag combinations.
+
+## Features
+
+- Step-by-step prompts
+- Keyboard navigation (vim keys supported)
+- Presets for common flag combinations
+- Chaining (top-level configs can link to subcommands)
+- Breadcrumbs showing your choices
+- Run, copy to clipboard, or print to stdout
 
 ## Installation
 
 ```bash
 cargo install --path .
+```
+
+## Development
+
+```bash
+cargo run -- ls
+cargo run -- docker
 ```
 
 ## Usage
@@ -16,66 +42,56 @@ cargo install --path .
 i <command>
 ```
 
-### Examples
-
 ```bash
-# Interactive wizard for ls
-i ls
-
-# Configure a git commit
-i git commit
+i ls              # Interactive ls wizard
+i docker          # Docker command picker
+i docker run      # Jump directly to docker run
 ```
 
-## How It Works
+## Keybindings
 
-When you run `i ls`, it:
+| Key | Action |
+|-----|--------|
+| `↑` / `k` | Move up |
+| `↓` / `j` | Move down |
+| `Space` | Toggle option |
+| `Enter` | Confirm / Run command |
+| `Ctrl+C` | Copy to clipboard |
+| `Ctrl+P` | Print to stdout |
+| `Esc` | Go back |
+| `q` | Quit |
 
-1. Loads the config file for `ls` (from `.i/ls.json`, `~/.config/i/ls.json`, or bundled)
-2. Shows a menu with quick presets and the interactive wizard
-3. Guides you through each option with a step-by-step wizard
-4. Outputs the final command (print, clipboard, or execute)
+## Available Configs
 
-## Config File Format
+See the [.i](.i/) directory for included configs (ls, docker, etc).
 
-Config files are JSON and define the command's options and presets:
+## Creating Your Own Configs
+
+Configs are JSON files that define the wizard steps. Place them in:
+
+- `./.i/<command>.json` — Project-local
+- `~/.config/i/<command>.json` — User-global
+
+For subcommands like `git commit`, name the file `git-commit.json`.
+
+### Basic Structure
 
 ```json
 {
-  "command": "ls",
-  "description": "List directory contents",
+  "command": "mytool",
+  "description": "What this tool does",
   "presets": [
-    {
-      "label": "Detailed list with sizes",
-      "flags": "-lah"
-    },
-    {
-      "label": "Recently modified first",
-      "flags": "-lt"
-    }
+    { "label": "Quick option", "flags": "--fast --quiet" }
   ],
   "steps": [
     {
-      "id": "format",
-      "prompt": "How do you want to see files?",
+      "id": "output",
+      "prompt": "Where should output go?",
       "type": "choice",
       "options": [
-        { "label": "Detailed list", "flag": "-l" },
-        { "label": "Grid (default)", "flag": null },
-        { "label": "One per line", "flag": "-1" }
+        { "label": "Terminal", "flag": null },
+        { "label": "File", "flag": "-o output.txt" }
       ]
-    },
-    {
-      "id": "hidden",
-      "prompt": "Show hidden files?",
-      "type": "toggle",
-      "flag": "-a"
-    },
-    {
-      "id": "human_sizes",
-      "prompt": "Human-readable sizes?",
-      "type": "toggle",
-      "flag": "-h",
-      "when": { "format": "Detailed list" }
     }
   ]
 }
@@ -83,67 +99,97 @@ Config files are JSON and define the command's options and presets:
 
 ### Step Types
 
-| Type | Description |
-|------|-------------|
-| `choice` | Single-select from a list of options |
-| `toggle` | Yes/No question |
-| `text` | Free-form text input |
-| `multi` | Multi-select from a list of options |
-
-### Conditional Steps
-
-Use `when` to show a step only when a previous answer matches:
+#### `choice` — Single selection
 
 ```json
 {
-  "id": "human_sizes",
-  "prompt": "Human-readable sizes?",
+  "id": "format",
+  "prompt": "Output format?",
+  "type": "choice",
+  "options": [
+    { "label": "JSON", "flag": "--format json" },
+    { "label": "YAML", "flag": "--format yaml" }
+  ]
+}
+```
+
+#### `toggle` — Yes/No
+
+```json
+{
+  "id": "verbose",
+  "prompt": "Verbose output?",
   "type": "toggle",
-  "flag": "-h",
-  "when": { "format": "Detailed list" }
+  "flag": "-v"
+}
+```
+
+#### `text` — Free-form input
+
+```json
+{
+  "id": "name",
+  "prompt": "Container name",
+  "type": "text",
+  "flag": "--name",
+  "placeholder": "my-container"
+}
+```
+
+#### `multi` — Multiple selections
+
+```json
+{
+  "id": "features",
+  "prompt": "Enable features",
+  "type": "multi",
+  "options": [
+    { "label": "Logging", "flag": "--enable-logging" },
+    { "label": "Metrics", "flag": "--enable-metrics" }
+  ]
+}
+```
+
+### Conditional Steps
+
+Show a step only when a previous answer matches:
+
+```json
+{
+  "id": "filename",
+  "prompt": "Output filename?",
+  "type": "text",
+  "flag": "-o",
+  "when": { "output": "File" }
+}
+```
+
+### Chaining
+
+Link to another config:
+
+```json
+{
+  "id": "subcommand",
+  "prompt": "What do you want to do?",
+  "type": "choice",
+  "options": [
+    { "label": "Run a container", "chain": "docker-run" },
+    { "label": "List containers", "chain": "docker-ps" }
+  ]
 }
 ```
 
 ### Presets
 
-Presets appear in the main menu for quick access to common flag combinations:
-
 ```json
-"presets": [
-  { "label": "List all with sizes", "flags": "-lah" },
-  { "label": "Just names", "flags": "-1" }
-]
+{
+  "presets": [
+    { "label": "List all", "flags": "-la" },
+    { "label": "Human-readable", "flags": "-lah" }
+  ]
+}
 ```
-
-## Config Lookup Order
-
-1. `./.i/<command>.json` - Project-local configs
-2. `~/.config/i/<command>.json` - User configs
-3. Bundled configs
-
-For subcommands like `git commit`, use `git-commit.json`.
-
-## Keybindings
-
-| Key | Action |
-|-----|--------|
-| `j` / `↓` | Move down |
-| `k` / `↑` | Move up |
-| `Space` | Toggle (for toggle/multi types) |
-| `Enter` | Confirm / Run command |
-| `Ctrl+C` | Copy command to clipboard |
-| `Ctrl+P` | Print command to stdout |
-| `Esc` | Go back |
-| `q` | Quit |
-
-## Creating Configs
-
-To add support for a new command:
-
-1. Create `.i/<command>.json` in your project, or `~/.config/i/<command>.json` for global use
-2. Define the steps based on the command's options
-3. Add common presets for quick access
-4. Run `i <command>` to test
 
 ## License
 

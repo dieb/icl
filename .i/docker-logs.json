@@ -1,0 +1,59 @@
+{
+  "command": "docker logs",
+  "description": "Fetch container logs",
+  "presets": [
+    {
+      "label": "Follow logs (live)",
+      "flags": "-f <container>"
+    },
+    {
+      "label": "Last 100 lines",
+      "flags": "--tail 100 <container>"
+    },
+    {
+      "label": "Since last hour",
+      "flags": "--since 1h <container>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "follow",
+      "prompt": "Follow log output (live)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "timestamps",
+      "prompt": "Show timestamps?",
+      "type": "toggle",
+      "flag": "-t"
+    },
+    {
+      "id": "tail",
+      "prompt": "Number of lines from end (optional)",
+      "type": "text",
+      "flag": "--tail",
+      "placeholder": "100"
+    },
+    {
+      "id": "since",
+      "prompt": "Show logs since (optional)",
+      "type": "text",
+      "flag": "--since",
+      "placeholder": "1h or 2024-01-01"
+    },
+    {
+      "id": "until",
+      "prompt": "Show logs until (optional)",
+      "type": "text",
+      "flag": "--until",
+      "placeholder": "30m or 2024-01-02"
+    },
+    {
+      "id": "container",
+      "prompt": "Container name or ID",
+      "type": "text",
+      "placeholder": "my-container"
+    }
+  ]
+}

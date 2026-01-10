@@ -1,0 +1,87 @@
+{
+  "command": "docker run",
+  "description": "Run a container from an image",
+  "presets": [
+    {
+      "label": "Interactive shell",
+      "flags": "-it --rm"
+    },
+    {
+      "label": "Detached with auto-remove",
+      "flags": "-d --rm"
+    },
+    {
+      "label": "Interactive with current dir mounted",
+      "flags": "-it --rm -v $(pwd):/app -w /app"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "How should the container run?",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive (attached TTY)", "flag": "-it" },
+        { "label": "Detached (background)", "flag": "-d" },
+        { "label": "Foreground (no TTY)", "flag": null }
+      ]
+    },
+    {
+      "id": "cleanup",
+      "prompt": "Auto-remove container when it exits?",
+      "type": "toggle",
+      "flag": "--rm"
+    },
+    {
+      "id": "name",
+      "prompt": "Container name (optional)",
+      "type": "text",
+      "flag": "--name",
+      "placeholder": "my-container"
+    },
+    {
+      "id": "port",
+      "prompt": "Port mapping (optional, e.g. 8080:80)",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "host:container"
+    },
+    {
+      "id": "volume",
+      "prompt": "Volume mount (optional, e.g. ./data:/data)",
+      "type": "text",
+      "flag": "-v",
+      "placeholder": "host:container"
+    },
+    {
+      "id": "env",
+      "prompt": "Environment variable (optional, e.g. DEBUG=1)",
+      "type": "text",
+      "flag": "-e",
+      "placeholder": "KEY=value"
+    },
+    {
+      "id": "workdir",
+      "prompt": "Working directory inside container",
+      "type": "text",
+      "flag": "-w",
+      "placeholder": "/app"
+    },
+    {
+      "id": "network",
+      "prompt": "Network mode",
+      "type": "choice",
+      "options": [
+        { "label": "Default (bridge)", "flag": null },
+        { "label": "Host network", "flag": "--network host" },
+        { "label": "None", "flag": "--network none" }
+      ]
+    },
+    {
+      "id": "image",
+      "prompt": "Image name",
+      "type": "text",
+      "placeholder": "ubuntu:latest"
+    }
+  ]
+}

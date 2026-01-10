@@ -2,8 +2,8 @@ mod config;
 mod output;
 mod wizard;
 
-use std::io;
 use clap::Parser;
+use wizard::WizardResult;
 
 #[derive(Parser, Debug)]
 #[command(name = "i")]
@@ -14,28 +14,29 @@ struct Args {
     command: Vec<String>,
 }
 
-fn main() -> io::Result<()> {
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
+
+fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
+    let mut command = args.command;
 
-    // Load config for this command
-    let config = match config::Config::load(&args.command) {
-        Ok(cfg) => cfg,
-        Err(e) => {
-            eprintln!("{}", e);
-            std::process::exit(1);
-        }
-    };
+    loop {
+        let config = config::Config::load(&command)?;
 
-    // Run wizard
-    match wizard::run(config, args.command)? {
-        Some((command, mode)) => {
-            if let Err(e) = output::handle_output(&command, mode) {
-                eprintln!("Error: {}", e);
-                std::process::exit(1);
+        match wizard::run(config, command.clone())? {
+            WizardResult::Command(cmd, mode) => {
+                output::handle_output(&cmd, mode)?;
+                break;
             }
-        }
-        None => {
-            // User quit without selecting
+            WizardResult::Chain(next_config) => {
+                command = next_config.split('-').map(String::from).collect();
+            }
+            WizardResult::Quit => break,
         }
     }
 

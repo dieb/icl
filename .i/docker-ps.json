@@ -1,0 +1,57 @@
+{
+  "command": "docker ps",
+  "description": "List containers",
+  "presets": [
+    {
+      "label": "All containers",
+      "flags": "-a"
+    },
+    {
+      "label": "Running with sizes",
+      "flags": "-s"
+    },
+    {
+      "label": "Just IDs (for scripting)",
+      "flags": "-aq"
+    }
+  ],
+  "steps": [
+    {
+      "id": "all",
+      "prompt": "Show all containers (including stopped)?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "size",
+      "prompt": "Show container sizes?",
+      "type": "toggle",
+      "flag": "-s"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Table (default)", "flag": null },
+        { "label": "Quiet (IDs only)", "flag": "-q" },
+        { "label": "JSON", "flag": "--format json" },
+        { "label": "Custom: name and status", "flag": "--format \"table {{.Names}}\\t{{.Status}}\"" }
+      ]
+    },
+    {
+      "id": "last",
+      "prompt": "Show only last N containers (optional)",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "5"
+    },
+    {
+      "id": "filter",
+      "prompt": "Filter (optional, e.g. status=running)",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "status=running"
+    }
+  ]
+}

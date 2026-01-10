@@ -1,0 +1,20 @@
+{
+  "command": "docker",
+  "description": "Docker container management",
+  "presets": [],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run a container", "chain": "docker-run" },
+        { "label": "List containers", "chain": "docker-ps" },
+        { "label": "View logs", "chain": "docker-logs" },
+        { "label": "Execute in container", "chain": "docker-exec" },
+        { "label": "Build an image", "chain": "docker-build" },
+        { "label": "List images", "chain": "docker-images" }
+      ]
+    }
+  ]
+}

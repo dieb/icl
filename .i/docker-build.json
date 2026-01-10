@@ -1,0 +1,74 @@
+{
+  "command": "docker build",
+  "description": "Build an image from a Dockerfile",
+  "presets": [
+    {
+      "label": "Build current directory",
+      "flags": "-t myapp:latest ."
+    },
+    {
+      "label": "Build with no cache",
+      "flags": "--no-cache -t myapp:latest ."
+    },
+    {
+      "label": "Build for multiple platforms",
+      "flags": "--platform linux/amd64,linux/arm64 -t myapp:latest ."
+    }
+  ],
+  "steps": [
+    {
+      "id": "tag",
+      "prompt": "Image tag (name:version)",
+      "type": "text",
+      "flag": "-t",
+      "placeholder": "myapp:latest"
+    },
+    {
+      "id": "dockerfile",
+      "prompt": "Dockerfile path (if not default)",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "Dockerfile.prod"
+    },
+    {
+      "id": "cache",
+      "prompt": "Use build cache?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No cache", "flag": "--no-cache" }
+      ]
+    },
+    {
+      "id": "platform",
+      "prompt": "Target platform",
+      "type": "choice",
+      "options": [
+        { "label": "Current platform", "flag": null },
+        { "label": "Linux AMD64", "flag": "--platform linux/amd64" },
+        { "label": "Linux ARM64", "flag": "--platform linux/arm64" },
+        { "label": "Both AMD64 and ARM64", "flag": "--platform linux/amd64,linux/arm64" }
+      ]
+    },
+    {
+      "id": "target",
+      "prompt": "Build target stage (optional)",
+      "type": "text",
+      "flag": "--target",
+      "placeholder": "production"
+    },
+    {
+      "id": "build_arg",
+      "prompt": "Build argument (optional, e.g. VERSION=1.0)",
+      "type": "text",
+      "flag": "--build-arg",
+      "placeholder": "KEY=value"
+    },
+    {
+      "id": "context",
+      "prompt": "Build context path",
+      "type": "text",
+      "placeholder": "."
+    }
+  ]
+}
