@@ -4,7 +4,7 @@ Transform any CLI into a little interactive wizard. The binary is called `i` for
 
 ![CleanShot 2026-01-10 at 10 18 48](https://github.com/user-attachments/assets/00c6ccbb-8ffe-477f-907c-9b70c3d280fd)
 
-
+See the [.i](.i/) directory for included configs (ls, docker, etc).
 
 ## Use Cases
 
