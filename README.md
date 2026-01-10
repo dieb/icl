@@ -1,12 +1,10 @@
 # icl
 
-Transform any CLI into a little interactive wizard.
+Transform any CLI into a little interactive wizard. The binary is called `i` for quick access.
 
-The binary is called `i` for quick access.
+![CleanShot 2026-01-10 at 10 18 48](https://github.com/user-attachments/assets/00c6ccbb-8ffe-477f-907c-9b70c3d280fd)
 
-<p align="center">
-  <img src="demo.gif" alt="i demo" width="600">
-</p>
+
 
 ## Use Cases
 
