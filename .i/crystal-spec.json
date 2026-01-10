@@ -1,0 +1,41 @@
+{
+  "command": "crystal spec",
+  "description": "Run Crystal specs",
+  "placeholder_options": {
+    "<file>": "find spec -name '*_spec.cr' -type f 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Run all specs", "flags": "" },
+    { "label": "Verbose", "flags": "--verbose" },
+    { "label": "Run single file", "flags": "<file>" }
+  ],
+  "steps": [
+    {
+      "id": "file",
+      "prompt": "Specific spec file (optional)",
+      "type": "text",
+      "placeholder": "spec/my_spec.cr"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "--verbose"
+    },
+    {
+      "id": "fail_fast",
+      "prompt": "Fail fast?",
+      "type": "toggle",
+      "flag": "--fail-fast"
+    },
+    {
+      "id": "order",
+      "prompt": "Run order",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Random", "flag": "--order random" }
+      ]
+    }
+  ]
+}

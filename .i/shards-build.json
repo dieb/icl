@@ -1,0 +1,31 @@
+{
+  "command": "shards build",
+  "description": "Build targets defined in shard.yml",
+  "placeholder_options": {
+    "<target>": "grep -E '^  [a-zA-Z]' shard.yml 2>/dev/null | grep -v '#' | sed 's/:.*$//' | tr -d ' ' | head -10"
+  },
+  "presets": [
+    { "label": "Build all", "flags": "" },
+    { "label": "Release build", "flags": "--release" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "Target to build (optional)",
+      "type": "text",
+      "placeholder": ""
+    },
+    {
+      "id": "release",
+      "prompt": "Release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "debug",
+      "prompt": "Debug symbols?",
+      "type": "toggle",
+      "flag": "--debug"
+    }
+  ]
+}

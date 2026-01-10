@@ -1,0 +1,45 @@
+{
+  "command": "crystal build",
+  "description": "Compile Crystal source to binary",
+  "placeholder_options": {
+    "<file>": "find . -name '*.cr' -type f 2>/dev/null | grep -v '/lib/' | grep -v '/_' | head -20"
+  },
+  "presets": [
+    { "label": "Quick build", "flags": "<file>" },
+    { "label": "Release build", "flags": "--release <file>" },
+    { "label": "Static binary", "flags": "--release --static <file>" }
+  ],
+  "steps": [
+    {
+      "id": "file",
+      "prompt": "File to compile",
+      "type": "text",
+      "placeholder": "src/main.cr"
+    },
+    {
+      "id": "output",
+      "prompt": "Output binary name",
+      "type": "text",
+      "flag": "--output",
+      "placeholder": "myapp"
+    },
+    {
+      "id": "release",
+      "prompt": "Release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "static",
+      "prompt": "Static linking?",
+      "type": "toggle",
+      "flag": "--static"
+    },
+    {
+      "id": "progress",
+      "prompt": "Show progress?",
+      "type": "toggle",
+      "flag": "--progress"
+    }
+  ]
+}

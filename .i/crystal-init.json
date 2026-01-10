@@ -1,0 +1,37 @@
+{
+  "command": "crystal init",
+  "description": "Initialize a new Crystal project",
+  "presets": [
+    { "label": "New app", "flags": "app <name>" },
+    { "label": "New lib", "flags": "lib <name>" }
+  ],
+  "steps": [
+    {
+      "id": "type",
+      "prompt": "Project type",
+      "type": "choice",
+      "options": [
+        { "label": "Application", "flag": "app" },
+        { "label": "Library", "flag": "lib" }
+      ]
+    },
+    {
+      "id": "name",
+      "prompt": "Project name",
+      "type": "text",
+      "placeholder": "my_project"
+    },
+    {
+      "id": "directory",
+      "prompt": "Directory (optional)",
+      "type": "text",
+      "placeholder": ""
+    },
+    {
+      "id": "skip_existing",
+      "prompt": "Skip existing files?",
+      "type": "toggle",
+      "flag": "--skip-existing"
+    }
+  ]
+}

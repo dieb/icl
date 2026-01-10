@@ -1,0 +1,21 @@
+{
+  "command": "crystal eval",
+  "description": "Evaluate Crystal code",
+  "presets": [
+    { "label": "Evaluate code", "flags": "'<code>'" }
+  ],
+  "steps": [
+    {
+      "id": "code",
+      "prompt": "Code to evaluate",
+      "type": "text",
+      "placeholder": "puts 1 + 1"
+    },
+    {
+      "id": "stats",
+      "prompt": "Show stats?",
+      "type": "toggle",
+      "flag": "--stats"
+    }
+  ]
+}

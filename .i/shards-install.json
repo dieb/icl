@@ -1,0 +1,29 @@
+{
+  "command": "shards install",
+  "description": "Install dependencies from shard.yml",
+  "presets": [
+    { "label": "Install all", "flags": "" },
+    { "label": "Production only", "flags": "--production" },
+    { "label": "Without development", "flags": "--without-development" }
+  ],
+  "steps": [
+    {
+      "id": "production",
+      "prompt": "Production mode?",
+      "type": "toggle",
+      "flag": "--production"
+    },
+    {
+      "id": "without_dev",
+      "prompt": "Without development dependencies?",
+      "type": "toggle",
+      "flag": "--without-development"
+    },
+    {
+      "id": "skip_postinstall",
+      "prompt": "Skip postinstall scripts?",
+      "type": "toggle",
+      "flag": "--skip-postinstall"
+    }
+  ]
+}

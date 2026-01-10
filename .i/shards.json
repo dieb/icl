@@ -1,0 +1,16 @@
+{
+  "command": "shards",
+  "description": "Crystal dependency manager",
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install dependencies", "chain": "shards-install" },
+        { "label": "Update dependencies", "chain": "shards-update" },
+        { "label": "Build targets", "chain": "shards-build" }
+      ]
+    }
+  ]
+}

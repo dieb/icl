@@ -1,0 +1,31 @@
+{
+  "command": "crystal docs",
+  "description": "Generate API documentation",
+  "presets": [
+    { "label": "Generate docs", "flags": "" },
+    { "label": "Custom output", "flags": "--output <dir>" }
+  ],
+  "steps": [
+    {
+      "id": "output",
+      "prompt": "Output directory",
+      "type": "text",
+      "flag": "--output",
+      "placeholder": "docs"
+    },
+    {
+      "id": "project_name",
+      "prompt": "Project name",
+      "type": "text",
+      "flag": "--project-name",
+      "placeholder": ""
+    },
+    {
+      "id": "project_version",
+      "prompt": "Project version",
+      "type": "text",
+      "flag": "--project-version",
+      "placeholder": ""
+    }
+  ]
+}

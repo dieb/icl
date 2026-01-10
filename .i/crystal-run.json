@@ -1,0 +1,38 @@
+{
+  "command": "crystal run",
+  "description": "Compile and run a Crystal file",
+  "placeholder_options": {
+    "<file>": "find . -name '*.cr' -type f 2>/dev/null | grep -v '/lib/' | grep -v '/_' | head -20"
+  },
+  "presets": [
+    { "label": "Run file", "flags": "<file>" },
+    { "label": "Run with stats", "flags": "--stats <file>" },
+    { "label": "Run release mode", "flags": "--release <file>" }
+  ],
+  "steps": [
+    {
+      "id": "file",
+      "prompt": "File to run",
+      "type": "text",
+      "placeholder": "src/main.cr"
+    },
+    {
+      "id": "release",
+      "prompt": "Release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "stats",
+      "prompt": "Show stats?",
+      "type": "toggle",
+      "flag": "--stats"
+    },
+    {
+      "id": "error_trace",
+      "prompt": "Show error trace?",
+      "type": "toggle",
+      "flag": "--error-trace"
+    }
+  ]
+}

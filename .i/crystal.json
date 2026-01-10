@@ -1,0 +1,19 @@
+{
+  "command": "crystal",
+  "description": "Crystal programming language compiler and tools",
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run a file", "chain": "crystal-run" },
+        { "label": "Build binary", "chain": "crystal-build" },
+        { "label": "Run specs", "chain": "crystal-spec" },
+        { "label": "Initialize project", "chain": "crystal-init" },
+        { "label": "Generate docs", "chain": "crystal-docs" },
+        { "label": "Evaluate code", "chain": "crystal-eval" }
+      ]
+    }
+  ]
+}

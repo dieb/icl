@@ -1,0 +1,25 @@
+{
+  "command": "shards update",
+  "description": "Update dependencies to latest versions",
+  "placeholder_options": {
+    "<shard>": "ls -1 lib/ 2>/dev/null"
+  },
+  "presets": [
+    { "label": "Update all", "flags": "" },
+    { "label": "Update specific shard", "flags": "<shard>" }
+  ],
+  "steps": [
+    {
+      "id": "shard",
+      "prompt": "Specific shard (optional)",
+      "type": "text",
+      "placeholder": ""
+    },
+    {
+      "id": "skip_postinstall",
+      "prompt": "Skip postinstall scripts?",
+      "type": "toggle",
+      "flag": "--skip-postinstall"
+    }
+  ]
+}
