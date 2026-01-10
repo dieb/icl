@@ -1,0 +1,99 @@
+{
+  "command": "grep",
+  "description": "Search for patterns in files",
+  "presets": [
+    { "label": "Search in current dir", "flags": "-rn '<pattern>' ." },
+    { "label": "Search in file", "flags": "'<pattern>' <file>" },
+    { "label": "Case-insensitive", "flags": "-i '<pattern>' <file>" },
+    { "label": "Recursive with line numbers", "flags": "-rn '<pattern>' <path>" },
+    { "label": "Recursive with color", "flags": "-rn --color=always '<pattern>' <path>" },
+    { "label": "Count matches", "flags": "-c '<pattern>' <file>" }
+  ],
+  "steps": [
+    {
+      "id": "regex_mode",
+      "prompt": "Regex mode?",
+      "type": "choice",
+      "options": [
+        { "label": "Basic regex", "flag": null },
+        { "label": "Extended regex", "flag": "-E" },
+        { "label": "Fixed strings (literal)", "flag": "-F" }
+      ]
+    },
+    {
+      "id": "case",
+      "prompt": "Case-insensitive?",
+      "type": "toggle",
+      "flag": "-i"
+    },
+    {
+      "id": "invert",
+      "prompt": "Invert match (show non-matching lines)?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "line_numbers",
+      "prompt": "Show line numbers?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "recursive",
+      "prompt": "Recursive search?",
+      "type": "toggle",
+      "flag": "-r"
+    },
+    {
+      "id": "whole_word",
+      "prompt": "Match whole words only?",
+      "type": "toggle",
+      "flag": "-w"
+    },
+    {
+      "id": "color",
+      "prompt": "Color output?",
+      "type": "choice",
+      "options": [
+        { "label": "Auto", "flag": null },
+        { "label": "Always", "flag": "--color=always" },
+        { "label": "Never", "flag": "--color=never" }
+      ]
+    },
+    {
+      "id": "context",
+      "prompt": "Show context lines?",
+      "type": "choice",
+      "options": [
+        { "label": "No context", "flag": null },
+        { "label": "Lines before", "flag": null },
+        { "label": "Lines after", "flag": null },
+        { "label": "Lines before and after", "flag": null }
+      ]
+    },
+    {
+      "id": "context_count",
+      "prompt": "How many context lines?",
+      "type": "text",
+      "flag": "-B",
+      "placeholder": "3",
+      "when": { "context": "Lines before" }
+    },
+    {
+      "id": "context_count_after",
+      "prompt": "How many context lines?",
+      "type": "text",
+      "flag": "-A",
+      "placeholder": "3",
+      "when": { "context": "Lines after" }
+    },
+    {
+      "id": "context_count_both",
+      "prompt": "How many context lines?",
+      "type": "text",
+      "flag": "-C",
+      "placeholder": "3",
+      "when": { "context": "Lines before and after" }
+    }
+  ]
+}
