@@ -1,0 +1,110 @@
+{
+  "command": "rspec",
+  "description": "Ruby testing framework",
+  "placeholder_options": {
+    "<file>": "find spec -name '*_spec.rb' 2>/dev/null | head -50"
+  },
+  "presets": [
+    { "label": "Run all specs", "flags": "" },
+    { "label": "Run specific file", "flags": "<file>" },
+    { "label": "Documentation format", "flags": "--format documentation" },
+    { "label": "Only failures", "flags": "--only-failures" },
+    { "label": "Next failure", "flags": "--next-failure" },
+    { "label": "Fail fast", "flags": "--fail-fast" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "What to run?",
+      "type": "choice",
+      "options": [
+        { "label": "All specs", "flag": null },
+        { "label": "Specific file", "flag": null },
+        { "label": "Specific directory", "flag": null },
+        { "label": "Specific line", "flag": null },
+        { "label": "Only failures", "flag": "--only-failures" },
+        { "label": "Next failure", "flag": "--next-failure" }
+      ]
+    },
+    {
+      "id": "spec_file",
+      "prompt": "Spec file path",
+      "type": "text",
+      "placeholder": "spec/models/user_spec.rb",
+      "when": { "target": "Specific file" }
+    },
+    {
+      "id": "spec_dir",
+      "prompt": "Spec directory",
+      "type": "text",
+      "placeholder": "spec/models",
+      "when": { "target": "Specific directory" }
+    },
+    {
+      "id": "spec_line",
+      "prompt": "File with line number",
+      "type": "text",
+      "placeholder": "spec/models/user_spec.rb:42",
+      "when": { "target": "Specific line" }
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Progress (default)", "flag": null },
+        { "label": "Documentation", "flag": "--format documentation" },
+        { "label": "HTML", "flag": "--format html" },
+        { "label": "JSON", "flag": "--format json" }
+      ]
+    },
+    {
+      "id": "tag",
+      "prompt": "Filter by tag (optional)",
+      "type": "text",
+      "flag": "--tag",
+      "placeholder": "focus"
+    },
+    {
+      "id": "fail_fast",
+      "prompt": "Stop on first failure?",
+      "type": "toggle",
+      "flag": "--fail-fast"
+    },
+    {
+      "id": "seed",
+      "prompt": "Random seed (optional)",
+      "type": "text",
+      "flag": "--seed",
+      "placeholder": "12345"
+    },
+    {
+      "id": "order",
+      "prompt": "Run order",
+      "type": "choice",
+      "options": [
+        { "label": "Default (random)", "flag": null },
+        { "label": "Defined order", "flag": "--order defined" },
+        { "label": "Random", "flag": "--order random" }
+      ]
+    },
+    {
+      "id": "profile",
+      "prompt": "Show slowest examples?",
+      "type": "toggle",
+      "flag": "--profile"
+    },
+    {
+      "id": "warnings",
+      "prompt": "Show Ruby warnings?",
+      "type": "toggle",
+      "flag": "--warnings"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (list specs without running)?",
+      "type": "toggle",
+      "flag": "--dry-run"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "command": "uv init",
+  "description": "Initialize a new Python project",
+  "presets": [
+    { "label": "Init in current dir", "flags": "" },
+    { "label": "Init application", "flags": "--app" },
+    { "label": "Init library", "flags": "--lib" }
+  ],
+  "steps": [
+    {
+      "id": "name",
+      "prompt": "Project name/directory (optional)",
+      "type": "text",
+      "placeholder": "my-project"
+    },
+    {
+      "id": "type",
+      "prompt": "Project type",
+      "type": "choice",
+      "options": [
+        { "label": "Application", "flag": "--app" },
+        { "label": "Library", "flag": "--lib" },
+        { "label": "Default", "flag": null }
+      ]
+    },
+    {
+      "id": "python",
+      "prompt": "Python version",
+      "type": "text",
+      "flag": "--python",
+      "placeholder": "3.11"
+    },
+    {
+      "id": "no_readme",
+      "prompt": "Skip README?",
+      "type": "toggle",
+      "flag": "--no-readme"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "command": "poetry publish",
+  "description": "Publish package to PyPI",
+  "presets": [
+    { "label": "Publish to PyPI", "flags": "" },
+    { "label": "Build and publish", "flags": "--build" },
+    { "label": "Dry run", "flags": "--dry-run" }
+  ],
+  "steps": [
+    {
+      "id": "build",
+      "prompt": "Build before publishing?",
+      "type": "toggle",
+      "flag": "--build"
+    },
+    {
+      "id": "repository",
+      "prompt": "Repository (optional, default: PyPI)",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": "testpypi"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (don't actually publish)?",
+      "type": "toggle",
+      "flag": "--dry-run"
+    },
+    {
+      "id": "skip_existing",
+      "prompt": "Skip if version exists?",
+      "type": "toggle",
+      "flag": "--skip-existing"
+    }
+  ]
+}

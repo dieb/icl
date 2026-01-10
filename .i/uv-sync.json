@@ -1,0 +1,36 @@
+{
+  "command": "uv sync",
+  "description": "Sync project dependencies from lockfile",
+  "presets": [
+    { "label": "Sync all", "flags": "" },
+    { "label": "Sync with dev deps", "flags": "--dev" },
+    { "label": "Sync frozen (no lock update)", "flags": "--frozen" }
+  ],
+  "steps": [
+    {
+      "id": "dev",
+      "prompt": "Include dev dependencies?",
+      "type": "toggle",
+      "flag": "--dev"
+    },
+    {
+      "id": "frozen",
+      "prompt": "Don't update lockfile?",
+      "type": "toggle",
+      "flag": "--frozen"
+    },
+    {
+      "id": "no_install_project",
+      "prompt": "Skip installing project itself?",
+      "type": "toggle",
+      "flag": "--no-install-project"
+    },
+    {
+      "id": "extras",
+      "prompt": "Include optional extras",
+      "type": "text",
+      "flag": "--extra",
+      "placeholder": "dev,test"
+    }
+  ]
+}

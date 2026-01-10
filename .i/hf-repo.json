@@ -1,0 +1,44 @@
+{
+  "command": "hf repo",
+  "description": "Manage Hugging Face repositories",
+  "presets": [
+    { "label": "Create model repo", "flags": "create <repo_id> --type model" },
+    { "label": "Create dataset repo", "flags": "create <repo_id> --type dataset" },
+    { "label": "Create private repo", "flags": "create <repo_id> --type model --private" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "Repository action",
+      "type": "choice",
+      "options": [
+        { "label": "Create new repository", "flag": "create" }
+      ]
+    },
+    {
+      "id": "repo_id",
+      "prompt": "Repository ID",
+      "type": "text",
+      "placeholder": "username/my-model",
+      "when": { "action": "Create new repository" }
+    },
+    {
+      "id": "type",
+      "prompt": "Repository type",
+      "type": "choice",
+      "options": [
+        { "label": "Model", "flag": "--type model" },
+        { "label": "Dataset", "flag": "--type dataset" },
+        { "label": "Space", "flag": "--type space" }
+      ],
+      "when": { "action": "Create new repository" }
+    },
+    {
+      "id": "private",
+      "prompt": "Make private?",
+      "type": "toggle",
+      "flag": "--private",
+      "when": { "action": "Create new repository" }
+    }
+  ]
+}

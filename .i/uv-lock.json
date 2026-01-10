@@ -1,0 +1,24 @@
+{
+  "command": "uv lock",
+  "description": "Update the project lockfile",
+  "presets": [
+    { "label": "Lock dependencies", "flags": "" },
+    { "label": "Upgrade all packages", "flags": "--upgrade" },
+    { "label": "Upgrade specific package", "flags": "--upgrade-package <package>" }
+  ],
+  "steps": [
+    {
+      "id": "upgrade",
+      "prompt": "Upgrade all packages?",
+      "type": "toggle",
+      "flag": "--upgrade"
+    },
+    {
+      "id": "upgrade_package",
+      "prompt": "Upgrade specific package (optional)",
+      "type": "text",
+      "flag": "--upgrade-package",
+      "placeholder": "requests"
+    }
+  ]
+}

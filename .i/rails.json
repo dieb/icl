@@ -1,0 +1,28 @@
+{
+  "command": "rails",
+  "description": "Ruby on Rails framework CLI",
+  "presets": [
+    { "label": "Start dev server", "flags": "server" },
+    { "label": "Open console", "flags": "console" },
+    { "label": "Run migrations", "flags": "db:migrate" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Start server", "chain": "rails-server" },
+        { "label": "Open console", "chain": "rails-console" },
+        { "label": "Generate code", "chain": "rails-generate" },
+        { "label": "Database tasks", "chain": "rails-db" },
+        { "label": "Run routes", "flag": "routes" },
+        { "label": "Edit credentials", "flag": "credentials:edit" },
+        { "label": "Create new app", "flag": "new" },
+        { "label": "Run tests", "flag": "test" },
+        { "label": "Clear tmp files", "flag": "tmp:clear" },
+        { "label": "Precompile assets", "flag": "assets:precompile" }
+      ]
+    }
+  ]
+}

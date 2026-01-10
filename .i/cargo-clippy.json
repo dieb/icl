@@ -1,0 +1,91 @@
+{
+  "command": "cargo clippy",
+  "description": "Rust linter with helpful suggestions",
+  "presets": [
+    {
+      "label": "Default lints",
+      "flags": ""
+    },
+    {
+      "label": "Deny all warnings",
+      "flags": "-- -D warnings"
+    },
+    {
+      "label": "Pedantic",
+      "flags": "-- -W clippy::pedantic"
+    },
+    {
+      "label": "Fix automatically",
+      "flags": "--fix"
+    },
+    {
+      "label": "Fix (allow dirty)",
+      "flags": "--fix --allow-dirty"
+    }
+  ],
+  "steps": [
+    {
+      "id": "fix",
+      "prompt": "Auto-fix lint issues?",
+      "type": "toggle",
+      "flag": "--fix"
+    },
+    {
+      "id": "allow_dirty",
+      "prompt": "Allow fixing with uncommitted changes?",
+      "type": "toggle",
+      "flag": "--allow-dirty"
+    },
+    {
+      "id": "allow_staged",
+      "prompt": "Allow fixing with staged changes?",
+      "type": "toggle",
+      "flag": "--allow-staged"
+    },
+    {
+      "id": "all_targets",
+      "prompt": "Check all targets (lib, bins, tests, examples)?",
+      "type": "toggle",
+      "flag": "--all-targets"
+    },
+    {
+      "id": "lint_level",
+      "prompt": "Lint level for warnings",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Deny all warnings", "flag": "-- -D warnings" },
+        { "label": "Allow warnings", "flag": "-- -A warnings" }
+      ]
+    },
+    {
+      "id": "lint_groups",
+      "prompt": "Enable additional lint groups?",
+      "type": "multi",
+      "options": [
+        { "label": "Pedantic (stricter)", "flag": "-- -W clippy::pedantic" },
+        { "label": "Nursery (experimental)", "flag": "-- -W clippy::nursery" },
+        { "label": "Cargo (Cargo.toml issues)", "flag": "-- -W clippy::cargo" }
+      ]
+    },
+    {
+      "id": "features",
+      "prompt": "Features to enable (comma-separated)",
+      "type": "text",
+      "flag": "--features",
+      "placeholder": "feature1,feature2"
+    },
+    {
+      "id": "all_features",
+      "prompt": "Enable all features?",
+      "type": "toggle",
+      "flag": "--all-features"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

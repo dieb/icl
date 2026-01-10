@@ -1,0 +1,86 @@
+{
+  "command": "rustup component",
+  "description": "Manage Rust toolchain components",
+  "placeholder_options": {
+    "<component>": "rustup component list --installed | cut -d' ' -f1"
+  },
+  "presets": [
+    {
+      "label": "Add clippy",
+      "flags": "add clippy"
+    },
+    {
+      "label": "Add rustfmt",
+      "flags": "add rustfmt"
+    },
+    {
+      "label": "Add rust-src",
+      "flags": "add rust-src"
+    },
+    {
+      "label": "Add rust-analyzer",
+      "flags": "add rust-analyzer"
+    },
+    {
+      "label": "Add miri",
+      "flags": "add miri"
+    },
+    {
+      "label": "List components",
+      "flags": "list"
+    },
+    {
+      "label": "Remove component",
+      "flags": "remove <component>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Add a component", "flag": "add" },
+        { "label": "Remove a component", "flag": "remove" },
+        { "label": "List components", "flag": "list" }
+      ]
+    },
+    {
+      "id": "component_to_add",
+      "prompt": "Component to add",
+      "type": "choice",
+      "options": [
+        { "label": "clippy (linter)", "flag": "clippy" },
+        { "label": "rustfmt (formatter)", "flag": "rustfmt" },
+        { "label": "rust-src (source code)", "flag": "rust-src" },
+        { "label": "rust-analyzer (LSP)", "flag": "rust-analyzer" },
+        { "label": "rust-docs (documentation)", "flag": "rust-docs" },
+        { "label": "miri (interpreter)", "flag": "miri" },
+        { "label": "llvm-tools (LLVM tools)", "flag": "llvm-tools" },
+        { "label": "Other (enter manually)", "flag": null }
+      ],
+      "when": { "action": "Add a component" }
+    },
+    {
+      "id": "custom_component",
+      "prompt": "Component name",
+      "type": "text",
+      "placeholder": "rust-analysis",
+      "when": { "component_to_add": "Other (enter manually)" }
+    },
+    {
+      "id": "component_to_remove",
+      "prompt": "Component to remove",
+      "type": "text",
+      "placeholder": "clippy",
+      "when": { "action": "Remove a component" }
+    },
+    {
+      "id": "toolchain",
+      "prompt": "For which toolchain? (leave empty for default)",
+      "type": "text",
+      "flag": "--toolchain",
+      "placeholder": "nightly"
+    }
+  ]
+}

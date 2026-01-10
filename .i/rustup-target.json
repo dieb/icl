@@ -1,0 +1,93 @@
+{
+  "command": "rustup target",
+  "description": "Manage Rust compilation targets",
+  "placeholder_options": {
+    "<installed_target>": "rustup target list --installed"
+  },
+  "presets": [
+    {
+      "label": "Add WebAssembly",
+      "flags": "add wasm32-unknown-unknown"
+    },
+    {
+      "label": "Add WASI",
+      "flags": "add wasm32-wasip1"
+    },
+    {
+      "label": "Add Linux musl",
+      "flags": "add x86_64-unknown-linux-musl"
+    },
+    {
+      "label": "Add aarch64 Linux",
+      "flags": "add aarch64-unknown-linux-gnu"
+    },
+    {
+      "label": "Add Apple Silicon",
+      "flags": "add aarch64-apple-darwin"
+    },
+    {
+      "label": "List installed",
+      "flags": "list --installed"
+    },
+    {
+      "label": "List all available",
+      "flags": "list"
+    },
+    {
+      "label": "Remove target",
+      "flags": "remove <installed_target>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Add a target", "flag": "add" },
+        { "label": "Remove a target", "flag": "remove" },
+        { "label": "List installed targets", "flag": "list --installed" },
+        { "label": "List all available targets", "flag": "list" }
+      ]
+    },
+    {
+      "id": "target_to_add",
+      "prompt": "Target triple to add",
+      "type": "choice",
+      "options": [
+        { "label": "wasm32-unknown-unknown (WebAssembly)", "flag": "wasm32-unknown-unknown" },
+        { "label": "wasm32-wasip1 (WASI)", "flag": "wasm32-wasip1" },
+        { "label": "x86_64-unknown-linux-musl (Linux static)", "flag": "x86_64-unknown-linux-musl" },
+        { "label": "x86_64-unknown-linux-gnu (Linux)", "flag": "x86_64-unknown-linux-gnu" },
+        { "label": "aarch64-unknown-linux-gnu (ARM64 Linux)", "flag": "aarch64-unknown-linux-gnu" },
+        { "label": "aarch64-apple-darwin (Apple Silicon)", "flag": "aarch64-apple-darwin" },
+        { "label": "x86_64-apple-darwin (Intel Mac)", "flag": "x86_64-apple-darwin" },
+        { "label": "x86_64-pc-windows-msvc (Windows MSVC)", "flag": "x86_64-pc-windows-msvc" },
+        { "label": "x86_64-pc-windows-gnu (Windows GNU)", "flag": "x86_64-pc-windows-gnu" },
+        { "label": "Other (enter manually)", "flag": null }
+      ],
+      "when": { "action": "Add a target" }
+    },
+    {
+      "id": "custom_target",
+      "prompt": "Target triple",
+      "type": "text",
+      "placeholder": "thumbv7em-none-eabihf",
+      "when": { "target_to_add": "Other (enter manually)" }
+    },
+    {
+      "id": "target_to_remove",
+      "prompt": "Target triple to remove",
+      "type": "text",
+      "placeholder": "wasm32-unknown-unknown",
+      "when": { "action": "Remove a target" }
+    },
+    {
+      "id": "toolchain",
+      "prompt": "For which toolchain? (leave empty for default)",
+      "type": "text",
+      "flag": "--toolchain",
+      "placeholder": "nightly"
+    }
+  ]
+}

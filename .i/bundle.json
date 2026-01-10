@@ -1,0 +1,29 @@
+{
+  "command": "bundle",
+  "description": "Ruby dependency manager (Bundler)",
+  "presets": [
+    { "label": "Install dependencies", "flags": "install" },
+    { "label": "Update all gems", "flags": "update" },
+    { "label": "Check for issues", "flags": "check" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install dependencies", "chain": "bundle-install" },
+        { "label": "Execute command", "chain": "bundle-exec" },
+        { "label": "Add a gem", "chain": "bundle-add" },
+        { "label": "Update gems", "flag": "update" },
+        { "label": "Check dependencies", "flag": "check" },
+        { "label": "Show gem info", "flag": "info" },
+        { "label": "List installed gems", "flag": "list" },
+        { "label": "Show outdated gems", "flag": "outdated" },
+        { "label": "Clean unused gems", "flag": "clean" },
+        { "label": "Initialize Gemfile", "flag": "init" },
+        { "label": "Lock dependencies", "flag": "lock" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "command": "hf upload",
+  "description": "Upload files to Hugging Face Hub",
+  "presets": [
+    { "label": "Upload folder as model", "flags": "<repo_id> <folder> --repo-type model" },
+    { "label": "Upload folder as dataset", "flags": "<repo_id> <folder> --repo-type dataset" },
+    { "label": "Upload single file", "flags": "<repo_id> <file> --path-in-repo <name>" },
+    { "label": "Upload to private repo", "flags": "<repo_id> <folder> --private" }
+  ],
+  "steps": [
+    {
+      "id": "repo_id",
+      "prompt": "Repository ID (e.g., username/my-model)",
+      "type": "text",
+      "placeholder": "username/repo-name"
+    },
+    {
+      "id": "local_path",
+      "prompt": "Local file or folder to upload",
+      "type": "text",
+      "placeholder": "./output"
+    },
+    {
+      "id": "repo_type",
+      "prompt": "Repository type",
+      "type": "choice",
+      "options": [
+        { "label": "Model (default)", "flag": null },
+        { "label": "Dataset", "flag": "--repo-type dataset" },
+        { "label": "Space", "flag": "--repo-type space" }
+      ]
+    },
+    {
+      "id": "path_in_repo",
+      "prompt": "Path in repository (optional)",
+      "type": "text",
+      "flag": "--path-in-repo",
+      "placeholder": "subfolder/"
+    },
+    {
+      "id": "commit_message",
+      "prompt": "Commit message (optional)",
+      "type": "text",
+      "flag": "--commit-message",
+      "placeholder": "Upload model files"
+    },
+    {
+      "id": "revision",
+      "prompt": "Branch/revision (optional)",
+      "type": "text",
+      "flag": "--revision",
+      "placeholder": "main"
+    },
+    {
+      "id": "private",
+      "prompt": "Create as private repo?",
+      "type": "toggle",
+      "flag": "--private"
+    },
+    {
+      "id": "include_pattern",
+      "prompt": "Include pattern (optional)",
+      "type": "text",
+      "flag": "--include",
+      "placeholder": "*.safetensors"
+    },
+    {
+      "id": "exclude_pattern",
+      "prompt": "Exclude pattern (optional)",
+      "type": "text",
+      "flag": "--exclude",
+      "placeholder": "*.bin"
+    }
+  ]
+}

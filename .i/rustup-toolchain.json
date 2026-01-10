@@ -1,0 +1,94 @@
+{
+  "command": "rustup toolchain",
+  "description": "Manage Rust toolchains",
+  "placeholder_options": {
+    "<installed_toolchain>": "rustup toolchain list | sed 's/ (default)//'"
+  },
+  "presets": [
+    {
+      "label": "Install stable",
+      "flags": "install stable"
+    },
+    {
+      "label": "Install nightly",
+      "flags": "install nightly"
+    },
+    {
+      "label": "Install beta",
+      "flags": "install beta"
+    },
+    {
+      "label": "Install nightly minimal",
+      "flags": "install nightly --profile minimal"
+    },
+    {
+      "label": "List installed",
+      "flags": "list"
+    },
+    {
+      "label": "Uninstall toolchain",
+      "flags": "uninstall <installed_toolchain>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install a toolchain", "flag": "install" },
+        { "label": "Uninstall a toolchain", "flag": "uninstall" },
+        { "label": "List installed toolchains", "flag": "list" }
+      ]
+    },
+    {
+      "id": "toolchain_to_install",
+      "prompt": "Which toolchain to install?",
+      "type": "choice",
+      "options": [
+        { "label": "Stable (latest)", "flag": "stable" },
+        { "label": "Beta (latest)", "flag": "beta" },
+        { "label": "Nightly (latest)", "flag": "nightly" },
+        { "label": "Specific version", "flag": null }
+      ],
+      "when": { "action": "Install a toolchain" }
+    },
+    {
+      "id": "specific_version",
+      "prompt": "Rust version or dated nightly",
+      "type": "text",
+      "placeholder": "1.75.0 or nightly-2024-01-15",
+      "when": { "toolchain_to_install": "Specific version" }
+    },
+    {
+      "id": "toolchain_to_uninstall",
+      "prompt": "Toolchain to uninstall",
+      "type": "text",
+      "placeholder": "nightly-2024-01-15",
+      "when": { "action": "Uninstall a toolchain" }
+    },
+    {
+      "id": "profile",
+      "prompt": "Installation profile",
+      "type": "choice",
+      "options": [
+        { "label": "Default (rustc, cargo, rustfmt, clippy)", "flag": null },
+        { "label": "Minimal (rustc, cargo only)", "flag": "--profile minimal" },
+        { "label": "Complete (all components)", "flag": "--profile complete" }
+      ],
+      "when": { "action": "Install a toolchain" }
+    },
+    {
+      "id": "components",
+      "prompt": "Additional components to include",
+      "type": "multi",
+      "options": [
+        { "label": "rust-src", "flag": "-c rust-src" },
+        { "label": "rust-analyzer", "flag": "-c rust-analyzer" },
+        { "label": "miri", "flag": "-c miri" },
+        { "label": "llvm-tools", "flag": "-c llvm-tools" }
+      ],
+      "when": { "action": "Install a toolchain" }
+    }
+  ]
+}

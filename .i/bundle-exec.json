@@ -1,0 +1,20 @@
+{
+  "command": "bundle exec",
+  "description": "Run command in bundle context",
+  "presets": [
+    { "label": "Rails server", "flags": "rails server" },
+    { "label": "Rails console", "flags": "rails console" },
+    { "label": "RSpec", "flags": "rspec" },
+    { "label": "Rake", "flags": "rake" },
+    { "label": "Rubocop", "flags": "rubocop" },
+    { "label": "Puma", "flags": "puma" }
+  ],
+  "steps": [
+    {
+      "id": "command",
+      "prompt": "Command to run",
+      "type": "text",
+      "placeholder": "rails server"
+    }
+  ]
+}

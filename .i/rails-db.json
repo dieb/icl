@@ -1,0 +1,73 @@
+{
+  "command": "rails",
+  "description": "Rails database tasks",
+  "presets": [
+    { "label": "Run migrations", "flags": "db:migrate" },
+    { "label": "Rollback last migration", "flags": "db:rollback" },
+    { "label": "Seed database", "flags": "db:seed" },
+    { "label": "Reset database", "flags": "db:reset" },
+    { "label": "Setup database", "flags": "db:setup" },
+    { "label": "Migration status", "flags": "db:migrate:status" }
+  ],
+  "steps": [
+    {
+      "id": "task",
+      "prompt": "Database task",
+      "type": "choice",
+      "options": [
+        { "label": "Migrate", "flag": "db:migrate" },
+        { "label": "Rollback", "flag": "db:rollback" },
+        { "label": "Seed", "flag": "db:seed" },
+        { "label": "Create database", "flag": "db:create" },
+        { "label": "Drop database", "flag": "db:drop" },
+        { "label": "Reset (drop + create + migrate + seed)", "flag": "db:reset" },
+        { "label": "Setup (create + migrate + seed)", "flag": "db:setup" },
+        { "label": "Migration status", "flag": "db:migrate:status" },
+        { "label": "Schema load", "flag": "db:schema:load" },
+        { "label": "Schema dump", "flag": "db:schema:dump" },
+        { "label": "Migrate to version", "flag": "db:migrate:up" },
+        { "label": "Rollback to version", "flag": "db:migrate:down" },
+        { "label": "Redo last migration", "flag": "db:migrate:redo" },
+        { "label": "Prepare test database", "flag": "db:test:prepare" }
+      ]
+    },
+    {
+      "id": "rollback_steps",
+      "prompt": "Number of migrations to rollback",
+      "type": "text",
+      "flag": "STEP=",
+      "placeholder": "1",
+      "when": { "task": "Rollback" }
+    },
+    {
+      "id": "migrate_version",
+      "prompt": "Migration version",
+      "type": "text",
+      "flag": "VERSION=",
+      "placeholder": "20240101120000",
+      "when": { "task": "Migrate to version" }
+    },
+    {
+      "id": "rollback_version",
+      "prompt": "Migration version to rollback",
+      "type": "text",
+      "flag": "VERSION=",
+      "placeholder": "20240101120000",
+      "when": { "task": "Rollback to version" }
+    },
+    {
+      "id": "redo_steps",
+      "prompt": "Number of migrations to redo",
+      "type": "text",
+      "flag": "STEP=",
+      "placeholder": "1",
+      "when": { "task": "Redo last migration" }
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "VERBOSE=true"
+    }
+  ]
+}

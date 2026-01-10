@@ -1,0 +1,36 @@
+{
+  "command": "rustup",
+  "description": "Rust toolchain manager",
+  "presets": [
+    {
+      "label": "Update all",
+      "flags": "update"
+    },
+    {
+      "label": "Show installed",
+      "flags": "show"
+    },
+    {
+      "label": "Check for updates",
+      "flags": "check"
+    }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Update toolchains", "chain": "rustup-update" },
+        { "label": "Set default toolchain", "chain": "rustup-default" },
+        { "label": "Manage toolchains", "chain": "rustup-toolchain" },
+        { "label": "Manage targets", "chain": "rustup-target" },
+        { "label": "Manage components", "chain": "rustup-component" },
+        { "label": "Show installed", "chain": "rustup-show" },
+        { "label": "Open documentation", "flag": "doc" },
+        { "label": "Update rustup itself", "flag": "self update" },
+        { "label": "Check for updates", "flag": "check" }
+      ]
+    }
+  ]
+}

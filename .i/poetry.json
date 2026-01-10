@@ -1,0 +1,33 @@
+{
+  "command": "poetry",
+  "description": "Python dependency management and packaging",
+  "presets": [
+    { "label": "Install dependencies", "flags": "install" },
+    { "label": "Add package", "flags": "add <package>" },
+    { "label": "Update all", "flags": "update" },
+    { "label": "Run command", "flags": "run <command>" },
+    { "label": "Activate shell", "flags": "shell" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Add dependency", "chain": "poetry-add" },
+        { "label": "Remove dependency", "chain": "poetry-remove" },
+        { "label": "Install dependencies", "chain": "poetry-install" },
+        { "label": "Run command", "chain": "poetry-run" },
+        { "label": "Build package", "chain": "poetry-build" },
+        { "label": "Publish package", "chain": "poetry-publish" },
+        { "label": "Activate shell", "chain": "poetry-shell" },
+        { "label": "Initialize project", "chain": "poetry-init" },
+        { "label": "Update dependencies", "flag": "update" },
+        { "label": "Show dependencies", "flag": "show" },
+        { "label": "Lock dependencies", "flag": "lock" },
+        { "label": "Check pyproject.toml", "flag": "check" },
+        { "label": "Export to requirements.txt", "flag": "export -f requirements.txt -o requirements.txt" }
+      ]
+    }
+  ]
+}

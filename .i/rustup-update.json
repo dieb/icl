@@ -1,0 +1,54 @@
+{
+  "command": "rustup update",
+  "description": "Update Rust toolchains",
+  "placeholder_options": {
+    "<toolchain>": "rustup toolchain list | sed 's/ (default)//'"
+  },
+  "presets": [
+    {
+      "label": "Update all",
+      "flags": ""
+    },
+    {
+      "label": "Update stable",
+      "flags": "stable"
+    },
+    {
+      "label": "Update nightly",
+      "flags": "nightly"
+    },
+    {
+      "label": "Update beta",
+      "flags": "beta"
+    },
+    {
+      "label": "Update specific",
+      "flags": "<toolchain>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "toolchain",
+      "prompt": "Which toolchain to update?",
+      "type": "choice",
+      "options": [
+        { "label": "All installed", "flag": null },
+        { "label": "Stable", "flag": "stable" },
+        { "label": "Beta", "flag": "beta" },
+        { "label": "Nightly", "flag": "nightly" }
+      ]
+    },
+    {
+      "id": "no_self_update",
+      "prompt": "Skip rustup self-update?",
+      "type": "toggle",
+      "flag": "--no-self-update"
+    },
+    {
+      "id": "force",
+      "prompt": "Force update even if up-to-date?",
+      "type": "toggle",
+      "flag": "--force"
+    }
+  ]
+}

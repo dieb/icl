@@ -1,0 +1,106 @@
+{
+  "command": "cargo test",
+  "description": "Run tests for the current package",
+  "presets": [
+    {
+      "label": "Run all tests",
+      "flags": ""
+    },
+    {
+      "label": "Run specific test",
+      "flags": "<test_name>"
+    },
+    {
+      "label": "Show output",
+      "flags": "-- --nocapture"
+    },
+    {
+      "label": "Run ignored tests",
+      "flags": "-- --ignored"
+    },
+    {
+      "label": "Doc tests only",
+      "flags": "--doc"
+    },
+    {
+      "label": "Release mode",
+      "flags": "--release"
+    },
+    {
+      "label": "Single-threaded",
+      "flags": "-- --test-threads=1"
+    }
+  ],
+  "steps": [
+    {
+      "id": "test_name",
+      "prompt": "Test name filter (leave empty for all)",
+      "type": "text",
+      "placeholder": "test_function_name"
+    },
+    {
+      "id": "release",
+      "prompt": "Run in release mode?",
+      "type": "toggle",
+      "flag": "--release"
+    },
+    {
+      "id": "test_type",
+      "prompt": "Which tests to run?",
+      "type": "choice",
+      "options": [
+        { "label": "All tests", "flag": null },
+        { "label": "Library tests only", "flag": "--lib" },
+        { "label": "Binary tests only", "flag": "--bins" },
+        { "label": "Doc tests only", "flag": "--doc" },
+        { "label": "Integration tests only", "flag": "--tests" },
+        { "label": "Examples only", "flag": "--examples" }
+      ]
+    },
+    {
+      "id": "capture",
+      "prompt": "Output capture",
+      "type": "choice",
+      "options": [
+        { "label": "Capture output (default)", "flag": null },
+        { "label": "Show all output", "flag": "-- --nocapture" },
+        { "label": "Show output on failure", "flag": "-- --show-output" }
+      ]
+    },
+    {
+      "id": "ignored",
+      "prompt": "Run ignored tests?",
+      "type": "choice",
+      "options": [
+        { "label": "Normal tests only", "flag": null },
+        { "label": "Ignored tests only", "flag": "-- --ignored" },
+        { "label": "All including ignored", "flag": "-- --include-ignored" }
+      ]
+    },
+    {
+      "id": "features",
+      "prompt": "Features to enable (comma-separated)",
+      "type": "text",
+      "flag": "--features",
+      "placeholder": "feature1,feature2"
+    },
+    {
+      "id": "all_features",
+      "prompt": "Enable all features?",
+      "type": "toggle",
+      "flag": "--all-features"
+    },
+    {
+      "id": "no_fail_fast",
+      "prompt": "Continue after failure?",
+      "type": "toggle",
+      "flag": "--no-fail-fast"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

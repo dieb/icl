@@ -1,0 +1,65 @@
+{
+  "command": "rake",
+  "description": "Ruby task runner",
+  "placeholder_options": {
+    "<task>": "rake -T 2>/dev/null | sed 's/^rake //' | cut -d' ' -f1 | head -50"
+  },
+  "presets": [
+    { "label": "Run task", "flags": "<task>" },
+    { "label": "List all tasks", "flags": "-T" },
+    { "label": "Run tests", "flags": "test" },
+    { "label": "Run specs", "flags": "spec" },
+    { "label": "Database migrate", "flags": "db:migrate" },
+    { "label": "Database seed", "flags": "db:seed" },
+    { "label": "Show routes", "flags": "routes" },
+    { "label": "Precompile assets", "flags": "assets:precompile" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run a task", "flag": null },
+        { "label": "List tasks", "flag": "-T" },
+        { "label": "List all tasks (with hidden)", "flag": "-T -A" },
+        { "label": "Show task description", "flag": "-D" },
+        { "label": "Show prerequisites", "flag": "-P" }
+      ]
+    },
+    {
+      "id": "task",
+      "prompt": "Task name",
+      "type": "text",
+      "placeholder": "db:migrate",
+      "when": { "action": "Run a task" }
+    },
+    {
+      "id": "describe_task",
+      "prompt": "Task to describe",
+      "type": "text",
+      "placeholder": "db:migrate",
+      "when": { "action": "Show task description" }
+    },
+    {
+      "id": "trace",
+      "prompt": "Enable trace (verbose)?",
+      "type": "toggle",
+      "flag": "--trace",
+      "when": { "action": "Run a task" }
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (show tasks without executing)?",
+      "type": "toggle",
+      "flag": "--dry-run",
+      "when": { "action": "Run a task" }
+    },
+    {
+      "id": "silent",
+      "prompt": "Silent mode?",
+      "type": "toggle",
+      "flag": "--silent"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "command": "hf env",
+  "description": "Show Hugging Face environment information",
+  "presets": [
+    { "label": "Show environment", "flags": "" }
+  ],
+  "steps": []
+}

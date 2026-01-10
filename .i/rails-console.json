@@ -1,0 +1,28 @@
+{
+  "command": "rails console",
+  "description": "Start the Rails interactive console",
+  "presets": [
+    { "label": "Development console", "flags": "" },
+    { "label": "Production console", "flags": "-e production" },
+    { "label": "Sandbox mode", "flags": "--sandbox" },
+    { "label": "Test environment", "flags": "-e test" }
+  ],
+  "steps": [
+    {
+      "id": "environment",
+      "prompt": "Environment",
+      "type": "choice",
+      "options": [
+        { "label": "Development (default)", "flag": null },
+        { "label": "Test", "flag": "-e test" },
+        { "label": "Production", "flag": "-e production" }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "prompt": "Sandbox mode (rollback all DB changes on exit)?",
+      "type": "toggle",
+      "flag": "--sandbox"
+    }
+  ]
+}

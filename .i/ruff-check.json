@@ -1,0 +1,113 @@
+{
+  "command": "ruff check",
+  "description": "Lint Python files",
+  "placeholder_options": {
+    "<rule>": "ruff rule --all 2>/dev/null | head -50 | awk '{print $1}'"
+  },
+  "presets": [
+    { "label": "Check all", "flags": "." },
+    { "label": "Check and fix", "flags": "--fix ." },
+    { "label": "Check with unsafe fixes", "flags": "--fix --unsafe-fixes ." },
+    { "label": "Show fixes available", "flags": "--diff ." },
+    { "label": "Check specific rules", "flags": "--select <rules> ." },
+    { "label": "Check with statistics", "flags": "--statistics ." }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "Path to check",
+      "type": "text",
+      "placeholder": "."
+    },
+    {
+      "id": "fix",
+      "prompt": "Apply fixes automatically?",
+      "type": "toggle",
+      "flag": "--fix"
+    },
+    {
+      "id": "unsafe_fixes",
+      "prompt": "Include unsafe fixes?",
+      "type": "toggle",
+      "flag": "--unsafe-fixes"
+    },
+    {
+      "id": "diff",
+      "prompt": "Show diff of fixes (don't apply)?",
+      "type": "toggle",
+      "flag": "--diff"
+    },
+    {
+      "id": "select_mode",
+      "prompt": "Rule selection",
+      "type": "choice",
+      "options": [
+        { "label": "Use config defaults", "flag": null },
+        { "label": "Select specific rules", "flag": null },
+        { "label": "Ignore specific rules", "flag": null },
+        { "label": "Extend selection", "flag": null }
+      ]
+    },
+    {
+      "id": "select",
+      "prompt": "Rules to select (comma-separated)",
+      "type": "text",
+      "flag": "--select",
+      "placeholder": "E,F,W",
+      "when": { "select_mode": "Select specific rules" }
+    },
+    {
+      "id": "ignore",
+      "prompt": "Rules to ignore (comma-separated)",
+      "type": "text",
+      "flag": "--ignore",
+      "placeholder": "E501,W503",
+      "when": { "select_mode": "Ignore specific rules" }
+    },
+    {
+      "id": "extend_select",
+      "prompt": "Additional rules to select",
+      "type": "text",
+      "flag": "--extend-select",
+      "placeholder": "I,UP",
+      "when": { "select_mode": "Extend selection" }
+    },
+    {
+      "id": "output_format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default (concise)", "flag": null },
+        { "label": "Full (with source)", "flag": "--output-format=full" },
+        { "label": "JSON", "flag": "--output-format=json" },
+        { "label": "GitHub Actions", "flag": "--output-format=github" },
+        { "label": "GitLab CI", "flag": "--output-format=gitlab" }
+      ]
+    },
+    {
+      "id": "statistics",
+      "prompt": "Show violation statistics?",
+      "type": "toggle",
+      "flag": "--statistics"
+    },
+    {
+      "id": "show_fixes",
+      "prompt": "Show available fixes?",
+      "type": "toggle",
+      "flag": "--show-fixes"
+    },
+    {
+      "id": "watch",
+      "prompt": "Watch for changes?",
+      "type": "toggle",
+      "flag": "--watch"
+    },
+    {
+      "id": "config",
+      "prompt": "Custom config file (optional)",
+      "type": "text",
+      "flag": "--config",
+      "placeholder": "pyproject.toml"
+    }
+  ]
+}

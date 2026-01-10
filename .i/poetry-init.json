@@ -1,0 +1,44 @@
+{
+  "command": "poetry init",
+  "description": "Initialize a new Python project",
+  "presets": [
+    { "label": "Interactive init", "flags": "" },
+    { "label": "Non-interactive", "flags": "-n" }
+  ],
+  "steps": [
+    {
+      "id": "name",
+      "prompt": "Package name",
+      "type": "text",
+      "flag": "--name",
+      "placeholder": "my-package"
+    },
+    {
+      "id": "description",
+      "prompt": "Description",
+      "type": "text",
+      "flag": "--description",
+      "placeholder": "A short description"
+    },
+    {
+      "id": "author",
+      "prompt": "Author",
+      "type": "text",
+      "flag": "--author",
+      "placeholder": "Name <email@example.com>"
+    },
+    {
+      "id": "python",
+      "prompt": "Python version constraint",
+      "type": "text",
+      "flag": "--python",
+      "placeholder": "^3.9"
+    },
+    {
+      "id": "non_interactive",
+      "prompt": "Non-interactive mode?",
+      "type": "toggle",
+      "flag": "-n"
+    }
+  ]
+}

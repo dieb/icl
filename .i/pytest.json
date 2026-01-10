@@ -1,0 +1,172 @@
+{
+  "command": "pytest",
+  "description": "Python testing framework",
+  "placeholder_options": {
+    "<test_file>": "find . -name 'test_*.py' -o -name '*_test.py' 2>/dev/null | head -20 | sed 's|^\\./||'",
+    "<marker>": "pytest --markers 2>/dev/null | grep '@pytest.mark' | sed 's/@pytest.mark.\\([a-zA-Z_]*\\).*/\\1/' | head -10"
+  },
+  "presets": [
+    { "label": "Run all tests", "flags": "" },
+    { "label": "Run with verbose output", "flags": "-v" },
+    { "label": "Run failed tests only", "flags": "--lf" },
+    { "label": "Run last failed first", "flags": "--ff" },
+    { "label": "Run with coverage", "flags": "--cov=. --cov-report=html" },
+    { "label": "Run specific file", "flags": "<test_file>" },
+    { "label": "Run matching expression", "flags": "-k '<expression>'" },
+    { "label": "Run with marker", "flags": "-m '<marker>'" },
+    { "label": "Stop on first failure", "flags": "-x" },
+    { "label": "Parallel execution", "flags": "-n auto" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "What to test",
+      "type": "choice",
+      "options": [
+        { "label": "All tests", "flag": null },
+        { "label": "Specific file/directory", "flag": null },
+        { "label": "Match expression (-k)", "flag": null },
+        { "label": "Match marker (-m)", "flag": null }
+      ]
+    },
+    {
+      "id": "test_path",
+      "prompt": "Test file or directory",
+      "type": "text",
+      "placeholder": "tests/",
+      "when": { "target": "Specific file/directory" }
+    },
+    {
+      "id": "expression",
+      "prompt": "Test name expression (substring match)",
+      "type": "text",
+      "flag": "-k",
+      "placeholder": "test_login or test_auth",
+      "when": { "target": "Match expression (-k)" }
+    },
+    {
+      "id": "marker",
+      "prompt": "Marker expression",
+      "type": "text",
+      "flag": "-m",
+      "placeholder": "slow or integration",
+      "when": { "target": "Match marker (-m)" }
+    },
+    {
+      "id": "verbosity",
+      "prompt": "Output verbosity",
+      "type": "choice",
+      "options": [
+        { "label": "Normal", "flag": null },
+        { "label": "Verbose (-v)", "flag": "-v" },
+        { "label": "Very verbose (-vv)", "flag": "-vv" },
+        { "label": "Quiet (-q)", "flag": "-q" }
+      ]
+    },
+    {
+      "id": "failure_mode",
+      "prompt": "On failure",
+      "type": "choice",
+      "options": [
+        { "label": "Continue all tests", "flag": null },
+        { "label": "Stop on first failure (-x)", "flag": "-x" },
+        { "label": "Stop after N failures", "flag": null }
+      ]
+    },
+    {
+      "id": "max_fail",
+      "prompt": "Max failures before stopping",
+      "type": "text",
+      "flag": "--maxfail",
+      "placeholder": "3",
+      "when": { "failure_mode": "Stop after N failures" }
+    },
+    {
+      "id": "rerun",
+      "prompt": "Rerun strategy",
+      "type": "choice",
+      "options": [
+        { "label": "Run all tests", "flag": null },
+        { "label": "Only failed tests (--lf)", "flag": "--lf" },
+        { "label": "Failed first, then rest (--ff)", "flag": "--ff" },
+        { "label": "New tests first (--nf)", "flag": "--nf" }
+      ]
+    },
+    {
+      "id": "output",
+      "prompt": "Show captured stdout (-s)?",
+      "type": "toggle",
+      "flag": "-s"
+    },
+    {
+      "id": "showlocals",
+      "prompt": "Show local variables on failure?",
+      "type": "toggle",
+      "flag": "--showlocals"
+    },
+    {
+      "id": "traceback",
+      "prompt": "Traceback style",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Short", "flag": "--tb=short" },
+        { "label": "Line only", "flag": "--tb=line" },
+        { "label": "No traceback", "flag": "--tb=no" }
+      ]
+    },
+    {
+      "id": "parallel",
+      "prompt": "Parallel execution (requires pytest-xdist)",
+      "type": "choice",
+      "options": [
+        { "label": "Sequential (default)", "flag": null },
+        { "label": "Auto-detect CPUs (-n auto)", "flag": "-n auto" },
+        { "label": "Specify workers", "flag": null }
+      ]
+    },
+    {
+      "id": "workers",
+      "prompt": "Number of workers",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "4",
+      "when": { "parallel": "Specify workers" }
+    },
+    {
+      "id": "coverage",
+      "prompt": "Enable coverage?",
+      "type": "toggle",
+      "flag": "--cov=."
+    },
+    {
+      "id": "cov_report",
+      "prompt": "Coverage report format",
+      "type": "choice",
+      "options": [
+        { "label": "Terminal", "flag": null },
+        { "label": "HTML", "flag": "--cov-report=html" },
+        { "label": "XML", "flag": "--cov-report=xml" }
+      ],
+      "when": { "coverage": true }
+    },
+    {
+      "id": "duration",
+      "prompt": "Show slowest tests?",
+      "type": "toggle",
+      "flag": "--durations=10"
+    },
+    {
+      "id": "pdb",
+      "prompt": "Debug on failure (--pdb)?",
+      "type": "toggle",
+      "flag": "--pdb"
+    },
+    {
+      "id": "collect_only",
+      "prompt": "Collect only (don't run)?",
+      "type": "toggle",
+      "flag": "--collect-only"
+    }
+  ]
+}

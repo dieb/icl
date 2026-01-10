@@ -1,0 +1,41 @@
+{
+  "command": "uv run",
+  "description": "Run a command in the project environment",
+  "placeholder_options": {
+    "<script>": "find . -maxdepth 2 -name '*.py' -type f 2>/dev/null | head -20 | sed 's|^\\./||'"
+  },
+  "presets": [
+    { "label": "Run Python file", "flags": "python <script>" },
+    { "label": "Run module", "flags": "python -m <module>" },
+    { "label": "Run pytest", "flags": "pytest" },
+    { "label": "Run with package", "flags": "--with <package> python -c '<code>'" }
+  ],
+  "steps": [
+    {
+      "id": "command",
+      "prompt": "Command to run",
+      "type": "text",
+      "placeholder": "python main.py"
+    },
+    {
+      "id": "with_package",
+      "prompt": "Additional package to include",
+      "type": "text",
+      "flag": "--with",
+      "placeholder": "requests"
+    },
+    {
+      "id": "python",
+      "prompt": "Python version override",
+      "type": "text",
+      "flag": "--python",
+      "placeholder": "3.11"
+    },
+    {
+      "id": "isolated",
+      "prompt": "Run in isolated environment?",
+      "type": "toggle",
+      "flag": "--isolated"
+    }
+  ]
+}

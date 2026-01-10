@@ -1,0 +1,30 @@
+{
+  "command": "hf",
+  "description": "Hugging Face Hub CLI",
+  "presets": [
+    { "label": "Download model", "flags": "download <model_id>" },
+    { "label": "Download dataset", "flags": "download <dataset_id> --repo-type dataset" },
+    { "label": "Upload folder", "flags": "upload <repo_id> <folder> --repo-type model" },
+    { "label": "Login", "flags": "login" },
+    { "label": "Whoami", "flags": "whoami" },
+    { "label": "Scan cache", "flags": "scan-cache" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Download model/dataset", "chain": "hf-download" },
+        { "label": "Upload files", "chain": "hf-upload" },
+        { "label": "Manage repositories", "chain": "hf-repo" },
+        { "label": "Scan local cache", "chain": "hf-scan-cache" },
+        { "label": "Delete cache entries", "chain": "hf-delete-cache" },
+        { "label": "Show environment info", "chain": "hf-env" },
+        { "label": "Login to Hub", "flag": "login" },
+        { "label": "Who am I?", "flag": "whoami" },
+        { "label": "Logout", "flag": "logout" }
+      ]
+    }
+  ]
+}

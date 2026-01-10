@@ -1,0 +1,102 @@
+{
+  "command": "uv pip",
+  "description": "pip-compatible package management",
+  "placeholder_options": {
+    "<package>": "uv pip list --format=columns 2>/dev/null | tail -n +3 | awk '{print $1\"\\t\"$2}'"
+  },
+  "presets": [
+    { "label": "Install package", "flags": "install <package>" },
+    { "label": "Install from requirements", "flags": "install -r requirements.txt" },
+    { "label": "Install editable (current dir)", "flags": "install -e ." },
+    { "label": "Upgrade package", "flags": "install --upgrade <package>" },
+    { "label": "Freeze to requirements", "flags": "freeze > requirements.txt" },
+    { "label": "Compile requirements", "flags": "compile requirements.in -o requirements.txt" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install package", "flag": "install" },
+        { "label": "Uninstall package", "flag": "uninstall" },
+        { "label": "List installed", "flag": "list" },
+        { "label": "Show package info", "flag": "show" },
+        { "label": "Freeze requirements", "flag": "freeze" },
+        { "label": "Compile requirements.in", "flag": "compile" },
+        { "label": "Check dependencies", "flag": "check" }
+      ]
+    },
+    {
+      "id": "package",
+      "prompt": "Package name",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "uninstall_package",
+      "prompt": "Package to uninstall",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Uninstall package" }
+    },
+    {
+      "id": "show_package",
+      "prompt": "Package to show",
+      "type": "text",
+      "placeholder": "requests",
+      "when": { "action": "Show package info" }
+    },
+    {
+      "id": "requirements",
+      "prompt": "Install from requirements file?",
+      "type": "toggle",
+      "flag": "-r requirements.txt",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "editable",
+      "prompt": "Install in editable mode?",
+      "type": "toggle",
+      "flag": "-e",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "upgrade",
+      "prompt": "Upgrade if already installed?",
+      "type": "toggle",
+      "flag": "--upgrade",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "no_deps",
+      "prompt": "Skip dependencies?",
+      "type": "toggle",
+      "flag": "--no-deps",
+      "when": { "action": "Install package" }
+    },
+    {
+      "id": "compile_input",
+      "prompt": "Input file",
+      "type": "text",
+      "placeholder": "requirements.in",
+      "when": { "action": "Compile requirements.in" }
+    },
+    {
+      "id": "compile_output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "-o",
+      "placeholder": "requirements.txt",
+      "when": { "action": "Compile requirements.in" }
+    },
+    {
+      "id": "outdated",
+      "prompt": "Show outdated only?",
+      "type": "toggle",
+      "flag": "--outdated",
+      "when": { "action": "List installed" }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "command": "poetry shell",
+  "description": "Activate the virtual environment",
+  "presets": [
+    { "label": "Activate shell", "flags": "" }
+  ],
+  "steps": []
+}

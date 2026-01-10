@@ -1,0 +1,30 @@
+{
+  "command": "uv",
+  "description": "Fast Python package installer and environment manager",
+  "presets": [
+    { "label": "Install from requirements", "flags": "pip install -r requirements.txt" },
+    { "label": "Sync project dependencies", "flags": "sync" },
+    { "label": "Run Python script", "flags": "run python <script>" },
+    { "label": "Create virtualenv", "flags": "venv" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install packages (pip interface)", "chain": "uv-pip" },
+        { "label": "Add dependency to project", "chain": "uv-add" },
+        { "label": "Remove dependency", "chain": "uv-remove" },
+        { "label": "Sync dependencies", "chain": "uv-sync" },
+        { "label": "Lock dependencies", "chain": "uv-lock" },
+        { "label": "Manage virtual environments", "chain": "uv-venv" },
+        { "label": "Run command in environment", "chain": "uv-run" },
+        { "label": "Initialize new project", "chain": "uv-init" },
+        { "label": "Manage CLI tools", "chain": "uv-tool" },
+        { "label": "Show package tree", "flag": "tree" },
+        { "label": "Self update", "flag": "self update" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "command": "rails server",
+  "description": "Start the Rails development server",
+  "presets": [
+    { "label": "Default (port 3000)", "flags": "" },
+    { "label": "Custom port", "flags": "-p <port>" },
+    { "label": "Production mode", "flags": "-e production" },
+    { "label": "Bind to all interfaces", "flags": "-b 0.0.0.0" }
+  ],
+  "steps": [
+    {
+      "id": "environment",
+      "prompt": "Environment",
+      "type": "choice",
+      "options": [
+        { "label": "Development (default)", "flag": null },
+        { "label": "Test", "flag": "-e test" },
+        { "label": "Production", "flag": "-e production" }
+      ]
+    },
+    {
+      "id": "port",
+      "prompt": "Port number",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "3000"
+    },
+    {
+      "id": "binding",
+      "prompt": "Bind address",
+      "type": "choice",
+      "options": [
+        { "label": "Localhost only (default)", "flag": null },
+        { "label": "All interfaces (0.0.0.0)", "flag": "-b 0.0.0.0" },
+        { "label": "Custom address", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_binding",
+      "prompt": "Custom bind address",
+      "type": "text",
+      "flag": "-b",
+      "placeholder": "192.168.1.100",
+      "when": { "binding": "Custom address" }
+    },
+    {
+      "id": "daemon",
+      "prompt": "Run as daemon (background)?",
+      "type": "toggle",
+      "flag": "-d"
+    },
+    {
+      "id": "using",
+      "prompt": "Web server",
+      "type": "choice",
+      "options": [
+        { "label": "Default (Puma)", "flag": null },
+        { "label": "Webrick", "flag": "-u webrick" },
+        { "label": "Thin", "flag": "-u thin" }
+      ]
+    }
+  ]
+}

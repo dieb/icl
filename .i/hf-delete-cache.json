@@ -1,0 +1,22 @@
+{
+  "command": "hf delete-cache",
+  "description": "Delete entries from the local cache",
+  "placeholder_options": {
+    "<revision>": "hf scan-cache 2>/dev/null | grep -E '^\\s+[a-f0-9]{40}' | awk '{print $1}' | head -20"
+  },
+  "presets": [
+    { "label": "Interactive delete", "flags": "" },
+    { "label": "Delete all (with confirm)", "flags": "--all" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Delete mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive (select entries)", "flag": null },
+        { "label": "Delete all", "flag": "--all" }
+      ]
+    }
+  ]
+}

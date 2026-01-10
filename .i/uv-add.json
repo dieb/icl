@@ -1,0 +1,43 @@
+{
+  "command": "uv add",
+  "description": "Add dependencies to the project",
+  "presets": [
+    { "label": "Add package", "flags": "<package>" },
+    { "label": "Add dev dependency", "flags": "--dev <package>" },
+    { "label": "Add optional dependency", "flags": "--optional <group> <package>" }
+  ],
+  "steps": [
+    {
+      "id": "package",
+      "prompt": "Package to add",
+      "type": "text",
+      "placeholder": "requests"
+    },
+    {
+      "id": "dev",
+      "prompt": "Add as dev dependency?",
+      "type": "toggle",
+      "flag": "--dev"
+    },
+    {
+      "id": "optional_group",
+      "prompt": "Optional dependency group (optional)",
+      "type": "text",
+      "flag": "--optional",
+      "placeholder": "test"
+    },
+    {
+      "id": "extras",
+      "prompt": "Package extras (optional)",
+      "type": "text",
+      "flag": "--extra",
+      "placeholder": "async"
+    },
+    {
+      "id": "frozen",
+      "prompt": "Don't update lockfile?",
+      "type": "toggle",
+      "flag": "--frozen"
+    }
+  ]
+}

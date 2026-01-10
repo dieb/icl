@@ -1,0 +1,92 @@
+{
+  "command": "hf download",
+  "description": "Download files from Hugging Face Hub",
+  "placeholder_options": {
+    "<model_id>": "hf scan-cache 2>/dev/null | grep -E '^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+' | awk '{print $1}' | sort -u | head -20"
+  },
+  "presets": [
+    { "label": "Download model", "flags": "<model_id>" },
+    { "label": "Download dataset", "flags": "<dataset_id> --repo-type dataset" },
+    { "label": "Download specific file", "flags": "<repo_id> --include '<pattern>'" },
+    { "label": "Download GGUF file", "flags": "<model_id> --include '*.gguf'" },
+    { "label": "Download to local dir", "flags": "<repo_id> --local-dir <path>" },
+    { "label": "Download specific revision", "flags": "<repo_id> --revision <branch>" }
+  ],
+  "steps": [
+    {
+      "id": "repo_id",
+      "prompt": "Repository ID (e.g., meta-llama/Llama-2-7b)",
+      "type": "text",
+      "placeholder": "username/repo-name"
+    },
+    {
+      "id": "repo_type",
+      "prompt": "Repository type",
+      "type": "choice",
+      "options": [
+        { "label": "Model (default)", "flag": null },
+        { "label": "Dataset", "flag": "--repo-type dataset" },
+        { "label": "Space", "flag": "--repo-type space" }
+      ]
+    },
+    {
+      "id": "file_filter",
+      "prompt": "File selection",
+      "type": "choice",
+      "options": [
+        { "label": "All files", "flag": null },
+        { "label": "Specific pattern", "flag": null },
+        { "label": "Exclude pattern", "flag": null }
+      ]
+    },
+    {
+      "id": "include_pattern",
+      "prompt": "Include pattern (glob)",
+      "type": "text",
+      "flag": "--include",
+      "placeholder": "*.safetensors",
+      "when": { "file_filter": "Specific pattern" }
+    },
+    {
+      "id": "exclude_pattern",
+      "prompt": "Exclude pattern (glob)",
+      "type": "text",
+      "flag": "--exclude",
+      "placeholder": "*.bin",
+      "when": { "file_filter": "Exclude pattern" }
+    },
+    {
+      "id": "revision",
+      "prompt": "Revision/branch (optional)",
+      "type": "text",
+      "flag": "--revision",
+      "placeholder": "main"
+    },
+    {
+      "id": "local_dir",
+      "prompt": "Local directory (optional, uses cache by default)",
+      "type": "text",
+      "flag": "--local-dir",
+      "placeholder": "./models/my-model"
+    },
+    {
+      "id": "token",
+      "prompt": "HF token (optional, uses cached)",
+      "type": "text",
+      "flag": "--token",
+      "placeholder": "hf_..."
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode?",
+      "type": "toggle",
+      "flag": "--quiet"
+    },
+    {
+      "id": "force",
+      "prompt": "Force re-download?",
+      "type": "toggle",
+      "flag": "--force-download"
+    }
+  ]
+}

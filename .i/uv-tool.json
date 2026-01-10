@@ -1,0 +1,54 @@
+{
+  "command": "uv tool",
+  "description": "Manage Python CLI tools",
+  "placeholder_options": {
+    "<tool>": "uv tool list 2>/dev/null | grep -v '^-' | awk '{print $1}'"
+  },
+  "presets": [
+    { "label": "Install tool globally", "flags": "install <tool>" },
+    { "label": "Run tool once", "flags": "run <tool>" },
+    { "label": "Upgrade all tools", "flags": "upgrade --all" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Install tool", "flag": "install" },
+        { "label": "Run tool (without installing)", "flag": "run" },
+        { "label": "Uninstall tool", "flag": "uninstall" },
+        { "label": "Upgrade tool", "flag": "upgrade" },
+        { "label": "List installed tools", "flag": "list" }
+      ]
+    },
+    {
+      "id": "tool_name",
+      "prompt": "Tool name",
+      "type": "text",
+      "placeholder": "ruff",
+      "when": { "action": "Install tool" }
+    },
+    {
+      "id": "run_tool",
+      "prompt": "Tool to run",
+      "type": "text",
+      "placeholder": "black .",
+      "when": { "action": "Run tool (without installing)" }
+    },
+    {
+      "id": "uninstall_tool",
+      "prompt": "Tool to uninstall",
+      "type": "text",
+      "placeholder": "ruff",
+      "when": { "action": "Uninstall tool" }
+    },
+    {
+      "id": "upgrade_all",
+      "prompt": "Upgrade all tools?",
+      "type": "toggle",
+      "flag": "--all",
+      "when": { "action": "Upgrade tool" }
+    }
+  ]
+}

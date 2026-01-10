@@ -1,0 +1,169 @@
+{
+  "command": "rails generate",
+  "description": "Generate Rails code (models, controllers, migrations, etc.)",
+  "presets": [
+    { "label": "Model", "flags": "model <name> <fields>" },
+    { "label": "Controller", "flags": "controller <name> <actions>" },
+    { "label": "Migration", "flags": "migration <name>" },
+    { "label": "Scaffold", "flags": "scaffold <name> <fields>" }
+  ],
+  "steps": [
+    {
+      "id": "generator",
+      "prompt": "What do you want to generate?",
+      "type": "choice",
+      "options": [
+        { "label": "Model", "flag": "model" },
+        { "label": "Controller", "flag": "controller" },
+        { "label": "Migration", "flag": "migration" },
+        { "label": "Scaffold", "flag": "scaffold" },
+        { "label": "Resource", "flag": "resource" },
+        { "label": "Mailer", "flag": "mailer" },
+        { "label": "Job", "flag": "job" },
+        { "label": "Channel", "flag": "channel" },
+        { "label": "Helper", "flag": "helper" },
+        { "label": "Task", "flag": "task" },
+        { "label": "Stimulus controller", "flag": "stimulus" }
+      ]
+    },
+    {
+      "id": "model_name",
+      "prompt": "Model name (singular, CamelCase)",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "Model" }
+    },
+    {
+      "id": "model_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string email:string age:integer",
+      "when": { "generator": "Model" }
+    },
+    {
+      "id": "controller_name",
+      "prompt": "Controller name",
+      "type": "text",
+      "placeholder": "Users",
+      "when": { "generator": "Controller" }
+    },
+    {
+      "id": "controller_actions",
+      "prompt": "Actions (space-separated)",
+      "type": "text",
+      "placeholder": "index show new create edit update destroy",
+      "when": { "generator": "Controller" }
+    },
+    {
+      "id": "migration_name",
+      "prompt": "Migration name",
+      "type": "text",
+      "placeholder": "AddEmailToUsers",
+      "when": { "generator": "Migration" }
+    },
+    {
+      "id": "migration_fields",
+      "prompt": "Fields (optional)",
+      "type": "text",
+      "placeholder": "email:string:index",
+      "when": { "generator": "Migration" }
+    },
+    {
+      "id": "scaffold_name",
+      "prompt": "Scaffold name (singular)",
+      "type": "text",
+      "placeholder": "Article",
+      "when": { "generator": "Scaffold" }
+    },
+    {
+      "id": "scaffold_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "title:string body:text published:boolean",
+      "when": { "generator": "Scaffold" }
+    },
+    {
+      "id": "resource_name",
+      "prompt": "Resource name (singular)",
+      "type": "text",
+      "placeholder": "Post",
+      "when": { "generator": "Resource" }
+    },
+    {
+      "id": "resource_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "title:string content:text",
+      "when": { "generator": "Resource" }
+    },
+    {
+      "id": "mailer_name",
+      "prompt": "Mailer name",
+      "type": "text",
+      "placeholder": "UserMailer",
+      "when": { "generator": "Mailer" }
+    },
+    {
+      "id": "mailer_actions",
+      "prompt": "Mailer actions (space-separated)",
+      "type": "text",
+      "placeholder": "welcome password_reset",
+      "when": { "generator": "Mailer" }
+    },
+    {
+      "id": "job_name",
+      "prompt": "Job name",
+      "type": "text",
+      "placeholder": "ProcessPayment",
+      "when": { "generator": "Job" }
+    },
+    {
+      "id": "channel_name",
+      "prompt": "Channel name",
+      "type": "text",
+      "placeholder": "Chat",
+      "when": { "generator": "Channel" }
+    },
+    {
+      "id": "helper_name",
+      "prompt": "Helper name",
+      "type": "text",
+      "placeholder": "Application",
+      "when": { "generator": "Helper" }
+    },
+    {
+      "id": "task_namespace",
+      "prompt": "Task namespace:name",
+      "type": "text",
+      "placeholder": "maintenance:cleanup",
+      "when": { "generator": "Task" }
+    },
+    {
+      "id": "stimulus_name",
+      "prompt": "Stimulus controller name",
+      "type": "text",
+      "placeholder": "hello",
+      "when": { "generator": "Stimulus controller" }
+    },
+    {
+      "id": "skip_migration",
+      "prompt": "Skip migration?",
+      "type": "toggle",
+      "flag": "--skip-migration",
+      "when": { "generator": "Model" }
+    },
+    {
+      "id": "skip_test",
+      "prompt": "Skip test files?",
+      "type": "toggle",
+      "flag": "--skip-test"
+    },
+    {
+      "id": "api_only",
+      "prompt": "API only (no views)?",
+      "type": "toggle",
+      "flag": "--api",
+      "when": { "generator": "Scaffold" }
+    }
+  ]
+}

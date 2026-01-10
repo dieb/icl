@@ -1,0 +1,51 @@
+{
+  "command": "ruff format",
+  "description": "Format Python files",
+  "presets": [
+    { "label": "Format all", "flags": "." },
+    { "label": "Check format (no changes)", "flags": "--check ." },
+    { "label": "Show diff", "flags": "--diff ." },
+    { "label": "Format specific file", "flags": "<file>" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "Path to format",
+      "type": "text",
+      "placeholder": "."
+    },
+    {
+      "id": "check",
+      "prompt": "Check only (don't modify)?",
+      "type": "toggle",
+      "flag": "--check"
+    },
+    {
+      "id": "diff",
+      "prompt": "Show diff of changes?",
+      "type": "toggle",
+      "flag": "--diff"
+    },
+    {
+      "id": "line_length",
+      "prompt": "Line length (optional)",
+      "type": "text",
+      "flag": "--line-length",
+      "placeholder": "88"
+    },
+    {
+      "id": "target_version",
+      "prompt": "Target Python version (optional)",
+      "type": "text",
+      "flag": "--target-version",
+      "placeholder": "py39"
+    },
+    {
+      "id": "config",
+      "prompt": "Custom config file (optional)",
+      "type": "text",
+      "flag": "--config",
+      "placeholder": "pyproject.toml"
+    }
+  ]
+}

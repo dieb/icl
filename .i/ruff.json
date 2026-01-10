@@ -1,0 +1,27 @@
+{
+  "command": "ruff",
+  "description": "Fast Python linter and formatter",
+  "presets": [
+    { "label": "Lint current directory", "flags": "check ." },
+    { "label": "Lint and fix", "flags": "check --fix ." },
+    { "label": "Format current directory", "flags": "format ." },
+    { "label": "Format check (no changes)", "flags": "format --check ." },
+    { "label": "Lint with unsafe fixes", "flags": "check --fix --unsafe-fixes ." }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Check/Lint code", "chain": "ruff-check" },
+        { "label": "Format code", "chain": "ruff-format" },
+        { "label": "List all rules", "flag": "rule --all" },
+        { "label": "Explain a rule", "flag": "rule" },
+        { "label": "Show config", "flag": "config" },
+        { "label": "Clean cache", "flag": "clean" },
+        { "label": "Show version", "flag": "version" }
+      ]
+    }
+  ]
+}

@@ -74,11 +74,14 @@ Supported tools:
 - **Version Control**: [git](.i/git.json)
 - **Containers**: [docker](.i/docker.json)
 - **Node.js**: [npm](.i/npm.json), [yarn](.i/yarn.json), [pnpm](.i/pnpm.json)
-- **Python**: [pip](.i/pip.json)
+- **Python**: [pip](.i/pip.json), [uv](.i/uv.json), [poetry](.i/poetry.json), [pytest](.i/pytest.json), [ruff](.i/ruff.json)
+- **Ruby/Rails**: [rails](.i/rails.json), [bundle](.i/bundle.json), [rake](.i/rake.json), [rspec](.i/rspec.json), [rubocop](.i/rubocop.json)
 - **Rust**: [cargo](.i/cargo.json)
 - **Go**: [go](.i/go.json)
 - **Crystal**: [crystal](.i/crystal.json), [shards](.i/shards.json)
 - **HTTP**: [curl](.i/curl.json)
+- **AI Tools**: [claude](.i/claude.json)
+- **ML/AI**: [hf](.i/hf.json)
 
 See the [.i](.i/) directory for included configs:
 

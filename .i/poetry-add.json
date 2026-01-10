@@ -1,0 +1,60 @@
+{
+  "command": "poetry add",
+  "description": "Add dependencies to pyproject.toml",
+  "presets": [
+    { "label": "Add package", "flags": "<package>" },
+    { "label": "Add dev dependency", "flags": "--group dev <package>" },
+    { "label": "Add with extras", "flags": "<package>[<extras>]" },
+    { "label": "Add from git", "flags": "git+<url>" }
+  ],
+  "steps": [
+    {
+      "id": "package",
+      "prompt": "Package name",
+      "type": "text",
+      "placeholder": "requests"
+    },
+    {
+      "id": "group",
+      "prompt": "Dependency group",
+      "type": "choice",
+      "options": [
+        { "label": "Main dependencies", "flag": null },
+        { "label": "Dev dependencies", "flag": "--group dev" },
+        { "label": "Custom group", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_group",
+      "prompt": "Group name",
+      "type": "text",
+      "flag": "--group",
+      "placeholder": "test",
+      "when": { "group": "Custom group" }
+    },
+    {
+      "id": "extras",
+      "prompt": "Package extras (optional)",
+      "type": "text",
+      "placeholder": "security"
+    },
+    {
+      "id": "version",
+      "prompt": "Version constraint (optional)",
+      "type": "text",
+      "placeholder": "^2.0.0"
+    },
+    {
+      "id": "optional",
+      "prompt": "Mark as optional?",
+      "type": "toggle",
+      "flag": "--optional"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (don't modify files)?",
+      "type": "toggle",
+      "flag": "--dry-run"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "command": "claude mcp",
+  "description": "Manage MCP servers for Claude Code",
+  "placeholder_options": {
+    "<server>": "claude mcp list 2>/dev/null | grep -v '^No MCP' | awk '{print $1}'"
+  },
+  "presets": [
+    {
+      "label": "List all servers",
+      "flags": "list"
+    },
+    {
+      "label": "Import from Claude Desktop",
+      "flags": "add-from-claude-desktop"
+    },
+    {
+      "label": "Start MCP server",
+      "flags": "serve"
+    },
+    {
+      "label": "Get server details",
+      "flags": "get <server>"
+    },
+    {
+      "label": "Remove server",
+      "flags": "remove <server>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "List configured servers", "flag": "list" },
+        { "label": "Add a new server", "flag": "add" },
+        { "label": "Add server with JSON config", "flag": "add-json" },
+        { "label": "Import from Claude Desktop", "flag": "add-from-claude-desktop" },
+        { "label": "Get server details", "flag": "get" },
+        { "label": "Remove a server", "flag": "remove" },
+        { "label": "Start MCP server", "flag": "serve" },
+        { "label": "Reset project choices", "flag": "reset-project-choices" }
+      ]
+    },
+    {
+      "id": "server_name_new",
+      "prompt": "Server name",
+      "type": "text",
+      "placeholder": "my-server",
+      "when": { "action": "Add a new server" }
+    },
+    {
+      "id": "transport",
+      "prompt": "Transport type",
+      "type": "choice",
+      "options": [
+        { "label": "stdio (default)", "flag": null },
+        { "label": "HTTP", "flag": "--transport http" },
+        { "label": "SSE", "flag": "--transport sse" }
+      ],
+      "when": { "action": "Add a new server" }
+    },
+    {
+      "id": "command_or_url",
+      "prompt": "Command or URL",
+      "type": "text",
+      "placeholder": "npx my-mcp-server or https://mcp.example.com",
+      "when": { "action": "Add a new server" }
+    },
+    {
+      "id": "scope",
+      "prompt": "Configuration scope",
+      "type": "choice",
+      "options": [
+        { "label": "Local (default)", "flag": null },
+        { "label": "User (global)", "flag": "--scope user" },
+        { "label": "Project", "flag": "--scope project" }
+      ],
+      "when": { "action": "Add a new server" }
+    },
+    {
+      "id": "json_name",
+      "prompt": "Server name",
+      "type": "text",
+      "placeholder": "my-server",
+      "when": { "action": "Add server with JSON config" }
+    },
+    {
+      "id": "json_config",
+      "prompt": "JSON configuration",
+      "type": "text",
+      "placeholder": "{\"command\": \"npx\", \"args\": [\"my-mcp-server\"]}",
+      "when": { "action": "Add server with JSON config" }
+    },
+    {
+      "id": "server_name_get",
+      "prompt": "Server name to inspect",
+      "type": "text",
+      "placeholder": "my-server",
+      "when": { "action": "Get server details" }
+    },
+    {
+      "id": "server_name_remove",
+      "prompt": "Server name to remove",
+      "type": "text",
+      "placeholder": "my-server",
+      "when": { "action": "Remove a server" }
+    },
+    {
+      "id": "serve_port",
+      "prompt": "Port (optional)",
+      "type": "text",
+      "flag": "--port",
+      "placeholder": "3000",
+      "when": { "action": "Start MCP server" }
+    }
+  ]
+}

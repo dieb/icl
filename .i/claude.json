@@ -1,0 +1,15 @@
+{
+  "command": "claude",
+  "description": "Claude Code CLI",
+  "presets": [],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Manage MCP servers", "chain": "claude-mcp" }
+      ]
+    }
+  ]
+}

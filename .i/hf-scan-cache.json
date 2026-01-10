@@ -1,0 +1,16 @@
+{
+  "command": "hf scan-cache",
+  "description": "Scan the local Hugging Face cache",
+  "presets": [
+    { "label": "Show cache summary", "flags": "" },
+    { "label": "Show detailed", "flags": "-v" }
+  ],
+  "steps": [
+    {
+      "id": "verbose",
+      "prompt": "Show detailed information?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

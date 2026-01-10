@@ -1,0 +1,36 @@
+{
+  "command": "uv venv",
+  "description": "Create virtual environments",
+  "presets": [
+    { "label": "Create .venv", "flags": "" },
+    { "label": "Create with specific Python", "flags": "--python <version>" },
+    { "label": "Create named env", "flags": "<name>" }
+  ],
+  "steps": [
+    {
+      "id": "name",
+      "prompt": "Environment name/path (optional, defaults to .venv)",
+      "type": "text",
+      "placeholder": ".venv"
+    },
+    {
+      "id": "python",
+      "prompt": "Python version",
+      "type": "text",
+      "flag": "--python",
+      "placeholder": "3.11"
+    },
+    {
+      "id": "seed",
+      "prompt": "Install seed packages (pip, setuptools)?",
+      "type": "toggle",
+      "flag": "--seed"
+    },
+    {
+      "id": "system_site_packages",
+      "prompt": "Allow system site packages?",
+      "type": "toggle",
+      "flag": "--system-site-packages"
+    }
+  ]
+}

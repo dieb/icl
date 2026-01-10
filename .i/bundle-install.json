@@ -1,0 +1,79 @@
+{
+  "command": "bundle install",
+  "description": "Install Ruby gem dependencies",
+  "presets": [
+    { "label": "Standard install", "flags": "" },
+    { "label": "Install to vendor/bundle", "flags": "--path vendor/bundle" },
+    { "label": "Without dev and test", "flags": "--without development test" },
+    { "label": "Production (frozen)", "flags": "--deployment --frozen" },
+    { "label": "Parallel install", "flags": "--jobs 4" }
+  ],
+  "steps": [
+    {
+      "id": "path",
+      "prompt": "Installation path",
+      "type": "choice",
+      "options": [
+        { "label": "Default (system/user gems)", "flag": null },
+        { "label": "vendor/bundle (project-local)", "flag": "--path vendor/bundle" },
+        { "label": "Custom path", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_path",
+      "prompt": "Custom installation path",
+      "type": "text",
+      "flag": "--path",
+      "placeholder": "/path/to/gems",
+      "when": { "path": "Custom path" }
+    },
+    {
+      "id": "without",
+      "prompt": "Groups to exclude",
+      "type": "text",
+      "flag": "--without",
+      "placeholder": "development test"
+    },
+    {
+      "id": "jobs",
+      "prompt": "Parallel jobs",
+      "type": "choice",
+      "options": [
+        { "label": "Default (1)", "flag": null },
+        { "label": "2 jobs", "flag": "--jobs 2" },
+        { "label": "4 jobs", "flag": "--jobs 4" },
+        { "label": "8 jobs", "flag": "--jobs 8" }
+      ]
+    },
+    {
+      "id": "deployment",
+      "prompt": "Deployment mode?",
+      "type": "toggle",
+      "flag": "--deployment"
+    },
+    {
+      "id": "frozen",
+      "prompt": "Frozen mode (fail if Gemfile.lock needs update)?",
+      "type": "toggle",
+      "flag": "--frozen"
+    },
+    {
+      "id": "clean",
+      "prompt": "Clean unused gems after install?",
+      "type": "toggle",
+      "flag": "--clean"
+    },
+    {
+      "id": "force",
+      "prompt": "Force reinstall all gems?",
+      "type": "toggle",
+      "flag": "--force"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode?",
+      "type": "toggle",
+      "flag": "--quiet"
+    }
+  ]
+}

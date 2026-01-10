@@ -1,0 +1,134 @@
+{
+  "command": "rubocop",
+  "description": "Ruby static code analyzer and formatter",
+  "presets": [
+    { "label": "Check all files", "flags": "" },
+    { "label": "Auto-correct safe", "flags": "-a" },
+    { "label": "Auto-correct all (unsafe)", "flags": "-A" },
+    { "label": "Only Lint cops", "flags": "--only Lint" },
+    { "label": "Generate TODO config", "flags": "--auto-gen-config" },
+    { "label": "Parallel execution", "flags": "--parallel" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "What to check?",
+      "type": "choice",
+      "options": [
+        { "label": "All files", "flag": null },
+        { "label": "Specific file(s)", "flag": null },
+        { "label": "Specific directory", "flag": null }
+      ]
+    },
+    {
+      "id": "files",
+      "prompt": "File(s) to check",
+      "type": "text",
+      "placeholder": "app/models/user.rb",
+      "when": { "target": "Specific file(s)" }
+    },
+    {
+      "id": "directory",
+      "prompt": "Directory to check",
+      "type": "text",
+      "placeholder": "app/models",
+      "when": { "target": "Specific directory" }
+    },
+    {
+      "id": "autocorrect",
+      "prompt": "Auto-correct mode",
+      "type": "choice",
+      "options": [
+        { "label": "No auto-correct (check only)", "flag": null },
+        { "label": "Safe auto-correct (-a)", "flag": "-a" },
+        { "label": "Unsafe auto-correct (-A)", "flag": "-A" }
+      ]
+    },
+    {
+      "id": "only",
+      "prompt": "Only specific cops (optional)",
+      "type": "text",
+      "flag": "--only",
+      "placeholder": "Layout/LineLength,Style/StringLiterals"
+    },
+    {
+      "id": "except",
+      "prompt": "Exclude specific cops (optional)",
+      "type": "text",
+      "flag": "--except",
+      "placeholder": "Metrics/MethodLength"
+    },
+    {
+      "id": "department",
+      "prompt": "Only specific department",
+      "type": "choice",
+      "options": [
+        { "label": "All departments", "flag": null },
+        { "label": "Layout", "flag": "--only Layout" },
+        { "label": "Lint", "flag": "--only Lint" },
+        { "label": "Metrics", "flag": "--only Metrics" },
+        { "label": "Naming", "flag": "--only Naming" },
+        { "label": "Security", "flag": "--only Security" },
+        { "label": "Style", "flag": "--only Style" }
+      ]
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Progress (default)", "flag": null },
+        { "label": "Simple", "flag": "--format simple" },
+        { "label": "Clang style", "flag": "--format clang" },
+        { "label": "JSON", "flag": "--format json" },
+        { "label": "HTML", "flag": "--format html" },
+        { "label": "Offenses count", "flag": "--format offenses" }
+      ]
+    },
+    {
+      "id": "parallel",
+      "prompt": "Run in parallel?",
+      "type": "toggle",
+      "flag": "--parallel"
+    },
+    {
+      "id": "fail_level",
+      "prompt": "Minimum severity to fail",
+      "type": "choice",
+      "options": [
+        { "label": "Default (all offenses)", "flag": null },
+        { "label": "Convention", "flag": "--fail-level convention" },
+        { "label": "Warning", "flag": "--fail-level warning" },
+        { "label": "Error", "flag": "--fail-level error" },
+        { "label": "Fatal", "flag": "--fail-level fatal" }
+      ]
+    },
+    {
+      "id": "display_cop_names",
+      "prompt": "Display cop names?",
+      "type": "toggle",
+      "flag": "--display-cop-names"
+    },
+    {
+      "id": "display_style_guide",
+      "prompt": "Show style guide URLs?",
+      "type": "toggle",
+      "flag": "--display-style-guide"
+    },
+    {
+      "id": "cache",
+      "prompt": "Cache mode",
+      "type": "choice",
+      "options": [
+        { "label": "Use cache (default)", "flag": null },
+        { "label": "Disable cache", "flag": "--no-cache" }
+      ]
+    },
+    {
+      "id": "auto_gen_config",
+      "prompt": "Generate TODO config?",
+      "type": "toggle",
+      "flag": "--auto-gen-config"
+    }
+  ]
+}

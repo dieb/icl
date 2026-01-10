@@ -1,0 +1,45 @@
+{
+  "command": "rustup default",
+  "description": "Set the default Rust toolchain",
+  "placeholder_options": {
+    "<toolchain>": "rustup toolchain list | sed 's/ (default)//'"
+  },
+  "presets": [
+    {
+      "label": "Use stable",
+      "flags": "stable"
+    },
+    {
+      "label": "Use nightly",
+      "flags": "nightly"
+    },
+    {
+      "label": "Use beta",
+      "flags": "beta"
+    },
+    {
+      "label": "Use installed",
+      "flags": "<toolchain>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "toolchain",
+      "prompt": "Which toolchain to set as default?",
+      "type": "choice",
+      "options": [
+        { "label": "Stable", "flag": "stable" },
+        { "label": "Beta", "flag": "beta" },
+        { "label": "Nightly", "flag": "nightly" },
+        { "label": "Enter manually", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_toolchain",
+      "prompt": "Toolchain name",
+      "type": "text",
+      "placeholder": "stable-x86_64-unknown-linux-gnu",
+      "when": { "toolchain": "Enter manually" }
+    }
+  ]
+}

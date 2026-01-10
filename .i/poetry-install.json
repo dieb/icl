@@ -1,0 +1,56 @@
+{
+  "command": "poetry install",
+  "description": "Install project dependencies",
+  "presets": [
+    { "label": "Install all", "flags": "" },
+    { "label": "Install without dev", "flags": "--without dev" },
+    { "label": "Install only main", "flags": "--only main" },
+    { "label": "Sync (remove unlisted)", "flags": "--sync" }
+  ],
+  "steps": [
+    {
+      "id": "groups",
+      "prompt": "Which dependency groups?",
+      "type": "choice",
+      "options": [
+        { "label": "All groups", "flag": null },
+        { "label": "Without dev", "flag": "--without dev" },
+        { "label": "Only main", "flag": "--only main" },
+        { "label": "Specific groups", "flag": null }
+      ]
+    },
+    {
+      "id": "with_groups",
+      "prompt": "Groups to include (comma-separated)",
+      "type": "text",
+      "flag": "--with",
+      "placeholder": "dev,test",
+      "when": { "groups": "Specific groups" }
+    },
+    {
+      "id": "sync",
+      "prompt": "Sync (remove packages not in lock)?",
+      "type": "toggle",
+      "flag": "--sync"
+    },
+    {
+      "id": "no_root",
+      "prompt": "Skip installing project itself?",
+      "type": "toggle",
+      "flag": "--no-root"
+    },
+    {
+      "id": "extras",
+      "prompt": "Extras to install (optional)",
+      "type": "text",
+      "flag": "--extras",
+      "placeholder": "all"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run?",
+      "type": "toggle",
+      "flag": "--dry-run"
+    }
+  ]
+}

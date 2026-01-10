@@ -1,0 +1,65 @@
+{
+  "command": "cargo fmt",
+  "description": "Format Rust source code",
+  "presets": [
+    {
+      "label": "Format all",
+      "flags": ""
+    },
+    {
+      "label": "Check only",
+      "flags": "--check"
+    },
+    {
+      "label": "All packages",
+      "flags": "--all"
+    },
+    {
+      "label": "Verbose check",
+      "flags": "--check -v"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Format files", "flag": null },
+        { "label": "Check formatting only", "flag": "--check" }
+      ]
+    },
+    {
+      "id": "scope",
+      "prompt": "Which packages to format?",
+      "type": "choice",
+      "options": [
+        { "label": "Current package", "flag": null },
+        { "label": "All packages in workspace", "flag": "--all" }
+      ]
+    },
+    {
+      "id": "package",
+      "prompt": "Specific package (leave empty for default)",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "package-name"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "message_format",
+      "prompt": "Message format",
+      "type": "choice",
+      "options": [
+        { "label": "Human-readable", "flag": null },
+        { "label": "Short", "flag": "--message-format short" },
+        { "label": "JSON", "flag": "--message-format json" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "command": "poetry build",
+  "description": "Build the package",
+  "presets": [
+    { "label": "Build wheel and sdist", "flags": "" },
+    { "label": "Build wheel only", "flags": "-f wheel" },
+    { "label": "Build sdist only", "flags": "-f sdist" }
+  ],
+  "steps": [
+    {
+      "id": "format",
+      "prompt": "Build format",
+      "type": "choice",
+      "options": [
+        { "label": "Both wheel and sdist", "flag": null },
+        { "label": "Wheel only", "flag": "-f wheel" },
+        { "label": "Sdist only", "flag": "-f sdist" }
+      ]
+    },
+    {
+      "id": "output",
+      "prompt": "Output directory (optional)",
+      "type": "text",
+      "flag": "-o",
+      "placeholder": "dist/"
+    }
+  ]
+}

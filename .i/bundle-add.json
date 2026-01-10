@@ -1,0 +1,77 @@
+{
+  "command": "bundle add",
+  "description": "Add a gem to the Gemfile",
+  "presets": [
+    { "label": "Add gem (latest)", "flags": "<gem>" },
+    { "label": "Add as dev dependency", "flags": "<gem> --group development" },
+    { "label": "Add with version", "flags": "<gem> --version '<version>'" }
+  ],
+  "steps": [
+    {
+      "id": "gem_name",
+      "prompt": "Gem name",
+      "type": "text",
+      "placeholder": "devise"
+    },
+    {
+      "id": "version",
+      "prompt": "Version constraint (optional)",
+      "type": "text",
+      "flag": "--version",
+      "placeholder": "~> 4.9"
+    },
+    {
+      "id": "group",
+      "prompt": "Add to group",
+      "type": "choice",
+      "options": [
+        { "label": "Default (no group)", "flag": null },
+        { "label": "Development", "flag": "--group development" },
+        { "label": "Test", "flag": "--group test" },
+        { "label": "Development and Test", "flag": "--group development,test" },
+        { "label": "Production", "flag": "--group production" },
+        { "label": "Custom group", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_group",
+      "prompt": "Custom group name",
+      "type": "text",
+      "flag": "--group",
+      "placeholder": "my_group",
+      "when": { "group": "Custom group" }
+    },
+    {
+      "id": "git",
+      "prompt": "Git repository (optional)",
+      "type": "text",
+      "flag": "--git",
+      "placeholder": "https://github.com/user/repo"
+    },
+    {
+      "id": "branch",
+      "prompt": "Git branch (optional)",
+      "type": "text",
+      "flag": "--branch",
+      "placeholder": "main"
+    },
+    {
+      "id": "skip_install",
+      "prompt": "Skip bundle install after adding?",
+      "type": "toggle",
+      "flag": "--skip-install"
+    },
+    {
+      "id": "strict",
+      "prompt": "Use strict version (=)?",
+      "type": "toggle",
+      "flag": "--strict"
+    },
+    {
+      "id": "optimistic",
+      "prompt": "Use optimistic version (>=)?",
+      "type": "toggle",
+      "flag": "--optimistic"
+    }
+  ]
+}

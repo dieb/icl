@@ -1,0 +1,43 @@
+{
+  "command": "poetry remove",
+  "description": "Remove dependencies from pyproject.toml",
+  "placeholder_options": {
+    "<package>": "poetry show --no-ansi 2>/dev/null | awk '{print $1\"\\t\"$2}' | head -30"
+  },
+  "presets": [
+    { "label": "Remove package", "flags": "<package>" },
+    { "label": "Remove dev dependency", "flags": "--group dev <package>" }
+  ],
+  "steps": [
+    {
+      "id": "package",
+      "prompt": "Package to remove",
+      "type": "text",
+      "placeholder": "requests"
+    },
+    {
+      "id": "group",
+      "prompt": "From which group?",
+      "type": "choice",
+      "options": [
+        { "label": "Main dependencies", "flag": null },
+        { "label": "Dev dependencies", "flag": "--group dev" },
+        { "label": "Custom group", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_group",
+      "prompt": "Group name",
+      "type": "text",
+      "flag": "--group",
+      "placeholder": "test",
+      "when": { "group": "Custom group" }
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run?",
+      "type": "toggle",
+      "flag": "--dry-run"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "command": "rustup show",
+  "description": "Show installed toolchains and active toolchain",
+  "presets": [
+    {
+      "label": "Show all info",
+      "flags": ""
+    },
+    {
+      "label": "Active toolchain",
+      "flags": "active-toolchain"
+    },
+    {
+      "label": "Rustup home",
+      "flags": "home"
+    },
+    {
+      "label": "Current profile",
+      "flags": "profile"
+    }
+  ],
+  "steps": [
+    {
+      "id": "info",
+      "prompt": "What do you want to see?",
+      "type": "choice",
+      "options": [
+        { "label": "All installed toolchains and components", "flag": null },
+        { "label": "Active toolchain only", "flag": "active-toolchain" },
+        { "label": "Rustup home directory", "flag": "home" },
+        { "label": "Current profile", "flag": "profile" }
+      ]
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

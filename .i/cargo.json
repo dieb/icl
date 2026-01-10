@@ -10,10 +10,10 @@
       "options": [
         { "label": "Build project", "chain": "cargo-build" },
         { "label": "Run project", "chain": "cargo-run" },
-        { "label": "Run tests", "flag": "test" },
+        { "label": "Run tests", "chain": "cargo-test" },
         { "label": "Check for errors", "flag": "check" },
-        { "label": "Run clippy (lints)", "flag": "clippy" },
-        { "label": "Format code", "flag": "fmt" },
+        { "label": "Run clippy (lints)", "chain": "cargo-clippy" },
+        { "label": "Format code", "chain": "cargo-fmt" },
         { "label": "Add dependency", "flag": "add" },
         { "label": "Update dependencies", "flag": "update" },
         { "label": "Generate docs", "flag": "doc" },

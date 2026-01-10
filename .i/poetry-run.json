@@ -1,0 +1,21 @@
+{
+  "command": "poetry run",
+  "description": "Run a command in the virtual environment",
+  "placeholder_options": {
+    "<script>": "find . -maxdepth 2 -name '*.py' -type f 2>/dev/null | head -20 | sed 's|^\\./||'"
+  },
+  "presets": [
+    { "label": "Run Python file", "flags": "python <script>" },
+    { "label": "Run pytest", "flags": "pytest" },
+    { "label": "Run module", "flags": "python -m <module>" },
+    { "label": "Run script from pyproject", "flags": "<script_name>" }
+  ],
+  "steps": [
+    {
+      "id": "command",
+      "prompt": "Command to run",
+      "type": "text",
+      "placeholder": "python main.py"
+    }
+  ]
+}
