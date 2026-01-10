@@ -1,0 +1,62 @@
+{
+  "command": "git push",
+  "description": "Update remote refs",
+  "placeholder_options": {
+    "<remote>": "git remote",
+    "<branch>": "git branch --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "Push current branch",
+      "flags": ""
+    },
+    {
+      "label": "Push and set upstream",
+      "flags": "-u origin HEAD"
+    },
+    {
+      "label": "Force with lease (safe force)",
+      "flags": "--force-with-lease"
+    },
+    {
+      "label": "Push all tags",
+      "flags": "--tags"
+    }
+  ],
+  "steps": [
+    {
+      "id": "remote",
+      "prompt": "Remote to push to",
+      "type": "text",
+      "placeholder": "origin"
+    },
+    {
+      "id": "branch",
+      "prompt": "Branch to push (leave empty for current)",
+      "type": "text",
+      "placeholder": ""
+    },
+    {
+      "id": "set_upstream",
+      "prompt": "Set upstream tracking?",
+      "type": "toggle",
+      "flag": "-u"
+    },
+    {
+      "id": "force",
+      "prompt": "Force push?",
+      "type": "choice",
+      "options": [
+        { "label": "No", "flag": null },
+        { "label": "Force with lease (safe)", "flag": "--force-with-lease" },
+        { "label": "Force (dangerous)", "flag": "--force" }
+      ]
+    },
+    {
+      "id": "tags",
+      "prompt": "Push tags?",
+      "type": "toggle",
+      "flag": "--tags"
+    }
+  ]
+}

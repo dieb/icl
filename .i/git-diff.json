@@ -1,0 +1,67 @@
+{
+  "command": "git diff",
+  "description": "Show changes between commits, working tree, etc",
+  "presets": [
+    {
+      "label": "Staged changes",
+      "flags": "--staged"
+    },
+    {
+      "label": "Unstaged changes",
+      "flags": ""
+    },
+    {
+      "label": "Last commit",
+      "flags": "HEAD~1"
+    },
+    {
+      "label": "Summary only",
+      "flags": "--stat"
+    }
+  ],
+  "steps": [
+    {
+      "id": "what",
+      "prompt": "What to compare?",
+      "type": "choice",
+      "options": [
+        { "label": "Unstaged changes", "flag": null },
+        { "label": "Staged changes", "flag": "--staged" },
+        { "label": "Between commits", "flag": null },
+        { "label": "Specific file", "flag": null }
+      ]
+    },
+    {
+      "id": "commit",
+      "prompt": "Commit or range (e.g., HEAD~3 or main..feature)",
+      "type": "text",
+      "placeholder": "HEAD~1",
+      "when": { "what": "Between commits" }
+    },
+    {
+      "id": "file",
+      "prompt": "File path",
+      "type": "text",
+      "placeholder": "src/main.rs",
+      "when": { "what": "Specific file" }
+    },
+    {
+      "id": "stat",
+      "prompt": "Show summary stats only?",
+      "type": "toggle",
+      "flag": "--stat"
+    },
+    {
+      "id": "name_only",
+      "prompt": "Show file names only?",
+      "type": "toggle",
+      "flag": "--name-only"
+    },
+    {
+      "id": "word_diff",
+      "prompt": "Word-level diff?",
+      "type": "toggle",
+      "flag": "--word-diff"
+    }
+  ]
+}

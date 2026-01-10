@@ -1,0 +1,70 @@
+{
+  "command": "git merge",
+  "description": "Join development histories together",
+  "placeholder_options": {
+    "<branch>": "git branch --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "Merge main",
+      "flags": "main"
+    },
+    {
+      "label": "No fast-forward merge",
+      "flags": "--no-ff <branch>"
+    },
+    {
+      "label": "Squash merge",
+      "flags": "--squash <branch>"
+    },
+    {
+      "label": "Abort merge",
+      "flags": "--abort"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Merge a branch", "flag": null },
+        { "label": "Abort current merge", "flag": "--abort" },
+        { "label": "Continue after resolving", "flag": "--continue" }
+      ]
+    },
+    {
+      "id": "branch",
+      "prompt": "Branch to merge",
+      "type": "text",
+      "placeholder": "feature/my-branch",
+      "when": { "action": "Merge a branch" }
+    },
+    {
+      "id": "ff",
+      "prompt": "Fast-forward strategy",
+      "type": "choice",
+      "options": [
+        { "label": "Default (fast-forward if possible)", "flag": null },
+        { "label": "Always create merge commit", "flag": "--no-ff" },
+        { "label": "Fast-forward only (fail otherwise)", "flag": "--ff-only" }
+      ],
+      "when": { "action": "Merge a branch" }
+    },
+    {
+      "id": "squash",
+      "prompt": "Squash commits into one?",
+      "type": "toggle",
+      "flag": "--squash",
+      "when": { "action": "Merge a branch" }
+    },
+    {
+      "id": "message",
+      "prompt": "Custom merge message",
+      "type": "text",
+      "flag": "-m",
+      "placeholder": "Merge feature into main",
+      "when": { "action": "Merge a branch" }
+    }
+  ]
+}

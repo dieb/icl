@@ -1,0 +1,66 @@
+{
+  "command": "git stash",
+  "description": "Stash changes in a dirty working directory",
+  "presets": [
+    {
+      "label": "Quick stash",
+      "flags": "push"
+    },
+    {
+      "label": "Stash with message",
+      "flags": "push -m '<message>'"
+    },
+    {
+      "label": "Pop latest stash",
+      "flags": "pop"
+    },
+    {
+      "label": "List stashes",
+      "flags": "list"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Save changes to stash", "flag": "push" },
+        { "label": "Pop latest stash", "flag": "pop" },
+        { "label": "Apply stash (keep in list)", "flag": "apply" },
+        { "label": "List all stashes", "flag": "list" },
+        { "label": "Show stash contents", "flag": "show" },
+        { "label": "Drop a stash", "flag": "drop" }
+      ]
+    },
+    {
+      "id": "message",
+      "prompt": "Stash message",
+      "type": "text",
+      "flag": "-m",
+      "placeholder": "WIP: feature work",
+      "when": { "action": "Save changes to stash" }
+    },
+    {
+      "id": "include_untracked",
+      "prompt": "Include untracked files?",
+      "type": "toggle",
+      "flag": "--include-untracked",
+      "when": { "action": "Save changes to stash" }
+    },
+    {
+      "id": "stash_ref",
+      "prompt": "Stash reference (e.g., stash@{0})",
+      "type": "text",
+      "placeholder": "stash@{0}",
+      "when": { "action": "Apply stash (keep in list)" }
+    },
+    {
+      "id": "drop_ref",
+      "prompt": "Stash to drop",
+      "type": "text",
+      "placeholder": "stash@{0}",
+      "when": { "action": "Drop a stash" }
+    }
+  ]
+}

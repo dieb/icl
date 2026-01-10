@@ -1,0 +1,25 @@
+{
+  "command": "git",
+  "description": "Git version control",
+  "presets": [],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Commit changes", "chain": "git-commit" },
+        { "label": "Push to remote", "chain": "git-push" },
+        { "label": "Pull from remote", "chain": "git-pull" },
+        { "label": "Switch branches", "chain": "git-checkout" },
+        { "label": "Manage branches", "chain": "git-branch" },
+        { "label": "Stage files", "chain": "git-add" },
+        { "label": "Stash changes", "chain": "git-stash" },
+        { "label": "View history", "chain": "git-log" },
+        { "label": "Show differences", "chain": "git-diff" },
+        { "label": "Merge branches", "chain": "git-merge" },
+        { "label": "Rebase commits", "chain": "git-rebase" }
+      ]
+    }
+  ]
+}

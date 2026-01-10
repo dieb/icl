@@ -1,0 +1,77 @@
+{
+  "command": "git branch",
+  "description": "List, create, or delete branches",
+  "placeholder_options": {
+    "<branch>": "git branch --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "List all branches",
+      "flags": "-a"
+    },
+    {
+      "label": "List with last commit",
+      "flags": "-v"
+    },
+    {
+      "label": "Delete merged branches",
+      "flags": "-d <branch>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "List branches", "flag": null },
+        { "label": "Create branch", "flag": null },
+        { "label": "Delete branch", "flag": "-d" },
+        { "label": "Force delete branch", "flag": "-D" },
+        { "label": "Rename current branch", "flag": "-m" }
+      ]
+    },
+    {
+      "id": "all",
+      "prompt": "Include remote branches?",
+      "type": "toggle",
+      "flag": "-a",
+      "when": { "action": "List branches" }
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show last commit info?",
+      "type": "toggle",
+      "flag": "-v",
+      "when": { "action": "List branches" }
+    },
+    {
+      "id": "branch_name",
+      "prompt": "Branch name",
+      "type": "text",
+      "placeholder": "feature/my-branch",
+      "when": { "action": "Create branch" }
+    },
+    {
+      "id": "delete_branch",
+      "prompt": "Branch to delete",
+      "type": "text",
+      "placeholder": "old-branch",
+      "when": { "action": "Delete branch" }
+    },
+    {
+      "id": "force_delete_branch",
+      "prompt": "Branch to force delete",
+      "type": "text",
+      "placeholder": "unmerged-branch",
+      "when": { "action": "Force delete branch" }
+    },
+    {
+      "id": "new_name",
+      "prompt": "New branch name",
+      "type": "text",
+      "placeholder": "new-name",
+      "when": { "action": "Rename current branch" }
+    }
+  ]
+}

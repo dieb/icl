@@ -1,0 +1,51 @@
+{
+  "command": "git commit",
+  "description": "Record changes to the repository",
+  "presets": [
+    {
+      "label": "Quick commit (add all + message)",
+      "flags": "-am '<message>'"
+    },
+    {
+      "label": "Amend last commit",
+      "flags": "--amend --no-edit"
+    },
+    {
+      "label": "WIP commit",
+      "flags": "-am 'WIP'"
+    }
+  ],
+  "steps": [
+    {
+      "id": "add_all",
+      "prompt": "Stage all tracked changes first?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "message",
+      "prompt": "Commit message",
+      "type": "text",
+      "flag": "-m",
+      "placeholder": "feat: add new feature"
+    },
+    {
+      "id": "amend",
+      "prompt": "Amend the last commit?",
+      "type": "toggle",
+      "flag": "--amend"
+    },
+    {
+      "id": "no_verify",
+      "prompt": "Skip pre-commit hooks?",
+      "type": "toggle",
+      "flag": "--no-verify"
+    },
+    {
+      "id": "signoff",
+      "prompt": "Add Signed-off-by line?",
+      "type": "toggle",
+      "flag": "--signoff"
+    }
+  ]
+}

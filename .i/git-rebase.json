@@ -1,0 +1,67 @@
+{
+  "command": "git rebase",
+  "description": "Reapply commits on top of another base",
+  "placeholder_options": {
+    "<branch>": "git branch --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "Rebase onto main",
+      "flags": "main"
+    },
+    {
+      "label": "Interactive rebase last 3",
+      "flags": "-i HEAD~3"
+    },
+    {
+      "label": "Continue rebase",
+      "flags": "--continue"
+    },
+    {
+      "label": "Abort rebase",
+      "flags": "--abort"
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Rebase onto branch", "flag": null },
+        { "label": "Interactive rebase", "flag": "-i" },
+        { "label": "Continue after resolving", "flag": "--continue" },
+        { "label": "Skip current commit", "flag": "--skip" },
+        { "label": "Abort rebase", "flag": "--abort" }
+      ]
+    },
+    {
+      "id": "branch",
+      "prompt": "Branch to rebase onto",
+      "type": "text",
+      "placeholder": "main",
+      "when": { "action": "Rebase onto branch" }
+    },
+    {
+      "id": "commits",
+      "prompt": "How many commits to rebase interactively?",
+      "type": "text",
+      "placeholder": "HEAD~3",
+      "when": { "action": "Interactive rebase" }
+    },
+    {
+      "id": "autostash",
+      "prompt": "Auto-stash local changes?",
+      "type": "toggle",
+      "flag": "--autostash",
+      "when": { "action": "Rebase onto branch" }
+    },
+    {
+      "id": "autosquash",
+      "prompt": "Auto-squash fixup commits?",
+      "type": "toggle",
+      "flag": "--autosquash",
+      "when": { "action": "Interactive rebase" }
+    }
+  ]
+}

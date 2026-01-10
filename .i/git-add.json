@@ -1,0 +1,44 @@
+{
+  "command": "git add",
+  "description": "Stage files for commit",
+  "presets": [
+    {
+      "label": "Add all files",
+      "flags": "-A"
+    },
+    {
+      "label": "Add tracked files only",
+      "flags": "-u"
+    },
+    {
+      "label": "Interactive patch mode",
+      "flags": "-p"
+    }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What do you want to stage?",
+      "type": "choice",
+      "options": [
+        { "label": "All changes (new, modified, deleted)", "flag": "-A" },
+        { "label": "Tracked files only (modified, deleted)", "flag": "-u" },
+        { "label": "Specific files", "flag": null },
+        { "label": "Interactive patch selection", "flag": "-p" }
+      ]
+    },
+    {
+      "id": "path",
+      "prompt": "File or directory to stage",
+      "type": "text",
+      "placeholder": "src/",
+      "when": { "mode": "Specific files" }
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show files being added?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

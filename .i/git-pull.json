@@ -1,0 +1,54 @@
+{
+  "command": "git pull",
+  "description": "Fetch and integrate remote changes",
+  "placeholder_options": {
+    "<remote>": "git remote",
+    "<branch>": "git branch -r --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "Pull with rebase",
+      "flags": "--rebase"
+    },
+    {
+      "label": "Pull and merge",
+      "flags": ""
+    },
+    {
+      "label": "Pull with autostash",
+      "flags": "--rebase --autostash"
+    }
+  ],
+  "steps": [
+    {
+      "id": "remote",
+      "prompt": "Remote to pull from",
+      "type": "text",
+      "placeholder": "origin"
+    },
+    {
+      "id": "branch",
+      "prompt": "Branch to pull (leave empty for current)",
+      "type": "text",
+      "placeholder": ""
+    },
+    {
+      "id": "rebase",
+      "prompt": "Rebase instead of merge?",
+      "type": "toggle",
+      "flag": "--rebase"
+    },
+    {
+      "id": "autostash",
+      "prompt": "Auto-stash local changes?",
+      "type": "toggle",
+      "flag": "--autostash"
+    },
+    {
+      "id": "ff_only",
+      "prompt": "Fast-forward only (fail if not possible)?",
+      "type": "toggle",
+      "flag": "--ff-only"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "command": "git log",
+  "description": "Show commit history",
+  "presets": [
+    {
+      "label": "Oneline graph",
+      "flags": "--oneline --graph --all"
+    },
+    {
+      "label": "Last 10 commits",
+      "flags": "-10 --oneline"
+    },
+    {
+      "label": "Today's commits",
+      "flags": "--since='1 day ago' --oneline"
+    },
+    {
+      "label": "My commits this week",
+      "flags": "--author=\"$(git config user.name)\" --since='1 week ago' --oneline"
+    }
+  ],
+  "steps": [
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Oneline (compact)", "flag": "--oneline" },
+        { "label": "Short", "flag": "--format=short" },
+        { "label": "Full (default)", "flag": null },
+        { "label": "Show patches", "flag": "-p" }
+      ]
+    },
+    {
+      "id": "graph",
+      "prompt": "Show branch graph?",
+      "type": "toggle",
+      "flag": "--graph"
+    },
+    {
+      "id": "all",
+      "prompt": "Show all branches?",
+      "type": "toggle",
+      "flag": "--all"
+    },
+    {
+      "id": "limit",
+      "prompt": "Limit number of commits",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "10"
+    },
+    {
+      "id": "author",
+      "prompt": "Filter by author",
+      "type": "text",
+      "flag": "--author",
+      "placeholder": "name or email"
+    },
+    {
+      "id": "since",
+      "prompt": "Show commits since",
+      "type": "text",
+      "flag": "--since",
+      "placeholder": "1 week ago"
+    },
+    {
+      "id": "path",
+      "prompt": "Filter by file path",
+      "type": "text",
+      "placeholder": "src/"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "command": "git checkout",
+  "description": "Switch branches or restore files",
+  "placeholder_options": {
+    "<branch>": "git branch --format='%(refname:short)'"
+  },
+  "presets": [
+    {
+      "label": "Switch to main",
+      "flags": "main"
+    },
+    {
+      "label": "Switch to master",
+      "flags": "master"
+    },
+    {
+      "label": "Create and switch to new branch",
+      "flags": "-b <branch>"
+    },
+    {
+      "label": "Discard all changes",
+      "flags": "-- ."
+    }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Switch to existing branch", "flag": null },
+        { "label": "Create new branch", "flag": "-b" },
+        { "label": "Restore file from HEAD", "flag": "--" }
+      ]
+    },
+    {
+      "id": "branch",
+      "prompt": "Branch name",
+      "type": "text",
+      "placeholder": "feature/my-branch",
+      "when": { "action": "Switch to existing branch" }
+    },
+    {
+      "id": "new_branch",
+      "prompt": "New branch name",
+      "type": "text",
+      "placeholder": "feature/new-branch",
+      "when": { "action": "Create new branch" }
+    },
+    {
+      "id": "file",
+      "prompt": "File path to restore",
+      "type": "text",
+      "placeholder": "src/file.ts",
+      "when": { "action": "Restore file from HEAD" }
+    },
+    {
+      "id": "track",
+      "prompt": "Track remote branch?",
+      "type": "toggle",
+      "flag": "--track",
+      "when": { "action": "Create new branch" }
+    }
+  ]
+}
