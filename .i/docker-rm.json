@@ -1,0 +1,45 @@
+{
+  "command": "docker rm",
+  "description": "Remove containers",
+  "placeholder_options": {
+    "<container>": "docker ps -a --format '{{.Names}}\t{{.ID}}'"
+  },
+  "presets": [
+    {
+      "label": "Remove stopped container",
+      "flags": "<container>"
+    },
+    {
+      "label": "Force remove (even if running)",
+      "flags": "-f <container>"
+    },
+    {
+      "label": "Remove with volumes",
+      "flags": "-v <container>"
+    },
+    {
+      "label": "Remove all stopped containers",
+      "flags": "$(docker ps -aq -f status=exited)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "force",
+      "prompt": "Force remove (even if running)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "volumes",
+      "prompt": "Remove associated volumes?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "container",
+      "prompt": "Container name or ID",
+      "type": "text",
+      "placeholder": "my-container"
+    }
+  ]
+}

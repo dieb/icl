@@ -1,0 +1,36 @@
+{
+  "command": "docker stop",
+  "description": "Stop running containers",
+  "placeholder_options": {
+    "<container>": "docker ps --format '{{.Names}}\t{{.ID}}'"
+  },
+  "presets": [
+    {
+      "label": "Stop container",
+      "flags": "<container>"
+    },
+    {
+      "label": "Stop with 30s timeout",
+      "flags": "-t 30 <container>"
+    },
+    {
+      "label": "Stop immediately (1s)",
+      "flags": "-t 1 <container>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "timeout",
+      "prompt": "Timeout before killing (seconds)",
+      "type": "text",
+      "flag": "-t",
+      "placeholder": "10"
+    },
+    {
+      "id": "container",
+      "prompt": "Container name or ID",
+      "type": "text",
+      "placeholder": "my-container"
+    }
+  ]
+}

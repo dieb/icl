@@ -9,10 +9,13 @@
       "type": "choice",
       "options": [
         { "label": "Run a container", "chain": "docker-run" },
+        { "label": "Stop a container", "chain": "docker-stop" },
+        { "label": "Remove a container", "chain": "docker-rm" },
         { "label": "List containers", "chain": "docker-ps" },
         { "label": "View logs", "chain": "docker-logs" },
         { "label": "Execute in container", "chain": "docker-exec" },
         { "label": "Build an image", "chain": "docker-build" },
+        { "label": "Remove an image", "chain": "docker-rmi" },
         { "label": "List images", "chain": "docker-images" }
       ]
     }

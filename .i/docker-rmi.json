@@ -1,0 +1,41 @@
+{
+  "command": "docker rmi",
+  "description": "Remove images",
+  "placeholder_options": {
+    "<image>": "docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'"
+  },
+  "presets": [
+    {
+      "label": "Remove image",
+      "flags": "<image>"
+    },
+    {
+      "label": "Force remove",
+      "flags": "-f <image>"
+    },
+    {
+      "label": "Remove dangling images",
+      "flags": "$(docker images -qf dangling=true)"
+    }
+  ],
+  "steps": [
+    {
+      "id": "force",
+      "prompt": "Force remove (even if used by containers)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "no_prune",
+      "prompt": "Keep untagged parent images?",
+      "type": "toggle",
+      "flag": "--no-prune"
+    },
+    {
+      "id": "image",
+      "prompt": "Image name or ID",
+      "type": "text",
+      "placeholder": "ubuntu:latest"
+    }
+  ]
+}
