@@ -1,6 +1,9 @@
 {
   "command": "docker exec",
   "description": "Execute a command in a running container",
+  "placeholder_options": {
+    "<container>": "docker ps --format '{{.Names}}\t{{.ID}}'"
+  },
   "presets": [
     {
       "label": "Interactive bash shell",

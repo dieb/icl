@@ -1,6 +1,9 @@
 {
   "command": "docker logs",
   "description": "Fetch container logs",
+  "placeholder_options": {
+    "<container>": "docker ps --format '{{.Names}}\t{{.ID}}'"
+  },
   "presets": [
     {
       "label": "Follow logs (live)",

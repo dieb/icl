@@ -41,9 +41,10 @@ pub struct Wizard {
     toggle_value: bool,
     text_buffer: String,
     multi_selected: Vec<bool>,
-    // Container selection for docker logs
-    containers: Vec<(String, String)>, // (name, id) pairs
-    container_index: usize,
+    // Dynamic placeholder options (e.g., container selection)
+    placeholder_values: Vec<(String, String)>, // (name, id) pairs
+    placeholder_index: usize,
+    active_placeholder: Option<String>, // The placeholder key being resolved
 }
 
 impl Wizard {
@@ -66,8 +67,9 @@ impl Wizard {
             toggle_value: false,
             text_buffer: String::new(),
             multi_selected: Vec::new(),
-            containers: Vec::new(),
-            container_index: 0,
+            placeholder_values: Vec::new(),
+            placeholder_index: 0,
+            active_placeholder: None,
         }
     }
 
@@ -243,8 +245,8 @@ impl Wizard {
     }
 
     fn prepare_confirm_phase(&mut self) {
-        if self.should_show_container_selection() {
-            self.fetch_containers();
+        if self.has_placeholder_options() {
+            self.fetch_placeholder_values();
         }
     }
 
@@ -354,26 +356,40 @@ impl Wizard {
             .collect()
     }
 
-    fn is_docker_logs_command(&self) -> bool {
-        self.base_command.len() >= 2
-            && self.base_command[0] == "docker"
-            && self.base_command[1] == "logs"
+    fn has_placeholder_options(&self) -> bool {
+        let cmd = self.current_command();
+        self.config
+            .placeholder_options
+            .keys()
+            .any(|p| cmd.contains(p))
     }
 
-    fn has_container_placeholder(&self) -> bool {
-        self.current_command().contains("<container>")
+    fn get_active_placeholder(&self) -> Option<(&str, &str)> {
+        let cmd = self.current_command();
+        self.config
+            .placeholder_options
+            .iter()
+            .find(|(placeholder, _)| cmd.contains(*placeholder))
+            .map(|(p, c)| (p.as_str(), c.as_str()))
     }
 
-    fn should_show_container_selection(&self) -> bool {
-        self.is_docker_logs_command() && self.has_container_placeholder()
-    }
+    fn fetch_placeholder_values(&mut self) {
+        self.placeholder_values.clear();
+        self.placeholder_index = 0;
+        self.active_placeholder = None;
 
-    fn fetch_containers(&mut self) {
-        self.containers.clear();
-        self.container_index = 0;
+        let Some((placeholder, fetch_cmd)) = self.get_active_placeholder() else {
+            return;
+        };
 
-        let output = std::process::Command::new("docker")
-            .args(["ps", "--format", "{{.Names}}\t{{.ID}}"])
+        // Copy values to avoid borrow issues
+        let placeholder = placeholder.to_string();
+        let fetch_cmd = fetch_cmd.to_string();
+
+        self.active_placeholder = Some(placeholder);
+
+        let output = std::process::Command::new("sh")
+            .args(["-c", &fetch_cmd])
             .output();
 
         if let Ok(output) = output {
@@ -382,15 +398,20 @@ impl Wizard {
                 for line in stdout.lines() {
                     let parts: Vec<&str> = line.split('\t').collect();
                     if parts.len() == 2 {
-                        self.containers.push((parts[0].to_string(), parts[1].to_string()));
+                        self.placeholder_values
+                            .push((parts[0].to_string(), parts[1].to_string()));
                     }
                 }
             }
         }
     }
 
-    fn command_with_container(&self, container_name: &str) -> String {
-        self.current_command().replace("<container>", container_name)
+    fn command_with_placeholder(&self, value: &str) -> String {
+        if let Some(placeholder) = &self.active_placeholder {
+            self.current_command().replace(placeholder, value)
+        } else {
+            self.current_command()
+        }
     }
 }
 
@@ -526,19 +547,19 @@ pub fn run(config: Config, base_command: Vec<String>) -> io::Result<WizardResult
                     }
                     KeyCode::Char('q') => break Ok(WizardResult::Quit),
                     KeyCode::Up | KeyCode::Char('k') => {
-                        if !wizard.containers.is_empty() && wizard.container_index > 0 {
-                            wizard.container_index -= 1;
+                        if !wizard.placeholder_values.is_empty() && wizard.placeholder_index > 0 {
+                            wizard.placeholder_index -= 1;
                         }
                     }
                     KeyCode::Down | KeyCode::Char('j') => {
-                        if wizard.container_index + 1 < wizard.containers.len() {
-                            wizard.container_index += 1;
+                        if wizard.placeholder_index + 1 < wizard.placeholder_values.len() {
+                            wizard.placeholder_index += 1;
                         }
                     }
                     KeyCode::Enter => {
-                        let cmd = if wizard.should_show_container_selection() && !wizard.containers.is_empty() {
-                            let container_name = &wizard.containers[wizard.container_index].0;
-                            wizard.command_with_container(container_name)
+                        let cmd = if wizard.has_placeholder_options() && !wizard.placeholder_values.is_empty() {
+                            let value = &wizard.placeholder_values[wizard.placeholder_index].0;
+                            wizard.command_with_placeholder(value)
                         } else {
                             wizard.current_command()
                         };
@@ -647,7 +668,7 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
         }
         Phase::Confirm => {
             let cmd = wizard.current_command();
-            let show_containers = wizard.should_show_container_selection();
+            let show_placeholder_options = wizard.has_placeholder_options();
 
             let mut content = vec![
                 Line::from(""),
@@ -660,10 +681,10 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 Line::from(""),
             ];
 
-            if show_containers {
-                if wizard.containers.is_empty() {
+            if show_placeholder_options {
+                if wizard.placeholder_values.is_empty() {
                     content.push(Line::from(Span::styled(
-                        "No running containers found.",
+                        "No options found.",
                         Style::default().fg(Color::Yellow),
                     )));
                 } else {
@@ -671,8 +692,8 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                         "Run on:",
                         Style::default().fg(Color::DarkGray),
                     )));
-                    for (i, (name, id)) in wizard.containers.iter().enumerate() {
-                        let is_selected = i == wizard.container_index;
+                    for (i, (name, id)) in wizard.placeholder_values.iter().enumerate() {
+                        let is_selected = i == wizard.placeholder_index;
                         let marker = if is_selected { "● " } else { "○ " };
                         let style = if is_selected {
                             Style::default().fg(Color::Cyan).bold()
@@ -692,7 +713,7 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
             let paragraph = Paragraph::new(content).block(block);
             f.render_widget(paragraph, chunks[0]);
 
-            let help_text = if show_containers && !wizard.containers.is_empty() {
+            let help_text = if show_placeholder_options && !wizard.placeholder_values.is_empty() {
                 "↑↓ select  Enter run  ^C copy  Esc back  q quit"
             } else {
                 "^C copy  Esc back  q quit"

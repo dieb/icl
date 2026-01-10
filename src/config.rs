@@ -12,6 +12,8 @@ pub struct Config {
     pub steps: Vec<Step>,
     #[serde(default)]
     pub presets: Vec<Preset>,
+    #[serde(default)]
+    pub placeholder_options: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
