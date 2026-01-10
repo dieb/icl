@@ -1,0 +1,92 @@
+{
+  "command": "make",
+  "description": "Build targets from Makefile",
+  "placeholder_options": {
+    "<target>": "make -pRrq 2>/dev/null | grep -E '^[a-zA-Z0-9_][a-zA-Z0-9_-]*:' | cut -d: -f1 | sort -u | grep -v '^Makefile$'"
+  },
+  "presets": [
+    {
+      "label": "Build target",
+      "flags": "<target>"
+    },
+    {
+      "label": "Build all (default)",
+      "flags": ""
+    },
+    {
+      "label": "Clean",
+      "flags": "clean"
+    },
+    {
+      "label": "Clean and rebuild",
+      "flags": "clean && make"
+    },
+    {
+      "label": "Install",
+      "flags": "install"
+    },
+    {
+      "label": "Test",
+      "flags": "test"
+    },
+    {
+      "label": "Parallel build",
+      "flags": "-j$(nproc) <target>"
+    }
+  ],
+  "steps": [
+    {
+      "id": "jobs",
+      "prompt": "Parallel jobs?",
+      "type": "choice",
+      "options": [
+        { "label": "Single (default)", "flag": null },
+        { "label": "Auto (all cores)", "flag": "-j$(nproc)" },
+        { "label": "2 jobs", "flag": "-j2" },
+        { "label": "4 jobs", "flag": "-j4" },
+        { "label": "8 jobs", "flag": "-j8" }
+      ]
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (print commands without executing)?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "keep_going",
+      "prompt": "Keep going on errors?",
+      "type": "toggle",
+      "flag": "-k"
+    },
+    {
+      "id": "silent",
+      "prompt": "Silent mode (no command echoing)?",
+      "type": "toggle",
+      "flag": "-s"
+    },
+    {
+      "id": "custom_makefile",
+      "prompt": "Use custom Makefile?",
+      "type": "choice",
+      "options": [
+        { "label": "Default (Makefile)", "flag": null },
+        { "label": "Specify path", "flag": null }
+      ]
+    },
+    {
+      "id": "makefile_path",
+      "prompt": "Makefile path",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "path/to/Makefile",
+      "when": { "custom_makefile": "Specify path" }
+    },
+    {
+      "id": "target",
+      "prompt": "Target to build (optional)",
+      "type": "text",
+      "placeholder": "all"
+    }
+  ]
+}
