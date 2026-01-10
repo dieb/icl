@@ -1,18 +1,21 @@
 {
   "command": "docker run",
   "description": "Run a container from an image",
+  "placeholder_options": {
+    "<image>": "docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}'"
+  },
   "presets": [
     {
       "label": "Interactive shell",
-      "flags": "-it --rm"
+      "flags": "-it --rm <image>"
     },
     {
       "label": "Detached with auto-remove",
-      "flags": "-d --rm"
+      "flags": "-d --rm <image>"
     },
     {
       "label": "Interactive with current dir mounted",
-      "flags": "-it --rm -v $(pwd):/app -w /app"
+      "flags": "-it --rm -v $(pwd):/app -w /app <image>"
     }
   ],
   "steps": [
