@@ -1,0 +1,77 @@
+{
+  "command": "terraform plan",
+  "description": "Preview infrastructure changes",
+  "placeholder_options": {
+    "<var_file>": "find . -maxdepth 2 -name '*.tfvars' -o -name '*.tfvars.json' 2>/dev/null | sed 's|^\\./||' | head -10"
+  },
+  "presets": [
+    { "label": "Standard plan", "flags": "" },
+    { "label": "Plan with var file", "flags": "-var-file=<var_file>" },
+    { "label": "Plan destroy", "flags": "-destroy" },
+    { "label": "Save plan to file", "flags": "-out=tfplan" },
+    { "label": "Compact output", "flags": "-compact-warnings" },
+    { "label": "Target specific resource", "flags": "-target=<resource>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Plan type",
+      "type": "choice",
+      "options": [
+        { "label": "Standard plan", "flag": null },
+        { "label": "Destroy plan", "flag": "-destroy" },
+        { "label": "Refresh-only plan", "flag": "-refresh-only" }
+      ]
+    },
+    {
+      "id": "var_file",
+      "prompt": "Variable file (optional)",
+      "type": "text",
+      "flag": "-var-file",
+      "placeholder": "terraform.tfvars"
+    },
+    {
+      "id": "var",
+      "prompt": "Variable override (optional)",
+      "type": "text",
+      "flag": "-var",
+      "placeholder": "key=value"
+    },
+    {
+      "id": "target",
+      "prompt": "Target resource (optional)",
+      "type": "text",
+      "flag": "-target",
+      "placeholder": "aws_instance.example"
+    },
+    {
+      "id": "out",
+      "prompt": "Save plan to file (optional)",
+      "type": "text",
+      "flag": "-out",
+      "placeholder": "tfplan"
+    },
+    {
+      "id": "refresh",
+      "prompt": "Refresh state before planning?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No", "flag": "-refresh=false" }
+      ]
+    },
+    {
+      "id": "compact",
+      "prompt": "Compact warnings?",
+      "type": "toggle",
+      "flag": "-compact-warnings"
+    },
+    {
+      "id": "parallelism",
+      "prompt": "Parallelism (optional)",
+      "type": "text",
+      "flag": "-parallelism",
+      "placeholder": "10"
+    }
+  ]
+}

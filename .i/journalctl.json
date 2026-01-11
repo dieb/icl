@@ -1,0 +1,112 @@
+{
+  "command": "journalctl",
+  "description": "Query the systemd journal",
+  "placeholder_options": {
+    "<unit>": "systemctl list-units --type=service --no-legend 2>/dev/null | awk '{print $1}' | head -30"
+  },
+  "presets": [
+    { "label": "Follow all logs", "flags": "-f" },
+    { "label": "Follow unit logs", "flags": "-f -u <unit>" },
+    { "label": "Kernel messages", "flags": "-k" },
+    { "label": "Last boot", "flags": "-b" },
+    { "label": "Previous boot", "flags": "-b -1" },
+    { "label": "Last 100 lines", "flags": "-n 100" },
+    { "label": "Errors only", "flags": "-p err" },
+    { "label": "Since yesterday", "flags": "--since yesterday" },
+    { "label": "Disk usage", "flags": "--disk-usage" }
+  ],
+  "steps": [
+    {
+      "id": "unit",
+      "prompt": "Filter by unit (optional)",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "nginx.service"
+    },
+    {
+      "id": "follow",
+      "prompt": "Follow (live stream)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "boot",
+      "prompt": "Boot selection",
+      "type": "choice",
+      "options": [
+        { "label": "All boots", "flag": null },
+        { "label": "Current boot", "flag": "-b" },
+        { "label": "Previous boot", "flag": "-b -1" },
+        { "label": "Two boots ago", "flag": "-b -2" }
+      ]
+    },
+    {
+      "id": "priority",
+      "prompt": "Minimum priority level",
+      "type": "choice",
+      "options": [
+        { "label": "All levels", "flag": null },
+        { "label": "Emergency (0)", "flag": "-p emerg" },
+        { "label": "Alert (1)", "flag": "-p alert" },
+        { "label": "Critical (2)", "flag": "-p crit" },
+        { "label": "Error (3)", "flag": "-p err" },
+        { "label": "Warning (4)", "flag": "-p warning" },
+        { "label": "Notice (5)", "flag": "-p notice" },
+        { "label": "Info (6)", "flag": "-p info" },
+        { "label": "Debug (7)", "flag": "-p debug" }
+      ]
+    },
+    {
+      "id": "lines",
+      "prompt": "Number of lines to show (optional)",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "100"
+    },
+    {
+      "id": "since",
+      "prompt": "Since when (optional)",
+      "type": "text",
+      "flag": "--since",
+      "placeholder": "yesterday, 1 hour ago, 2024-01-01"
+    },
+    {
+      "id": "until",
+      "prompt": "Until when (optional)",
+      "type": "text",
+      "flag": "--until",
+      "placeholder": "now, 1 hour ago, 2024-01-01"
+    },
+    {
+      "id": "output",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Short (one line)", "flag": "-o short" },
+        { "label": "Verbose", "flag": "-o verbose" },
+        { "label": "JSON", "flag": "-o json" },
+        { "label": "JSON pretty", "flag": "-o json-pretty" },
+        { "label": "Cat (message only)", "flag": "-o cat" }
+      ]
+    },
+    {
+      "id": "kernel",
+      "prompt": "Kernel messages only?",
+      "type": "toggle",
+      "flag": "-k"
+    },
+    {
+      "id": "reverse",
+      "prompt": "Reverse order (newest first)?",
+      "type": "toggle",
+      "flag": "-r"
+    },
+    {
+      "id": "no_pager",
+      "prompt": "Disable pager?",
+      "type": "toggle",
+      "flag": "--no-pager"
+    }
+  ]
+}

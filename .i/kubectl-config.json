@@ -1,0 +1,93 @@
+{
+  "command": "kubectl config",
+  "description": "Manage kubeconfig contexts",
+  "placeholder_options": {
+    "<context>": "kubectl config get-contexts -o name 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "View current context", "flags": "current-context" },
+    { "label": "List contexts", "flags": "get-contexts" },
+    { "label": "Use context", "flags": "use-context <context>" },
+    { "label": "View config", "flags": "view" },
+    { "label": "View config (minified)", "flags": "view --minify" },
+    { "label": "Set default namespace", "flags": "set-context --current --namespace=<namespace>" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "Config action",
+      "type": "choice",
+      "options": [
+        { "label": "View current context", "flag": "current-context" },
+        { "label": "List all contexts", "flag": "get-contexts" },
+        { "label": "Switch context", "flag": "use-context" },
+        { "label": "View full config", "flag": "view" },
+        { "label": "Set namespace for context", "flag": "set-context" },
+        { "label": "Get clusters", "flag": "get-clusters" },
+        { "label": "Get users", "flag": "get-users" },
+        { "label": "Delete context", "flag": "delete-context" },
+        { "label": "Rename context", "flag": "rename-context" }
+      ]
+    },
+    {
+      "id": "context",
+      "prompt": "Context name",
+      "type": "text",
+      "placeholder": "my-cluster-context",
+      "when": { "action": "Switch context" }
+    },
+    {
+      "id": "delete_context",
+      "prompt": "Context to delete",
+      "type": "text",
+      "placeholder": "old-context",
+      "when": { "action": "Delete context" }
+    },
+    {
+      "id": "old_name",
+      "prompt": "Current context name",
+      "type": "text",
+      "placeholder": "old-name",
+      "when": { "action": "Rename context" }
+    },
+    {
+      "id": "new_name",
+      "prompt": "New context name",
+      "type": "text",
+      "placeholder": "new-name",
+      "when": { "action": "Rename context" }
+    },
+    {
+      "id": "set_context_target",
+      "prompt": "Context to modify",
+      "type": "choice",
+      "options": [
+        { "label": "Current context", "flag": "--current" },
+        { "label": "Specific context", "flag": null }
+      ],
+      "when": { "action": "Set namespace for context" }
+    },
+    {
+      "id": "set_context_name",
+      "prompt": "Context name",
+      "type": "text",
+      "placeholder": "my-context",
+      "when": { "set_context_target": "Specific context" }
+    },
+    {
+      "id": "namespace",
+      "prompt": "Default namespace",
+      "type": "text",
+      "flag": "--namespace",
+      "placeholder": "my-namespace",
+      "when": { "action": "Set namespace for context" }
+    },
+    {
+      "id": "minify",
+      "prompt": "Minify output (current context only)?",
+      "type": "toggle",
+      "flag": "--minify",
+      "when": { "action": "View full config" }
+    }
+  ]
+}

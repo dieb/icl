@@ -1,0 +1,99 @@
+{
+  "command": "mount",
+  "description": "Mount a filesystem",
+  "placeholder_options": {
+    "<device>": "lsblk -rno NAME,TYPE 2>/dev/null | awk '$2==\"part\" || $2==\"disk\" {print \"/dev/\" $1}' | head -20"
+  },
+  "presets": [
+    { "label": "List all mounts", "flags": "" },
+    { "label": "List mounts (pretty)", "flags": "-l" },
+    { "label": "Mount device", "flags": "<device> <mountpoint>" },
+    { "label": "Mount ISO", "flags": "-o loop <iso_file> <mountpoint>" },
+    { "label": "Mount NFS", "flags": "-t nfs <server>:<path> <mountpoint>" },
+    { "label": "Mount CIFS/SMB", "flags": "-t cifs //<server>/<share> <mountpoint> -o username=<user>" },
+    { "label": "Mount read-only", "flags": "-o ro <device> <mountpoint>" },
+    { "label": "Remount read-write", "flags": "-o remount,rw <mountpoint>" },
+    { "label": "Mount all from fstab", "flags": "-a" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What to do",
+      "type": "choice",
+      "options": [
+        { "label": "List current mounts", "flag": null },
+        { "label": "Mount a device", "flag": null },
+        { "label": "Mount all from fstab", "flag": "-a" },
+        { "label": "Remount", "flag": null }
+      ]
+    },
+    {
+      "id": "device",
+      "prompt": "Device or source",
+      "type": "text",
+      "placeholder": "/dev/sdb1 or //server/share",
+      "when": { "mode": "Mount a device" }
+    },
+    {
+      "id": "mountpoint",
+      "prompt": "Mount point",
+      "type": "text",
+      "placeholder": "/mnt/data",
+      "when": { "mode": "Mount a device" }
+    },
+    {
+      "id": "remount_point",
+      "prompt": "Mount point to remount",
+      "type": "text",
+      "placeholder": "/mnt/data",
+      "when": { "mode": "Remount" }
+    },
+    {
+      "id": "fstype",
+      "prompt": "Filesystem type",
+      "type": "choice",
+      "options": [
+        { "label": "Auto-detect", "flag": null },
+        { "label": "ext4", "flag": "-t ext4" },
+        { "label": "xfs", "flag": "-t xfs" },
+        { "label": "btrfs", "flag": "-t btrfs" },
+        { "label": "ntfs", "flag": "-t ntfs" },
+        { "label": "vfat (FAT32)", "flag": "-t vfat" },
+        { "label": "exfat", "flag": "-t exfat" },
+        { "label": "nfs", "flag": "-t nfs" },
+        { "label": "cifs (SMB)", "flag": "-t cifs" },
+        { "label": "iso9660", "flag": "-t iso9660" },
+        { "label": "tmpfs", "flag": "-t tmpfs" }
+      ],
+      "when": { "mode": "Mount a device" }
+    },
+    {
+      "id": "read_mode",
+      "prompt": "Read/write mode",
+      "type": "choice",
+      "options": [
+        { "label": "Read-write (default)", "flag": null },
+        { "label": "Read-only", "flag": "-o ro" }
+      ]
+    },
+    {
+      "id": "loop",
+      "prompt": "Loop device (for ISO/images)?",
+      "type": "toggle",
+      "flag": "-o loop"
+    },
+    {
+      "id": "options",
+      "prompt": "Additional options (optional)",
+      "type": "text",
+      "flag": "-o",
+      "placeholder": "uid=1000,gid=1000"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

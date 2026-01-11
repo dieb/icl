@@ -1,0 +1,86 @@
+{
+  "command": "kubectl apply",
+  "description": "Apply configuration to resources",
+  "presets": [
+    { "label": "Apply file", "flags": "-f <file>" },
+    { "label": "Apply directory", "flags": "-f <directory>/" },
+    { "label": "Dry-run (client)", "flags": "-f <file> --dry-run=client" },
+    { "label": "Dry-run (server)", "flags": "-f <file> --dry-run=server" },
+    { "label": "Apply from URL", "flags": "-f <url>" },
+    { "label": "Apply kustomization", "flags": "-k <directory>" }
+  ],
+  "steps": [
+    {
+      "id": "source",
+      "prompt": "Apply from",
+      "type": "choice",
+      "options": [
+        { "label": "File", "flag": null },
+        { "label": "Directory", "flag": null },
+        { "label": "Kustomization", "flag": null },
+        { "label": "URL", "flag": null }
+      ]
+    },
+    {
+      "id": "file",
+      "prompt": "Manifest file path",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "deployment.yaml",
+      "when": { "source": "File" }
+    },
+    {
+      "id": "directory",
+      "prompt": "Directory path",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "./manifests/",
+      "when": { "source": "Directory" }
+    },
+    {
+      "id": "kustomize",
+      "prompt": "Kustomization directory",
+      "type": "text",
+      "flag": "-k",
+      "placeholder": "./overlays/production",
+      "when": { "source": "Kustomization" }
+    },
+    {
+      "id": "url",
+      "prompt": "URL to manifest",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "https://raw.githubusercontent.com/...",
+      "when": { "source": "URL" }
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace (optional)",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default"
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run mode",
+      "type": "choice",
+      "options": [
+        { "label": "None (apply for real)", "flag": null },
+        { "label": "Client-side dry run", "flag": "--dry-run=client" },
+        { "label": "Server-side dry run", "flag": "--dry-run=server" }
+      ]
+    },
+    {
+      "id": "force",
+      "prompt": "Force replace?",
+      "type": "toggle",
+      "flag": "--force"
+    },
+    {
+      "id": "prune",
+      "prompt": "Prune deleted resources?",
+      "type": "toggle",
+      "flag": "--prune"
+    }
+  ]
+}

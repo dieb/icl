@@ -1,0 +1,61 @@
+{
+  "command": "kubectl exec",
+  "description": "Execute commands in a container",
+  "placeholder_options": {
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Interactive bash", "flags": "-it <pod> -- bash" },
+    { "label": "Interactive sh", "flags": "-it <pod> -- sh" },
+    { "label": "Run command", "flags": "<pod> -- <command>" }
+  ],
+  "steps": [
+    {
+      "id": "pod",
+      "prompt": "Pod name",
+      "type": "text",
+      "placeholder": "my-pod"
+    },
+    {
+      "id": "namespace_scope",
+      "prompt": "Namespace",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace_scope": "Specific namespace" }
+    },
+    {
+      "id": "container",
+      "prompt": "Container name (optional)",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "app"
+    },
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive TTY", "flag": "-it" },
+        { "label": "Non-interactive", "flag": null }
+      ]
+    },
+    {
+      "id": "command",
+      "prompt": "Command to run",
+      "type": "text",
+      "flag": "--",
+      "placeholder": "bash"
+    }
+  ]
+}

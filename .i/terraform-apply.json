@@ -1,0 +1,76 @@
+{
+  "command": "terraform apply",
+  "description": "Apply infrastructure changes",
+  "placeholder_options": {
+    "<var_file>": "find . -maxdepth 2 -name '*.tfvars' -o -name '*.tfvars.json' 2>/dev/null | sed 's|^\\./||' | head -10",
+    "<plan_file>": "find . -maxdepth 1 -name '*.tfplan' -o -name 'tfplan' 2>/dev/null | sed 's|^\\./||' | head -5"
+  },
+  "presets": [
+    { "label": "Apply with approval", "flags": "" },
+    { "label": "Auto-approve", "flags": "-auto-approve" },
+    { "label": "Apply saved plan", "flags": "<plan_file>" },
+    { "label": "Apply with var file", "flags": "-var-file=<var_file>" },
+    { "label": "Target specific resource", "flags": "-target=<resource>" }
+  ],
+  "steps": [
+    {
+      "id": "source",
+      "prompt": "Apply from",
+      "type": "choice",
+      "options": [
+        { "label": "Current configuration", "flag": null },
+        { "label": "Saved plan file", "flag": null }
+      ]
+    },
+    {
+      "id": "plan_file",
+      "prompt": "Plan file path",
+      "type": "text",
+      "placeholder": "tfplan",
+      "when": { "source": "Saved plan file" }
+    },
+    {
+      "id": "auto_approve",
+      "prompt": "Auto-approve (skip confirmation)?",
+      "type": "toggle",
+      "flag": "-auto-approve"
+    },
+    {
+      "id": "var_file",
+      "prompt": "Variable file (optional)",
+      "type": "text",
+      "flag": "-var-file",
+      "placeholder": "terraform.tfvars"
+    },
+    {
+      "id": "var",
+      "prompt": "Variable override (optional)",
+      "type": "text",
+      "flag": "-var",
+      "placeholder": "key=value"
+    },
+    {
+      "id": "target",
+      "prompt": "Target resource (optional)",
+      "type": "text",
+      "flag": "-target",
+      "placeholder": "aws_instance.example"
+    },
+    {
+      "id": "parallelism",
+      "prompt": "Parallelism (optional)",
+      "type": "text",
+      "flag": "-parallelism",
+      "placeholder": "10"
+    },
+    {
+      "id": "lock",
+      "prompt": "Lock state during apply?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No", "flag": "-lock=false" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "command": "aws s3",
+  "description": "Amazon S3 storage operations",
+  "placeholder_options": {
+    "<bucket>": "aws s3 ls 2>/dev/null | awk '{print $3}' | head -20",
+    "<profile>": "aws configure list-profiles 2>/dev/null | head -10"
+  },
+  "presets": [
+    { "label": "List buckets", "flags": "ls" },
+    { "label": "List bucket contents", "flags": "ls s3://<bucket>/" },
+    { "label": "Sync local to S3", "flags": "sync <local_path> s3://<bucket>/<prefix>" },
+    { "label": "Sync S3 to local", "flags": "sync s3://<bucket>/<prefix> <local_path>" },
+    { "label": "Copy file to S3", "flags": "cp <file> s3://<bucket>/<key>" },
+    { "label": "Download from S3", "flags": "cp s3://<bucket>/<key> <local_path>" },
+    { "label": "Remove file", "flags": "rm s3://<bucket>/<key>" },
+    { "label": "Remove bucket contents", "flags": "rm s3://<bucket>/ --recursive" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "S3 action",
+      "type": "choice",
+      "options": [
+        { "label": "List (ls)", "flag": "ls" },
+        { "label": "Copy (cp)", "flag": "cp" },
+        { "label": "Move (mv)", "flag": "mv" },
+        { "label": "Sync", "flag": "sync" },
+        { "label": "Remove (rm)", "flag": "rm" },
+        { "label": "Make bucket (mb)", "flag": "mb" },
+        { "label": "Remove bucket (rb)", "flag": "rb" },
+        { "label": "Presign URL", "flag": "presign" }
+      ]
+    },
+    {
+      "id": "source",
+      "prompt": "Source path",
+      "type": "text",
+      "placeholder": "s3://bucket/key or local/path"
+    },
+    {
+      "id": "destination",
+      "prompt": "Destination path",
+      "type": "text",
+      "placeholder": "s3://bucket/key or local/path"
+    },
+    {
+      "id": "recursive",
+      "prompt": "Recursive?",
+      "type": "toggle",
+      "flag": "--recursive"
+    },
+    {
+      "id": "dryrun",
+      "prompt": "Dry run (preview only)?",
+      "type": "toggle",
+      "flag": "--dryrun"
+    },
+    {
+      "id": "delete",
+      "prompt": "Delete files not in source (sync)?",
+      "type": "toggle",
+      "flag": "--delete"
+    },
+    {
+      "id": "exclude",
+      "prompt": "Exclude pattern (optional)",
+      "type": "text",
+      "flag": "--exclude",
+      "placeholder": "*.log"
+    },
+    {
+      "id": "include",
+      "prompt": "Include pattern (optional)",
+      "type": "text",
+      "flag": "--include",
+      "placeholder": "*.txt"
+    },
+    {
+      "id": "storage_class",
+      "prompt": "Storage class",
+      "type": "choice",
+      "options": [
+        { "label": "Standard (default)", "flag": null },
+        { "label": "Intelligent Tiering", "flag": "--storage-class INTELLIGENT_TIERING" },
+        { "label": "Standard-IA", "flag": "--storage-class STANDARD_IA" },
+        { "label": "Glacier", "flag": "--storage-class GLACIER" },
+        { "label": "Deep Archive", "flag": "--storage-class DEEP_ARCHIVE" }
+      ]
+    },
+    {
+      "id": "profile",
+      "prompt": "AWS profile (optional)",
+      "type": "text",
+      "flag": "--profile",
+      "placeholder": "default"
+    },
+    {
+      "id": "region",
+      "prompt": "AWS region (optional)",
+      "type": "text",
+      "flag": "--region",
+      "placeholder": "us-east-1"
+    }
+  ]
+}

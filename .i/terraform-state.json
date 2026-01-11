@@ -1,0 +1,74 @@
+{
+  "command": "terraform state",
+  "description": "Manage Terraform state",
+  "presets": [
+    { "label": "List resources", "flags": "list" },
+    { "label": "Show resource", "flags": "show <resource>" },
+    { "label": "Pull remote state", "flags": "pull" },
+    { "label": "Push state", "flags": "push" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "State action",
+      "type": "choice",
+      "options": [
+        { "label": "List resources", "flag": "list" },
+        { "label": "Show resource", "flag": "show" },
+        { "label": "Move resource", "flag": "mv" },
+        { "label": "Remove from state", "flag": "rm" },
+        { "label": "Pull remote state", "flag": "pull" },
+        { "label": "Push local state", "flag": "push" },
+        { "label": "Replace provider", "flag": "replace-provider" }
+      ]
+    },
+    {
+      "id": "resource",
+      "prompt": "Resource address",
+      "type": "text",
+      "placeholder": "aws_instance.example",
+      "when": { "action": "Show resource" }
+    },
+    {
+      "id": "source",
+      "prompt": "Source address",
+      "type": "text",
+      "placeholder": "aws_instance.old",
+      "when": { "action": "Move resource" }
+    },
+    {
+      "id": "destination",
+      "prompt": "Destination address",
+      "type": "text",
+      "placeholder": "aws_instance.new",
+      "when": { "action": "Move resource" }
+    },
+    {
+      "id": "rm_resource",
+      "prompt": "Resource to remove",
+      "type": "text",
+      "placeholder": "aws_instance.example",
+      "when": { "action": "Remove from state" }
+    },
+    {
+      "id": "old_provider",
+      "prompt": "Old provider address",
+      "type": "text",
+      "placeholder": "registry.terraform.io/hashicorp/aws",
+      "when": { "action": "Replace provider" }
+    },
+    {
+      "id": "new_provider",
+      "prompt": "New provider address",
+      "type": "text",
+      "placeholder": "registry.terraform.io/hashicorp/aws",
+      "when": { "action": "Replace provider" }
+    },
+    {
+      "id": "dry_run",
+      "prompt": "Dry run (show what would happen)?",
+      "type": "toggle",
+      "flag": "-dry-run"
+    }
+  ]
+}

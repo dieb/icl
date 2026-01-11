@@ -1,0 +1,101 @@
+{
+  "command": "lsof",
+  "description": "List open files and network connections",
+  "presets": [
+    { "label": "Network connections", "flags": "-i" },
+    { "label": "Listening ports", "flags": "-i -P -n | grep LISTEN" },
+    { "label": "Files by process", "flags": "-c <process>" },
+    { "label": "Files by PID", "flags": "-p <pid>" },
+    { "label": "Files by user", "flags": "-u <user>" },
+    { "label": "Who is using port", "flags": "-i :<port>" },
+    { "label": "Who is using file", "flags": "<file>" },
+    { "label": "TCP connections", "flags": "-i TCP" },
+    { "label": "UDP connections", "flags": "-i UDP" },
+    { "label": "Connections to host", "flags": "-i @<host>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What to list",
+      "type": "choice",
+      "options": [
+        { "label": "Network connections", "flag": "-i" },
+        { "label": "All open files", "flag": null },
+        { "label": "Files by process name", "flag": null },
+        { "label": "Files by PID", "flag": null },
+        { "label": "Files by user", "flag": null },
+        { "label": "Specific file/directory", "flag": null }
+      ]
+    },
+    {
+      "id": "protocol",
+      "prompt": "Protocol filter",
+      "type": "choice",
+      "options": [
+        { "label": "All protocols", "flag": null },
+        { "label": "TCP only", "flag": "-i TCP" },
+        { "label": "UDP only", "flag": "-i UDP" },
+        { "label": "IPv4 only", "flag": "-i 4" },
+        { "label": "IPv6 only", "flag": "-i 6" }
+      ],
+      "when": { "mode": "Network connections" }
+    },
+    {
+      "id": "port",
+      "prompt": "Port number (optional)",
+      "type": "text",
+      "placeholder": "80 or 8080-8090",
+      "when": { "mode": "Network connections" }
+    },
+    {
+      "id": "process_name",
+      "prompt": "Process name",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "nginx",
+      "when": { "mode": "Files by process name" }
+    },
+    {
+      "id": "pid",
+      "prompt": "Process ID",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "1234",
+      "when": { "mode": "Files by PID" }
+    },
+    {
+      "id": "user",
+      "prompt": "Username",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "www-data",
+      "when": { "mode": "Files by user" }
+    },
+    {
+      "id": "file",
+      "prompt": "File or directory path",
+      "type": "text",
+      "placeholder": "/var/log/syslog",
+      "when": { "mode": "Specific file/directory" }
+    },
+    {
+      "id": "numeric",
+      "prompt": "Numeric output (don't resolve)?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "no_port_names",
+      "prompt": "Show port numbers (not names)?",
+      "type": "toggle",
+      "flag": "-P"
+    },
+    {
+      "id": "repeat",
+      "prompt": "Repeat every N seconds (optional)",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": "2"
+    }
+  ]
+}

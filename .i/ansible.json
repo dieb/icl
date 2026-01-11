@@ -1,0 +1,117 @@
+{
+  "command": "ansible",
+  "description": "Run ad-hoc Ansible commands",
+  "placeholder_options": {
+    "<inventory>": "find . -maxdepth 2 -name 'inventory*' -o -name 'hosts' -o -name '*.ini' 2>/dev/null | sed 's|^\\./||' | head -10"
+  },
+  "presets": [
+    { "label": "Ping all hosts", "flags": "all -m ping" },
+    { "label": "Run shell command", "flags": "all -m shell -a '<command>'" },
+    { "label": "Gather facts", "flags": "all -m setup" },
+    { "label": "Copy file", "flags": "all -m copy -a 'src=<src> dest=<dest>'" },
+    { "label": "Install package", "flags": "all -m package -a 'name=<package> state=present'" },
+    { "label": "Restart service", "flags": "all -m service -a 'name=<service> state=restarted'" },
+    { "label": "List hosts", "flags": "all --list-hosts" }
+  ],
+  "steps": [
+    {
+      "id": "pattern",
+      "prompt": "Host pattern",
+      "type": "text",
+      "placeholder": "all, webservers, 192.168.1.0/24"
+    },
+    {
+      "id": "inventory",
+      "prompt": "Inventory file (optional)",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "inventory.ini"
+    },
+    {
+      "id": "module",
+      "prompt": "Module to run",
+      "type": "choice",
+      "options": [
+        { "label": "ping", "flag": "-m ping" },
+        { "label": "shell", "flag": "-m shell" },
+        { "label": "command", "flag": "-m command" },
+        { "label": "copy", "flag": "-m copy" },
+        { "label": "file", "flag": "-m file" },
+        { "label": "package", "flag": "-m package" },
+        { "label": "apt", "flag": "-m apt" },
+        { "label": "yum", "flag": "-m yum" },
+        { "label": "service", "flag": "-m service" },
+        { "label": "systemd", "flag": "-m systemd" },
+        { "label": "user", "flag": "-m user" },
+        { "label": "setup (facts)", "flag": "-m setup" },
+        { "label": "git", "flag": "-m git" },
+        { "label": "docker_container", "flag": "-m docker_container" }
+      ]
+    },
+    {
+      "id": "args",
+      "prompt": "Module arguments",
+      "type": "text",
+      "flag": "-a",
+      "placeholder": "key=value or 'command here'"
+    },
+    {
+      "id": "become",
+      "prompt": "Run with sudo?",
+      "type": "toggle",
+      "flag": "-b"
+    },
+    {
+      "id": "become_user",
+      "prompt": "Become user (optional)",
+      "type": "text",
+      "flag": "--become-user",
+      "placeholder": "root"
+    },
+    {
+      "id": "user",
+      "prompt": "Remote user (optional)",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "ubuntu"
+    },
+    {
+      "id": "key_file",
+      "prompt": "SSH private key (optional)",
+      "type": "text",
+      "flag": "--private-key",
+      "placeholder": "~/.ssh/id_rsa"
+    },
+    {
+      "id": "limit",
+      "prompt": "Limit to hosts (optional)",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "host1,host2"
+    },
+    {
+      "id": "forks",
+      "prompt": "Parallel forks (optional)",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "5"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbosity level",
+      "type": "choice",
+      "options": [
+        { "label": "Normal", "flag": null },
+        { "label": "Verbose (-v)", "flag": "-v" },
+        { "label": "More verbose (-vv)", "flag": "-vv" },
+        { "label": "Debug (-vvv)", "flag": "-vvv" }
+      ]
+    },
+    {
+      "id": "check",
+      "prompt": "Check mode (dry run)?",
+      "type": "toggle",
+      "flag": "--check"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "command": "ansible-playbook",
+  "description": "Run Ansible playbooks",
+  "placeholder_options": {
+    "<playbook>": "find . -maxdepth 2 -name '*.yml' -o -name '*.yaml' 2>/dev/null | grep -v roles | grep -v vars | sed 's|^\\./||' | head -15",
+    "<inventory>": "find . -maxdepth 2 -name 'inventory*' -o -name 'hosts' -o -name '*.ini' 2>/dev/null | sed 's|^\\./||' | head -10"
+  },
+  "presets": [
+    { "label": "Run playbook", "flags": "<playbook>" },
+    { "label": "Run with inventory", "flags": "-i <inventory> <playbook>" },
+    { "label": "Check mode (dry run)", "flags": "--check <playbook>" },
+    { "label": "Run with tags", "flags": "--tags '<tags>' <playbook>" },
+    { "label": "Start at task", "flags": "--start-at-task '<task>' <playbook>" },
+    { "label": "List tasks", "flags": "--list-tasks <playbook>" },
+    { "label": "List hosts", "flags": "--list-hosts <playbook>" },
+    { "label": "Syntax check", "flags": "--syntax-check <playbook>" }
+  ],
+  "steps": [
+    {
+      "id": "playbook",
+      "prompt": "Playbook file",
+      "type": "text",
+      "placeholder": "site.yml"
+    },
+    {
+      "id": "inventory",
+      "prompt": "Inventory file (optional)",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "inventory.ini"
+    },
+    {
+      "id": "mode",
+      "prompt": "Run mode",
+      "type": "choice",
+      "options": [
+        { "label": "Execute playbook", "flag": null },
+        { "label": "Check mode (dry run)", "flag": "--check" },
+        { "label": "Diff mode (show changes)", "flag": "--diff" },
+        { "label": "Check + Diff", "flag": "--check --diff" },
+        { "label": "Syntax check only", "flag": "--syntax-check" },
+        { "label": "List tasks", "flag": "--list-tasks" },
+        { "label": "List hosts", "flag": "--list-hosts" }
+      ]
+    },
+    {
+      "id": "limit",
+      "prompt": "Limit to hosts (optional)",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "webservers"
+    },
+    {
+      "id": "tags",
+      "prompt": "Run only tagged tasks (optional)",
+      "type": "text",
+      "flag": "--tags",
+      "placeholder": "configuration,packages"
+    },
+    {
+      "id": "skip_tags",
+      "prompt": "Skip tagged tasks (optional)",
+      "type": "text",
+      "flag": "--skip-tags",
+      "placeholder": "slow,optional"
+    },
+    {
+      "id": "start_at",
+      "prompt": "Start at task (optional)",
+      "type": "text",
+      "flag": "--start-at-task",
+      "placeholder": "Install packages"
+    },
+    {
+      "id": "become",
+      "prompt": "Run with sudo?",
+      "type": "toggle",
+      "flag": "-b"
+    },
+    {
+      "id": "become_user",
+      "prompt": "Become user (optional)",
+      "type": "text",
+      "flag": "--become-user",
+      "placeholder": "root"
+    },
+    {
+      "id": "user",
+      "prompt": "Remote user (optional)",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "ubuntu"
+    },
+    {
+      "id": "key_file",
+      "prompt": "SSH private key (optional)",
+      "type": "text",
+      "flag": "--private-key",
+      "placeholder": "~/.ssh/id_rsa"
+    },
+    {
+      "id": "extra_vars",
+      "prompt": "Extra variables (optional)",
+      "type": "text",
+      "flag": "-e",
+      "placeholder": "key=value or @vars.yml"
+    },
+    {
+      "id": "vault_password",
+      "prompt": "Vault password file (optional)",
+      "type": "text",
+      "flag": "--vault-password-file",
+      "placeholder": ".vault_pass"
+    },
+    {
+      "id": "ask_vault",
+      "prompt": "Prompt for vault password?",
+      "type": "toggle",
+      "flag": "--ask-vault-pass"
+    },
+    {
+      "id": "forks",
+      "prompt": "Parallel forks (optional)",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "5"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbosity level",
+      "type": "choice",
+      "options": [
+        { "label": "Normal", "flag": null },
+        { "label": "Verbose (-v)", "flag": "-v" },
+        { "label": "More verbose (-vv)", "flag": "-vv" },
+        { "label": "Debug (-vvv)", "flag": "-vvv" },
+        { "label": "Connection debug (-vvvv)", "flag": "-vvvv" }
+      ]
+    },
+    {
+      "id": "step",
+      "prompt": "Step through tasks (confirm each)?",
+      "type": "toggle",
+      "flag": "--step"
+    }
+  ]
+}

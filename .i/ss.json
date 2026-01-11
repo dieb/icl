@@ -1,0 +1,79 @@
+{
+  "command": "ss",
+  "description": "Socket statistics (replacement for netstat)",
+  "presets": [
+    { "label": "Listening TCP ports", "flags": "-tlnp" },
+    { "label": "Listening UDP ports", "flags": "-ulnp" },
+    { "label": "All listening ports", "flags": "-tulnp" },
+    { "label": "All connections", "flags": "-a" },
+    { "label": "TCP connections", "flags": "-t" },
+    { "label": "Established connections", "flags": "-t state established" },
+    { "label": "Connections to port 80", "flags": "-t '( dport = :80 or sport = :80 )'" },
+    { "label": "Summary statistics", "flags": "-s" },
+    { "label": "Show timers", "flags": "-to" }
+  ],
+  "steps": [
+    {
+      "id": "socket_type",
+      "prompt": "Socket type",
+      "type": "multi",
+      "options": [
+        { "label": "TCP", "flag": "-t" },
+        { "label": "UDP", "flag": "-u" },
+        { "label": "Unix", "flag": "-x" },
+        { "label": "Raw", "flag": "-w" }
+      ]
+    },
+    {
+      "id": "state",
+      "prompt": "Connection state",
+      "type": "choice",
+      "options": [
+        { "label": "All", "flag": "-a" },
+        { "label": "Listening only", "flag": "-l" },
+        { "label": "Established only", "flag": "state established" },
+        { "label": "Connected (non-listening)", "flag": null }
+      ]
+    },
+    {
+      "id": "resolve",
+      "prompt": "Resolve names",
+      "type": "choice",
+      "options": [
+        { "label": "Show numeric (faster)", "flag": "-n" },
+        { "label": "Resolve hostnames", "flag": "-r" },
+        { "label": "Default", "flag": null }
+      ]
+    },
+    {
+      "id": "processes",
+      "prompt": "Show process info?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "extended",
+      "prompt": "Show extended info?",
+      "type": "toggle",
+      "flag": "-e"
+    },
+    {
+      "id": "memory",
+      "prompt": "Show memory usage?",
+      "type": "toggle",
+      "flag": "-m"
+    },
+    {
+      "id": "timers",
+      "prompt": "Show timer info?",
+      "type": "toggle",
+      "flag": "-o"
+    },
+    {
+      "id": "filter",
+      "prompt": "Filter expression (optional)",
+      "type": "text",
+      "placeholder": "( dport = :22 or sport = :22 )"
+    }
+  ]
+}

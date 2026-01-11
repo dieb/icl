@@ -1,0 +1,63 @@
+{
+  "command": "kubectl scale",
+  "description": "Scale a deployment, replicaset, or statefulset",
+  "placeholder_options": {
+    "<deployment>": "kubectl get deployments --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Scale deployment", "flags": "deployment/<deployment> --replicas=<count>" },
+    { "label": "Scale to zero", "flags": "deployment/<deployment> --replicas=0" },
+    { "label": "Scale up to 3", "flags": "deployment/<deployment> --replicas=3" },
+    { "label": "Scale all in namespace", "flags": "deployment --all --replicas=<count> -n <namespace>" }
+  ],
+  "steps": [
+    {
+      "id": "resource_type",
+      "prompt": "Resource type",
+      "type": "choice",
+      "options": [
+        { "label": "Deployment", "flag": "deployment" },
+        { "label": "ReplicaSet", "flag": "replicaset" },
+        { "label": "StatefulSet", "flag": "statefulset" }
+      ]
+    },
+    {
+      "id": "name",
+      "prompt": "Resource name",
+      "type": "text",
+      "placeholder": "my-deployment"
+    },
+    {
+      "id": "replicas",
+      "prompt": "Number of replicas",
+      "type": "text",
+      "flag": "--replicas",
+      "placeholder": "3"
+    },
+    {
+      "id": "namespace_scope",
+      "prompt": "Namespace",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace_scope": "Specific namespace" }
+    },
+    {
+      "id": "timeout",
+      "prompt": "Timeout (optional)",
+      "type": "text",
+      "flag": "--timeout",
+      "placeholder": "5m"
+    }
+  ]
+}

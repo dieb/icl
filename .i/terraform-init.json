@@ -1,0 +1,53 @@
+{
+  "command": "terraform init",
+  "description": "Initialize Terraform working directory",
+  "presets": [
+    { "label": "Standard init", "flags": "" },
+    { "label": "Upgrade providers", "flags": "-upgrade" },
+    { "label": "Reconfigure backend", "flags": "-reconfigure" },
+    { "label": "Migrate state", "flags": "-migrate-state" }
+  ],
+  "steps": [
+    {
+      "id": "backend",
+      "prompt": "Backend configuration",
+      "type": "choice",
+      "options": [
+        { "label": "Use existing config", "flag": null },
+        { "label": "Reconfigure backend", "flag": "-reconfigure" },
+        { "label": "Migrate state to new backend", "flag": "-migrate-state" }
+      ]
+    },
+    {
+      "id": "upgrade",
+      "prompt": "Upgrade providers/modules?",
+      "type": "toggle",
+      "flag": "-upgrade"
+    },
+    {
+      "id": "backend_config",
+      "prompt": "Backend config file (optional)",
+      "type": "text",
+      "flag": "-backend-config",
+      "placeholder": "backend.hcl"
+    },
+    {
+      "id": "get_plugins",
+      "prompt": "Download plugins?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No", "flag": "-get-plugins=false" }
+      ]
+    },
+    {
+      "id": "lock",
+      "prompt": "Lock state?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No", "flag": "-lock=false" }
+      ]
+    }
+  ]
+}

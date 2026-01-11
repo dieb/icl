@@ -1,0 +1,91 @@
+{
+  "command": "aws ec2",
+  "description": "Amazon EC2 compute operations",
+  "placeholder_options": {
+    "<instance_id>": "aws ec2 describe-instances --query 'Reservations[].Instances[].InstanceId' --output text 2>/dev/null | tr '\\t' '\\n' | head -20",
+    "<profile>": "aws configure list-profiles 2>/dev/null | head -10"
+  },
+  "presets": [
+    { "label": "List instances (table)", "flags": "describe-instances --query 'Reservations[].Instances[].{ID:InstanceId,State:State.Name,Type:InstanceType,Name:Tags[?Key==`Name`].Value|[0]}' --output table" },
+    { "label": "List running instances", "flags": "describe-instances --filters Name=instance-state-name,Values=running --output table" },
+    { "label": "Start instance", "flags": "start-instances --instance-ids <instance_id>" },
+    { "label": "Stop instance", "flags": "stop-instances --instance-ids <instance_id>" },
+    { "label": "Reboot instance", "flags": "reboot-instances --instance-ids <instance_id>" },
+    { "label": "Describe instance", "flags": "describe-instances --instance-ids <instance_id>" },
+    { "label": "List security groups", "flags": "describe-security-groups --output table" },
+    { "label": "List VPCs", "flags": "describe-vpcs --output table" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "EC2 action",
+      "type": "choice",
+      "options": [
+        { "label": "Describe instances", "flag": "describe-instances" },
+        { "label": "Start instances", "flag": "start-instances" },
+        { "label": "Stop instances", "flag": "stop-instances" },
+        { "label": "Reboot instances", "flag": "reboot-instances" },
+        { "label": "Terminate instances", "flag": "terminate-instances" },
+        { "label": "Describe security groups", "flag": "describe-security-groups" },
+        { "label": "Describe VPCs", "flag": "describe-vpcs" },
+        { "label": "Describe subnets", "flag": "describe-subnets" },
+        { "label": "Describe AMIs", "flag": "describe-images --owners self" },
+        { "label": "Create AMI from instance", "flag": "create-image" }
+      ]
+    },
+    {
+      "id": "instance_ids",
+      "prompt": "Instance IDs (space-separated)",
+      "type": "text",
+      "flag": "--instance-ids",
+      "placeholder": "i-1234567890abcdef0"
+    },
+    {
+      "id": "ami_name",
+      "prompt": "AMI name",
+      "type": "text",
+      "flag": "--name",
+      "placeholder": "my-ami-backup",
+      "when": { "action": "Create AMI from instance" }
+    },
+    {
+      "id": "filter",
+      "prompt": "Filter (optional)",
+      "type": "text",
+      "flag": "--filters",
+      "placeholder": "Name=instance-state-name,Values=running"
+    },
+    {
+      "id": "query",
+      "prompt": "JMESPath query (optional)",
+      "type": "text",
+      "flag": "--query",
+      "placeholder": "Reservations[].Instances[].InstanceId"
+    },
+    {
+      "id": "output",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Table", "flag": "--output table" },
+        { "label": "JSON", "flag": "--output json" },
+        { "label": "Text", "flag": "--output text" },
+        { "label": "YAML", "flag": "--output yaml" }
+      ]
+    },
+    {
+      "id": "profile",
+      "prompt": "AWS profile (optional)",
+      "type": "text",
+      "flag": "--profile",
+      "placeholder": "default"
+    },
+    {
+      "id": "region",
+      "prompt": "AWS region (optional)",
+      "type": "text",
+      "flag": "--region",
+      "placeholder": "us-east-1"
+    }
+  ]
+}

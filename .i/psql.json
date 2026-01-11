@@ -1,0 +1,114 @@
+{
+  "command": "psql",
+  "description": "PostgreSQL interactive terminal",
+  "presets": [
+    { "label": "Connect to local", "flags": "-U postgres" },
+    { "label": "Connect to host", "flags": "-h <host> -U <user> -d <database>" },
+    { "label": "Execute query", "flags": "-U <user> -d <database> -c '<query>'" },
+    { "label": "Execute file", "flags": "-U <user> -d <database> -f <file>" },
+    { "label": "List databases", "flags": "-U postgres -l" },
+    { "label": "List tables", "flags": "-U <user> -d <database> -c '\\dt'" },
+    { "label": "Describe table", "flags": "-U <user> -d <database> -c '\\d <table>'" },
+    { "label": "CSV output", "flags": "-U <user> -d <database> --csv -c '<query>'" }
+  ],
+  "steps": [
+    {
+      "id": "host",
+      "prompt": "Host (optional, default: localhost)",
+      "type": "text",
+      "flag": "-h",
+      "placeholder": "localhost"
+    },
+    {
+      "id": "port",
+      "prompt": "Port (optional, default: 5432)",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "5432"
+    },
+    {
+      "id": "user",
+      "prompt": "Username",
+      "type": "text",
+      "flag": "-U",
+      "placeholder": "postgres"
+    },
+    {
+      "id": "database",
+      "prompt": "Database name",
+      "type": "text",
+      "flag": "-d",
+      "placeholder": "postgres"
+    },
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive shell", "flag": null },
+        { "label": "Execute command", "flag": null },
+        { "label": "Execute file", "flag": null },
+        { "label": "List databases", "flag": "-l" }
+      ]
+    },
+    {
+      "id": "command",
+      "prompt": "SQL command to execute",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "SELECT * FROM users LIMIT 10;",
+      "when": { "mode": "Execute command" }
+    },
+    {
+      "id": "file",
+      "prompt": "SQL file to execute",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "script.sql",
+      "when": { "mode": "Execute file" }
+    },
+    {
+      "id": "output_format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default (aligned)", "flag": null },
+        { "label": "CSV", "flag": "--csv" },
+        { "label": "HTML", "flag": "-H" },
+        { "label": "Unaligned", "flag": "-A" },
+        { "label": "Tuples only (no headers)", "flag": "-t" }
+      ]
+    },
+    {
+      "id": "expanded",
+      "prompt": "Expanded output (vertical)?",
+      "type": "toggle",
+      "flag": "-x"
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode (no messages)?",
+      "type": "toggle",
+      "flag": "-q"
+    },
+    {
+      "id": "no_psqlrc",
+      "prompt": "Skip .psqlrc?",
+      "type": "toggle",
+      "flag": "-X"
+    },
+    {
+      "id": "single_transaction",
+      "prompt": "Wrap file in transaction?",
+      "type": "toggle",
+      "flag": "--single-transaction"
+    },
+    {
+      "id": "variable",
+      "prompt": "Set variable (optional)",
+      "type": "text",
+      "flag": "-v",
+      "placeholder": "name=value"
+    }
+  ]
+}

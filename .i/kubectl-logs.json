@@ -1,0 +1,90 @@
+{
+  "command": "kubectl logs",
+  "description": "View pod logs",
+  "placeholder_options": {
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Follow pod logs", "flags": "-f <pod>" },
+    { "label": "Last 100 lines", "flags": "--tail=100 <pod>" },
+    { "label": "Last hour", "flags": "--since=1h <pod>" },
+    { "label": "Previous container", "flags": "-p <pod>" },
+    { "label": "All containers", "flags": "--all-containers <pod>" }
+  ],
+  "steps": [
+    {
+      "id": "pod",
+      "prompt": "Pod name",
+      "type": "text",
+      "placeholder": "my-pod"
+    },
+    {
+      "id": "namespace_scope",
+      "prompt": "Namespace",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace_scope": "Specific namespace" }
+    },
+    {
+      "id": "container_mode",
+      "prompt": "Container selection",
+      "type": "choice",
+      "options": [
+        { "label": "Default container", "flag": null },
+        { "label": "Specific container", "flag": null },
+        { "label": "All containers", "flag": "--all-containers" }
+      ]
+    },
+    {
+      "id": "container",
+      "prompt": "Container name",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "app",
+      "when": { "container_mode": "Specific container" }
+    },
+    {
+      "id": "follow",
+      "prompt": "Follow logs (stream)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "previous",
+      "prompt": "Previous container instance?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "timestamps",
+      "prompt": "Show timestamps?",
+      "type": "toggle",
+      "flag": "--timestamps"
+    },
+    {
+      "id": "tail",
+      "prompt": "Lines from end (optional)",
+      "type": "text",
+      "flag": "--tail",
+      "placeholder": "100"
+    },
+    {
+      "id": "since",
+      "prompt": "Since duration (optional)",
+      "type": "text",
+      "flag": "--since",
+      "placeholder": "1h"
+    }
+  ]
+}

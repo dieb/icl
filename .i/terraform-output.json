@@ -1,0 +1,34 @@
+{
+  "command": "terraform output",
+  "description": "Show Terraform outputs",
+  "presets": [
+    { "label": "All outputs", "flags": "" },
+    { "label": "JSON format", "flags": "-json" },
+    { "label": "Raw value", "flags": "-raw <output_name>" }
+  ],
+  "steps": [
+    {
+      "id": "output_name",
+      "prompt": "Output name (optional, blank for all)",
+      "type": "text",
+      "placeholder": "instance_ip"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "JSON", "flag": "-json" },
+        { "label": "Raw (no quotes)", "flag": "-raw" }
+      ]
+    },
+    {
+      "id": "state",
+      "prompt": "State file (optional)",
+      "type": "text",
+      "flag": "-state",
+      "placeholder": "terraform.tfstate"
+    }
+  ]
+}

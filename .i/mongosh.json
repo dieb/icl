@@ -1,0 +1,130 @@
+{
+  "command": "mongosh",
+  "description": "MongoDB Shell",
+  "presets": [
+    { "label": "Connect to local", "flags": "" },
+    { "label": "Connect to host", "flags": "mongodb://<host>:<port>" },
+    { "label": "Connect with auth", "flags": "mongodb://<user>:<password>@<host>:<port>/<database>" },
+    { "label": "Connect to Atlas", "flags": "'mongodb+srv://<cluster>.mongodb.net/<database>'" },
+    { "label": "Execute command", "flags": "--eval '<command>'" },
+    { "label": "Execute file", "flags": "--file <script.js>" },
+    { "label": "Show databases", "flags": "--eval 'show dbs'" },
+    { "label": "Show collections", "flags": "<database> --eval 'show collections'" }
+  ],
+  "steps": [
+    {
+      "id": "connection_type",
+      "prompt": "Connection type",
+      "type": "choice",
+      "options": [
+        { "label": "Local (localhost:27017)", "flag": null },
+        { "label": "Connection string", "flag": null },
+        { "label": "Host and port", "flag": null }
+      ]
+    },
+    {
+      "id": "connection_string",
+      "prompt": "Connection string",
+      "type": "text",
+      "placeholder": "mongodb://user:pass@host:27017/db",
+      "when": { "connection_type": "Connection string" }
+    },
+    {
+      "id": "host",
+      "prompt": "Host",
+      "type": "text",
+      "flag": "--host",
+      "placeholder": "localhost",
+      "when": { "connection_type": "Host and port" }
+    },
+    {
+      "id": "port",
+      "prompt": "Port",
+      "type": "text",
+      "flag": "--port",
+      "placeholder": "27017",
+      "when": { "connection_type": "Host and port" }
+    },
+    {
+      "id": "username",
+      "prompt": "Username (optional)",
+      "type": "text",
+      "flag": "--username",
+      "placeholder": "admin"
+    },
+    {
+      "id": "password",
+      "prompt": "Password (optional)",
+      "type": "text",
+      "flag": "--password",
+      "placeholder": "password"
+    },
+    {
+      "id": "auth_database",
+      "prompt": "Authentication database (optional)",
+      "type": "text",
+      "flag": "--authenticationDatabase",
+      "placeholder": "admin"
+    },
+    {
+      "id": "database",
+      "prompt": "Database to use (optional)",
+      "type": "text",
+      "placeholder": "mydb"
+    },
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive shell", "flag": null },
+        { "label": "Evaluate expression", "flag": null },
+        { "label": "Execute file", "flag": null }
+      ]
+    },
+    {
+      "id": "eval",
+      "prompt": "JavaScript expression to evaluate",
+      "type": "text",
+      "flag": "--eval",
+      "placeholder": "db.collection.find().limit(10)",
+      "when": { "mode": "Evaluate expression" }
+    },
+    {
+      "id": "file",
+      "prompt": "JavaScript file to execute",
+      "type": "text",
+      "flag": "--file",
+      "placeholder": "script.js",
+      "when": { "mode": "Execute file" }
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode (no welcome message)?",
+      "type": "toggle",
+      "flag": "--quiet"
+    },
+    {
+      "id": "no_rc",
+      "prompt": "Skip .mongoshrc.js?",
+      "type": "toggle",
+      "flag": "--norc"
+    },
+    {
+      "id": "tls",
+      "prompt": "Use TLS/SSL?",
+      "type": "toggle",
+      "flag": "--tls"
+    },
+    {
+      "id": "json_output",
+      "prompt": "JSON output mode",
+      "type": "choice",
+      "options": [
+        { "label": "Default (shell)", "flag": null },
+        { "label": "Canonical JSON", "flag": "--json=canonical" },
+        { "label": "Relaxed JSON", "flag": "--json=relaxed" }
+      ]
+    }
+  ]
+}

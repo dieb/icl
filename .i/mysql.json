@@ -1,0 +1,106 @@
+{
+  "command": "mysql",
+  "description": "MySQL command-line client",
+  "presets": [
+    { "label": "Connect to local", "flags": "-u root -p" },
+    { "label": "Connect to host", "flags": "-h <host> -u <user> -p" },
+    { "label": "Connect to database", "flags": "-h <host> -u <user> -p <database>" },
+    { "label": "Execute query", "flags": "-u <user> -p -e '<query>'" },
+    { "label": "Execute file", "flags": "-u <user> -p < <file>" },
+    { "label": "Batch mode (no headers)", "flags": "-u <user> -p -N -B -e '<query>'" },
+    { "label": "Show databases", "flags": "-u root -p -e 'SHOW DATABASES;'" },
+    { "label": "Show tables", "flags": "-u <user> -p <database> -e 'SHOW TABLES;'" }
+  ],
+  "steps": [
+    {
+      "id": "host",
+      "prompt": "Host (optional, default: localhost)",
+      "type": "text",
+      "flag": "-h",
+      "placeholder": "localhost"
+    },
+    {
+      "id": "port",
+      "prompt": "Port (optional, default: 3306)",
+      "type": "text",
+      "flag": "-P",
+      "placeholder": "3306"
+    },
+    {
+      "id": "user",
+      "prompt": "Username",
+      "type": "text",
+      "flag": "-u",
+      "placeholder": "root"
+    },
+    {
+      "id": "password_mode",
+      "prompt": "Password handling",
+      "type": "choice",
+      "options": [
+        { "label": "Prompt for password", "flag": "-p" },
+        { "label": "No password", "flag": null },
+        { "label": "Password in env (MYSQL_PWD)", "flag": null }
+      ]
+    },
+    {
+      "id": "database",
+      "prompt": "Database name (optional)",
+      "type": "text",
+      "placeholder": "mydb"
+    },
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive shell", "flag": null },
+        { "label": "Execute query", "flag": null },
+        { "label": "Execute file", "flag": null }
+      ]
+    },
+    {
+      "id": "query",
+      "prompt": "SQL query to execute",
+      "type": "text",
+      "flag": "-e",
+      "placeholder": "SELECT * FROM users LIMIT 10;",
+      "when": { "mode": "Execute query" }
+    },
+    {
+      "id": "batch",
+      "prompt": "Batch mode (no formatting)?",
+      "type": "toggle",
+      "flag": "-B"
+    },
+    {
+      "id": "no_headers",
+      "prompt": "Skip column headers?",
+      "type": "toggle",
+      "flag": "-N"
+    },
+    {
+      "id": "vertical",
+      "prompt": "Vertical output (\\G style)?",
+      "type": "toggle",
+      "flag": "-E"
+    },
+    {
+      "id": "safe_updates",
+      "prompt": "Safe updates (prevent full table updates)?",
+      "type": "toggle",
+      "flag": "--safe-updates"
+    },
+    {
+      "id": "ssl",
+      "prompt": "SSL mode",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Require SSL", "flag": "--ssl-mode=REQUIRED" },
+        { "label": "Verify CA", "flag": "--ssl-mode=VERIFY_CA" },
+        { "label": "Disable SSL", "flag": "--ssl-mode=DISABLED" }
+      ]
+    }
+  ]
+}

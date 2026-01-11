@@ -1,0 +1,90 @@
+{
+  "command": "chown",
+  "description": "Change file owner and group",
+  "presets": [
+    { "label": "Change owner", "flags": "<user> <file>" },
+    { "label": "Change owner and group", "flags": "<user>:<group> <file>" },
+    { "label": "Change group only", "flags": ":<group> <file>" },
+    { "label": "Recursive change", "flags": "-R <user>:<group> <directory>" },
+    { "label": "Match reference file", "flags": "--reference=<ref_file> <file>" },
+    { "label": "Change with verbose", "flags": "-v <user>:<group> <file>" }
+  ],
+  "steps": [
+    {
+      "id": "ownership",
+      "prompt": "What to change",
+      "type": "choice",
+      "options": [
+        { "label": "User only", "flag": null },
+        { "label": "User and group", "flag": null },
+        { "label": "Group only", "flag": null },
+        { "label": "Copy from reference file", "flag": null }
+      ]
+    },
+    {
+      "id": "user",
+      "prompt": "New owner (username or UID)",
+      "type": "text",
+      "placeholder": "www-data",
+      "when": { "ownership": "User only" }
+    },
+    {
+      "id": "user_group",
+      "prompt": "Owner:group (e.g., www-data:www-data)",
+      "type": "text",
+      "placeholder": "www-data:www-data",
+      "when": { "ownership": "User and group" }
+    },
+    {
+      "id": "group",
+      "prompt": "New group (groupname or GID)",
+      "type": "text",
+      "placeholder": "www-data",
+      "when": { "ownership": "Group only" }
+    },
+    {
+      "id": "reference",
+      "prompt": "Reference file to copy ownership from",
+      "type": "text",
+      "flag": "--reference",
+      "placeholder": "/path/to/reference",
+      "when": { "ownership": "Copy from reference file" }
+    },
+    {
+      "id": "target",
+      "prompt": "Target file or directory",
+      "type": "text",
+      "placeholder": "/path/to/file"
+    },
+    {
+      "id": "recursive",
+      "prompt": "Recursive (apply to contents)?",
+      "type": "toggle",
+      "flag": "-R"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "changes",
+      "prompt": "Report only changes?",
+      "type": "toggle",
+      "flag": "-c"
+    },
+    {
+      "id": "no_dereference",
+      "prompt": "Don't follow symlinks?",
+      "type": "toggle",
+      "flag": "-h"
+    },
+    {
+      "id": "preserve_root",
+      "prompt": "Fail on root directory?",
+      "type": "toggle",
+      "flag": "--preserve-root"
+    }
+  ]
+}

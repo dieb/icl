@@ -1,0 +1,118 @@
+{
+  "command": "redis-cli",
+  "description": "Redis command-line interface",
+  "presets": [
+    { "label": "Connect to local", "flags": "" },
+    { "label": "Connect to host", "flags": "-h <host> -p <port>" },
+    { "label": "Connect with auth", "flags": "-h <host> -a <password>" },
+    { "label": "Execute command", "flags": "<command>" },
+    { "label": "Ping server", "flags": "ping" },
+    { "label": "Get all keys", "flags": "keys '*'" },
+    { "label": "Get key value", "flags": "get <key>" },
+    { "label": "Monitor commands", "flags": "monitor" },
+    { "label": "Server info", "flags": "info" },
+    { "label": "Database stats", "flags": "info keyspace" }
+  ],
+  "steps": [
+    {
+      "id": "host",
+      "prompt": "Host (optional, default: 127.0.0.1)",
+      "type": "text",
+      "flag": "-h",
+      "placeholder": "127.0.0.1"
+    },
+    {
+      "id": "port",
+      "prompt": "Port (optional, default: 6379)",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "6379"
+    },
+    {
+      "id": "auth",
+      "prompt": "Password (optional)",
+      "type": "text",
+      "flag": "-a",
+      "placeholder": "password"
+    },
+    {
+      "id": "database",
+      "prompt": "Database number (optional, default: 0)",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "0"
+    },
+    {
+      "id": "mode",
+      "prompt": "Execution mode",
+      "type": "choice",
+      "options": [
+        { "label": "Interactive shell", "flag": null },
+        { "label": "Execute command", "flag": null },
+        { "label": "Monitor mode", "flag": "monitor" },
+        { "label": "Pub/sub subscribe", "flag": null },
+        { "label": "Scan keys", "flag": "--scan" }
+      ]
+    },
+    {
+      "id": "command",
+      "prompt": "Redis command",
+      "type": "text",
+      "placeholder": "GET mykey",
+      "when": { "mode": "Execute command" }
+    },
+    {
+      "id": "channel",
+      "prompt": "Channel to subscribe",
+      "type": "text",
+      "placeholder": "mychannel",
+      "when": { "mode": "Pub/sub subscribe" }
+    },
+    {
+      "id": "pattern",
+      "prompt": "Key pattern for scan",
+      "type": "text",
+      "flag": "--pattern",
+      "placeholder": "user:*",
+      "when": { "mode": "Scan keys" }
+    },
+    {
+      "id": "repeat",
+      "prompt": "Repeat command N times (optional)",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": "100"
+    },
+    {
+      "id": "interval",
+      "prompt": "Interval between repeats (optional)",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "1"
+    },
+    {
+      "id": "tls",
+      "prompt": "Use TLS?",
+      "type": "toggle",
+      "flag": "--tls"
+    },
+    {
+      "id": "cluster",
+      "prompt": "Cluster mode?",
+      "type": "toggle",
+      "flag": "-c"
+    },
+    {
+      "id": "raw",
+      "prompt": "Raw output (no formatting)?",
+      "type": "toggle",
+      "flag": "--raw"
+    },
+    {
+      "id": "no_raw",
+      "prompt": "Force formatted output?",
+      "type": "toggle",
+      "flag": "--no-raw"
+    }
+  ]
+}

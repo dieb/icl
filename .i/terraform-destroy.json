@@ -1,0 +1,50 @@
+{
+  "command": "terraform destroy",
+  "description": "Destroy infrastructure",
+  "placeholder_options": {
+    "<var_file>": "find . -maxdepth 2 -name '*.tfvars' -o -name '*.tfvars.json' 2>/dev/null | sed 's|^\\./||' | head -10"
+  },
+  "presets": [
+    { "label": "Destroy with approval", "flags": "" },
+    { "label": "Auto-approve destroy", "flags": "-auto-approve" },
+    { "label": "Target specific resource", "flags": "-target=<resource>" }
+  ],
+  "steps": [
+    {
+      "id": "auto_approve",
+      "prompt": "Auto-approve (skip confirmation)?",
+      "type": "toggle",
+      "flag": "-auto-approve"
+    },
+    {
+      "id": "var_file",
+      "prompt": "Variable file (optional)",
+      "type": "text",
+      "flag": "-var-file",
+      "placeholder": "terraform.tfvars"
+    },
+    {
+      "id": "target",
+      "prompt": "Target resource (optional)",
+      "type": "text",
+      "flag": "-target",
+      "placeholder": "aws_instance.example"
+    },
+    {
+      "id": "parallelism",
+      "prompt": "Parallelism (optional)",
+      "type": "text",
+      "flag": "-parallelism",
+      "placeholder": "10"
+    },
+    {
+      "id": "lock",
+      "prompt": "Lock state during destroy?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No", "flag": "-lock=false" }
+      ]
+    }
+  ]
+}

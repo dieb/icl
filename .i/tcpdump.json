@@ -1,0 +1,157 @@
+{
+  "command": "tcpdump",
+  "description": "Capture and analyze network packets",
+  "placeholder_options": {
+    "<interface>": "ip link show 2>/dev/null | awk -F': ' '/^[0-9]+:/ {print $2}' | head -10"
+  },
+  "presets": [
+    { "label": "Capture all on interface", "flags": "-i <interface>" },
+    { "label": "Capture with timestamps", "flags": "-i <interface> -tttt" },
+    { "label": "Capture HTTP traffic", "flags": "-i <interface> port 80 or port 443" },
+    { "label": "Capture DNS traffic", "flags": "-i <interface> port 53" },
+    { "label": "Capture to/from host", "flags": "-i <interface> host <host>" },
+    { "label": "Save to file", "flags": "-i <interface> -w capture.pcap" },
+    { "label": "Read from file", "flags": "-r <file>" },
+    { "label": "Verbose with hex", "flags": "-i <interface> -XX" },
+    { "label": "Show ASCII", "flags": "-i <interface> -A" },
+    { "label": "Capture N packets", "flags": "-i <interface> -c <count>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Capture mode",
+      "type": "choice",
+      "options": [
+        { "label": "Live capture", "flag": null },
+        { "label": "Read from file", "flag": "-r" }
+      ]
+    },
+    {
+      "id": "interface",
+      "prompt": "Network interface",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "eth0 or any",
+      "when": { "mode": "Live capture" }
+    },
+    {
+      "id": "file",
+      "prompt": "Capture file to read",
+      "type": "text",
+      "placeholder": "capture.pcap",
+      "when": { "mode": "Read from file" }
+    },
+    {
+      "id": "filter_type",
+      "prompt": "Filter by",
+      "type": "choice",
+      "options": [
+        { "label": "No filter (all traffic)", "flag": null },
+        { "label": "Port", "flag": null },
+        { "label": "Host", "flag": null },
+        { "label": "Network", "flag": null },
+        { "label": "Protocol", "flag": null },
+        { "label": "Custom BPF filter", "flag": null }
+      ]
+    },
+    {
+      "id": "port",
+      "prompt": "Port number",
+      "type": "text",
+      "placeholder": "80 or 443",
+      "when": { "filter_type": "Port" }
+    },
+    {
+      "id": "host",
+      "prompt": "Host (IP or hostname)",
+      "type": "text",
+      "placeholder": "192.168.1.1",
+      "when": { "filter_type": "Host" }
+    },
+    {
+      "id": "network",
+      "prompt": "Network CIDR",
+      "type": "text",
+      "placeholder": "192.168.1.0/24",
+      "when": { "filter_type": "Network" }
+    },
+    {
+      "id": "protocol",
+      "prompt": "Protocol",
+      "type": "choice",
+      "options": [
+        { "label": "TCP", "flag": null },
+        { "label": "UDP", "flag": null },
+        { "label": "ICMP", "flag": null },
+        { "label": "ARP", "flag": null }
+      ],
+      "when": { "filter_type": "Protocol" }
+    },
+    {
+      "id": "bpf",
+      "prompt": "BPF filter expression",
+      "type": "text",
+      "placeholder": "tcp port 80 and host 10.0.0.1",
+      "when": { "filter_type": "Custom BPF filter" }
+    },
+    {
+      "id": "count",
+      "prompt": "Number of packets (optional)",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "100"
+    },
+    {
+      "id": "output_file",
+      "prompt": "Save to file (optional)",
+      "type": "text",
+      "flag": "-w",
+      "placeholder": "capture.pcap"
+    },
+    {
+      "id": "verbosity",
+      "prompt": "Verbosity level",
+      "type": "choice",
+      "options": [
+        { "label": "Normal", "flag": null },
+        { "label": "Verbose (-v)", "flag": "-v" },
+        { "label": "More verbose (-vv)", "flag": "-vv" },
+        { "label": "Very verbose (-vvv)", "flag": "-vvv" }
+      ]
+    },
+    {
+      "id": "show_data",
+      "prompt": "Show packet data",
+      "type": "choice",
+      "options": [
+        { "label": "Headers only", "flag": null },
+        { "label": "ASCII (-A)", "flag": "-A" },
+        { "label": "Hex and ASCII (-X)", "flag": "-X" },
+        { "label": "Hex and ASCII with link (-XX)", "flag": "-XX" }
+      ]
+    },
+    {
+      "id": "timestamp",
+      "prompt": "Timestamp format",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Human-readable", "flag": "-tttt" },
+        { "label": "Unix timestamp", "flag": "-tt" },
+        { "label": "No timestamp", "flag": "-t" }
+      ]
+    },
+    {
+      "id": "no_resolve",
+      "prompt": "Don't resolve names?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "no_resolve_ports",
+      "prompt": "Don't resolve port names?",
+      "type": "toggle",
+      "flag": "-nn"
+    }
+  ]
+}

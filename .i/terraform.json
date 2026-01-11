@@ -1,0 +1,31 @@
+{
+  "command": "terraform",
+  "description": "Infrastructure as Code tool",
+  "presets": [
+    { "label": "Initialize", "flags": "init" },
+    { "label": "Plan changes", "flags": "plan" },
+    { "label": "Apply changes", "flags": "apply" },
+    { "label": "Show state", "flags": "show" },
+    { "label": "Format files", "flags": "fmt" },
+    { "label": "Validate config", "flags": "validate" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Initialize working directory", "chain": "terraform-init" },
+        { "label": "Plan changes", "chain": "terraform-plan" },
+        { "label": "Apply changes", "chain": "terraform-apply" },
+        { "label": "Destroy infrastructure", "chain": "terraform-destroy" },
+        { "label": "Manage state", "chain": "terraform-state" },
+        { "label": "Show outputs", "chain": "terraform-output" },
+        { "label": "Validate configuration", "flag": "validate" },
+        { "label": "Format files", "flag": "fmt" },
+        { "label": "Show providers", "flag": "providers" },
+        { "label": "Refresh state", "flag": "refresh" }
+      ]
+    }
+  ]
+}

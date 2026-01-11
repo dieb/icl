@@ -1,0 +1,93 @@
+{
+  "command": "kubectl get",
+  "description": "Display Kubernetes resources",
+  "placeholder_options": {
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "All pods (all namespaces)", "flags": "pods -A" },
+    { "label": "Pods in namespace", "flags": "pods -n <namespace>" },
+    { "label": "All deployments", "flags": "deployments -A" },
+    { "label": "All services", "flags": "svc -A" },
+    { "label": "All resources", "flags": "all -A" },
+    { "label": "Nodes", "flags": "nodes" },
+    { "label": "Events (recent)", "flags": "events --sort-by='.lastTimestamp'" },
+    { "label": "ConfigMaps", "flags": "configmaps -A" },
+    { "label": "Secrets", "flags": "secrets -A" }
+  ],
+  "steps": [
+    {
+      "id": "resource",
+      "prompt": "Resource type",
+      "type": "choice",
+      "options": [
+        { "label": "Pods", "flag": "pods" },
+        { "label": "Deployments", "flag": "deployments" },
+        { "label": "Services", "flag": "services" },
+        { "label": "Nodes", "flag": "nodes" },
+        { "label": "Namespaces", "flag": "namespaces" },
+        { "label": "ConfigMaps", "flag": "configmaps" },
+        { "label": "Secrets", "flag": "secrets" },
+        { "label": "Ingress", "flag": "ingress" },
+        { "label": "PersistentVolumes", "flag": "pv" },
+        { "label": "PersistentVolumeClaims", "flag": "pvc" },
+        { "label": "StatefulSets", "flag": "statefulsets" },
+        { "label": "DaemonSets", "flag": "daemonsets" },
+        { "label": "Jobs", "flag": "jobs" },
+        { "label": "CronJobs", "flag": "cronjobs" },
+        { "label": "Events", "flag": "events" },
+        { "label": "All", "flag": "all" }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace scope",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "All namespaces", "flag": "-A" },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "specific_ns",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace": "Specific namespace" }
+    },
+    {
+      "id": "output",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default table", "flag": null },
+        { "label": "Wide (more columns)", "flag": "-o wide" },
+        { "label": "YAML", "flag": "-o yaml" },
+        { "label": "JSON", "flag": "-o json" },
+        { "label": "Names only", "flag": "-o name" }
+      ]
+    },
+    {
+      "id": "selector",
+      "prompt": "Label selector (optional)",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "app=nginx"
+    },
+    {
+      "id": "watch",
+      "prompt": "Watch for changes?",
+      "type": "toggle",
+      "flag": "-w"
+    },
+    {
+      "id": "show_labels",
+      "prompt": "Show labels?",
+      "type": "toggle",
+      "flag": "--show-labels"
+    }
+  ]
+}

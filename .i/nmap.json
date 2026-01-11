@@ -1,0 +1,119 @@
+{
+  "command": "nmap",
+  "description": "Network exploration and security auditing",
+  "presets": [
+    { "label": "Quick scan", "flags": "-T4 -F <target>" },
+    { "label": "Ping scan (host discovery)", "flags": "-sn <target>" },
+    { "label": "Port scan (top 1000)", "flags": "<target>" },
+    { "label": "All ports scan", "flags": "-p- <target>" },
+    { "label": "Service version detection", "flags": "-sV <target>" },
+    { "label": "OS detection", "flags": "-O <target>" },
+    { "label": "Aggressive scan", "flags": "-A <target>" },
+    { "label": "Stealth SYN scan", "flags": "-sS <target>" },
+    { "label": "UDP scan", "flags": "-sU <target>" },
+    { "label": "Scan specific ports", "flags": "-p <ports> <target>" },
+    { "label": "Scan subnet", "flags": "-sn <network>/24" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "Target (IP, hostname, or CIDR)",
+      "type": "text",
+      "placeholder": "192.168.1.1 or example.com or 10.0.0.0/24"
+    },
+    {
+      "id": "scan_type",
+      "prompt": "Scan type",
+      "type": "choice",
+      "options": [
+        { "label": "TCP SYN (default, requires root)", "flag": "-sS" },
+        { "label": "TCP Connect", "flag": "-sT" },
+        { "label": "UDP scan", "flag": "-sU" },
+        { "label": "Ping scan (no port scan)", "flag": "-sn" },
+        { "label": "TCP ACK", "flag": "-sA" },
+        { "label": "TCP Window", "flag": "-sW" }
+      ]
+    },
+    {
+      "id": "ports",
+      "prompt": "Ports to scan",
+      "type": "choice",
+      "options": [
+        { "label": "Top 1000 (default)", "flag": null },
+        { "label": "Top 100 (fast)", "flag": "-F" },
+        { "label": "All 65535 ports", "flag": "-p-" },
+        { "label": "Specific ports", "flag": null }
+      ]
+    },
+    {
+      "id": "port_range",
+      "prompt": "Port range",
+      "type": "text",
+      "flag": "-p",
+      "placeholder": "22,80,443 or 1-1000",
+      "when": { "ports": "Specific ports" }
+    },
+    {
+      "id": "timing",
+      "prompt": "Timing template",
+      "type": "choice",
+      "options": [
+        { "label": "Normal (T3)", "flag": null },
+        { "label": "Paranoid (T0, slowest)", "flag": "-T0" },
+        { "label": "Sneaky (T1)", "flag": "-T1" },
+        { "label": "Polite (T2)", "flag": "-T2" },
+        { "label": "Aggressive (T4)", "flag": "-T4" },
+        { "label": "Insane (T5, fastest)", "flag": "-T5" }
+      ]
+    },
+    {
+      "id": "service_version",
+      "prompt": "Detect service versions?",
+      "type": "toggle",
+      "flag": "-sV"
+    },
+    {
+      "id": "os_detection",
+      "prompt": "Detect OS? (requires root)",
+      "type": "toggle",
+      "flag": "-O"
+    },
+    {
+      "id": "script",
+      "prompt": "Run NSE scripts",
+      "type": "choice",
+      "options": [
+        { "label": "None", "flag": null },
+        { "label": "Default scripts", "flag": "-sC" },
+        { "label": "Safe scripts", "flag": "--script=safe" },
+        { "label": "Vuln scripts", "flag": "--script=vuln" },
+        { "label": "All default + version", "flag": "-A" }
+      ]
+    },
+    {
+      "id": "output",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Normal (stdout)", "flag": null },
+        { "label": "Verbose", "flag": "-v" },
+        { "label": "Very verbose", "flag": "-vv" },
+        { "label": "XML file", "flag": "-oX scan.xml" },
+        { "label": "Grepable file", "flag": "-oG scan.gnmap" },
+        { "label": "All formats", "flag": "-oA scan" }
+      ]
+    },
+    {
+      "id": "no_ping",
+      "prompt": "Skip host discovery (treat as up)?",
+      "type": "toggle",
+      "flag": "-Pn"
+    },
+    {
+      "id": "no_dns",
+      "prompt": "Skip DNS resolution?",
+      "type": "toggle",
+      "flag": "-n"
+    }
+  ]
+}

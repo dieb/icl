@@ -1,0 +1,52 @@
+{
+  "command": "umount",
+  "description": "Unmount a filesystem",
+  "placeholder_options": {
+    "<mountpoint>": "mount | awk '{print $3}' | grep -v '^/$' | head -20"
+  },
+  "presets": [
+    { "label": "Unmount by mount point", "flags": "<mountpoint>" },
+    { "label": "Unmount by device", "flags": "<device>" },
+    { "label": "Force unmount", "flags": "-f <mountpoint>" },
+    { "label": "Lazy unmount", "flags": "-l <mountpoint>" },
+    { "label": "Unmount all", "flags": "-a" }
+  ],
+  "steps": [
+    {
+      "id": "target",
+      "prompt": "Mount point or device",
+      "type": "text",
+      "placeholder": "/mnt/data or /dev/sdb1"
+    },
+    {
+      "id": "force",
+      "prompt": "Force unmount (may cause data loss)?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "lazy",
+      "prompt": "Lazy unmount (detach now, cleanup later)?",
+      "type": "toggle",
+      "flag": "-l"
+    },
+    {
+      "id": "all",
+      "prompt": "Unmount all filesystems?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "recursive",
+      "prompt": "Recursive (unmount submounts)?",
+      "type": "toggle",
+      "flag": "-R"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Verbose output?",
+      "type": "toggle",
+      "flag": "-v"
+    }
+  ]
+}

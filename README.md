@@ -71,9 +71,15 @@ i docker run      # Jump directly to docker run
 Supported tools:
 
 - **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [find](.i/find.json), [make](.i/make.json), [tar](.i/tar.json), [chmod](.i/chmod.json), [ps](.i/ps.json)
+- **System Admin**: [systemctl](.i/systemctl.json), [journalctl](.i/journalctl.json), [chown](.i/chown.json), [lsblk](.i/lsblk.json), [mount](.i/mount.json), [umount](.i/umount.json)
 - **Networking**: [curl](.i/curl.json), [wget](.i/wget.json), [ssh](.i/ssh.json), [scp](.i/scp.json), [rsync](.i/rsync.json)
+- **Network Diagnostics**: [ss](.i/ss.json), [lsof](.i/lsof.json), [nmap](.i/nmap.json), [dig](.i/dig.json), [tcpdump](.i/tcpdump.json), [iftop](.i/iftop.json)
 - **Version Control**: [git](.i/git.json)
 - **Containers**: [docker](.i/docker.json)
+- **Kubernetes**: [kubectl](.i/kubectl.json)
+- **Infrastructure**: [terraform](.i/terraform.json), [ansible](.i/ansible.json), [ansible-playbook](.i/ansible-playbook.json)
+- **Cloud**: [aws](.i/aws.json)
+- **Databases**: [mysql](.i/mysql.json), [psql](.i/psql.json), [redis-cli](.i/redis-cli.json), [mongosh](.i/mongosh.json)
 - **Node.js**: [npm](.i/npm.json), [yarn](.i/yarn.json), [pnpm](.i/pnpm.json)
 - **Python**: [pip](.i/pip.json), [uv](.i/uv.json), [poetry](.i/poetry.json), [pytest](.i/pytest.json), [ruff](.i/ruff.json)
 - **Ruby/Rails**: [rails](.i/rails.json), [bundle](.i/bundle.json), [rake](.i/rake.json), [rspec](.i/rspec.json), [rubocop](.i/rubocop.json)

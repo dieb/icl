@@ -1,0 +1,71 @@
+{
+  "command": "kubectl port-forward",
+  "description": "Forward local ports to a pod",
+  "placeholder_options": {
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<service>": "kubectl get svc --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Forward to pod", "flags": "<pod> <local_port>:<remote_port>" },
+    { "label": "Forward to service", "flags": "svc/<service> <local_port>:<remote_port>" },
+    { "label": "Forward same port", "flags": "<pod> <port>" },
+    { "label": "Listen on all interfaces", "flags": "--address 0.0.0.0 <pod> <local_port>:<remote_port>" }
+  ],
+  "steps": [
+    {
+      "id": "target_type",
+      "prompt": "Forward to",
+      "type": "choice",
+      "options": [
+        { "label": "Pod", "flag": null },
+        { "label": "Service", "flag": "svc/" },
+        { "label": "Deployment", "flag": "deployment/" }
+      ]
+    },
+    {
+      "id": "target_name",
+      "prompt": "Resource name",
+      "type": "text",
+      "placeholder": "my-pod or my-service"
+    },
+    {
+      "id": "namespace_scope",
+      "prompt": "Namespace",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace_scope": "Specific namespace" }
+    },
+    {
+      "id": "local_port",
+      "prompt": "Local port",
+      "type": "text",
+      "placeholder": "8080"
+    },
+    {
+      "id": "remote_port",
+      "prompt": "Remote port",
+      "type": "text",
+      "placeholder": "80"
+    },
+    {
+      "id": "address",
+      "prompt": "Listen address",
+      "type": "choice",
+      "options": [
+        { "label": "localhost only (default)", "flag": null },
+        { "label": "All interfaces (0.0.0.0)", "flag": "--address 0.0.0.0" }
+      ]
+    }
+  ]
+}

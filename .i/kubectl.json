@@ -1,0 +1,30 @@
+{
+  "command": "kubectl",
+  "description": "Kubernetes cluster management",
+  "presets": [
+    { "label": "Get all pods", "flags": "get pods -A" },
+    { "label": "Get all services", "flags": "get svc -A" },
+    { "label": "Cluster info", "flags": "cluster-info" },
+    { "label": "Current context", "flags": "config current-context" },
+    { "label": "Get nodes", "flags": "get nodes" },
+    { "label": "Get namespaces", "flags": "get namespaces" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Get resources", "chain": "kubectl-get" },
+        { "label": "Describe resource", "chain": "kubectl-describe" },
+        { "label": "View logs", "chain": "kubectl-logs" },
+        { "label": "Execute in pod", "chain": "kubectl-exec" },
+        { "label": "Apply manifest", "chain": "kubectl-apply" },
+        { "label": "Delete resources", "chain": "kubectl-delete" },
+        { "label": "Port forward", "chain": "kubectl-port-forward" },
+        { "label": "Scale deployment", "chain": "kubectl-scale" },
+        { "label": "Manage contexts", "chain": "kubectl-config" }
+      ]
+    }
+  ]
+}

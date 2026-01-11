@@ -1,0 +1,87 @@
+{
+  "command": "iftop",
+  "description": "Display bandwidth usage on an interface",
+  "placeholder_options": {
+    "<interface>": "ip link show 2>/dev/null | awk -F': ' '/^[0-9]+:/ {print $2}' | head -10"
+  },
+  "presets": [
+    { "label": "Monitor interface", "flags": "-i <interface>" },
+    { "label": "Monitor with port numbers", "flags": "-i <interface> -P" },
+    { "label": "Monitor without DNS", "flags": "-i <interface> -n" },
+    { "label": "Monitor without port names", "flags": "-i <interface> -N" },
+    { "label": "Filter by host", "flags": "-i <interface> -f 'host <host>'" },
+    { "label": "Filter by port", "flags": "-i <interface> -f 'port <port>'" },
+    { "label": "Text mode (no curses)", "flags": "-i <interface> -t" },
+    { "label": "Show bars as bytes", "flags": "-i <interface> -B" }
+  ],
+  "steps": [
+    {
+      "id": "interface",
+      "prompt": "Network interface",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "eth0"
+    },
+    {
+      "id": "show_ports",
+      "prompt": "Show port numbers?",
+      "type": "toggle",
+      "flag": "-P"
+    },
+    {
+      "id": "no_dns",
+      "prompt": "Don't resolve hostnames?",
+      "type": "toggle",
+      "flag": "-n"
+    },
+    {
+      "id": "no_port_names",
+      "prompt": "Don't resolve port names?",
+      "type": "toggle",
+      "flag": "-N"
+    },
+    {
+      "id": "bytes",
+      "prompt": "Show bytes instead of bits?",
+      "type": "toggle",
+      "flag": "-B"
+    },
+    {
+      "id": "filter",
+      "prompt": "BPF filter (optional)",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "host 192.168.1.1 or port 80"
+    },
+    {
+      "id": "text_mode",
+      "prompt": "Text mode (no interactive UI)?",
+      "type": "toggle",
+      "flag": "-t"
+    },
+    {
+      "id": "output_seconds",
+      "prompt": "Seconds to run in text mode (optional)",
+      "type": "text",
+      "flag": "-s",
+      "placeholder": "10"
+    },
+    {
+      "id": "promiscuous",
+      "prompt": "Promiscuous mode?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "line_display",
+      "prompt": "Line display mode",
+      "type": "choice",
+      "options": [
+        { "label": "Two lines per host pair", "flag": null },
+        { "label": "One line per host pair", "flag": "-o 2s" },
+        { "label": "Source only", "flag": "-o source" },
+        { "label": "Destination only", "flag": "-o destination" }
+      ]
+    }
+  ]
+}

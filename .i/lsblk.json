@@ -1,0 +1,83 @@
+{
+  "command": "lsblk",
+  "description": "List block devices",
+  "presets": [
+    { "label": "Default tree view", "flags": "" },
+    { "label": "With filesystem info", "flags": "-f" },
+    { "label": "All devices", "flags": "-a" },
+    { "label": "Show size in bytes", "flags": "-b" },
+    { "label": "List format", "flags": "-l" },
+    { "label": "Show paths", "flags": "-p" },
+    { "label": "JSON output", "flags": "-J" },
+    { "label": "Key=value pairs", "flags": "-P" },
+    { "label": "Specific columns", "flags": "-o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE" }
+  ],
+  "steps": [
+    {
+      "id": "device",
+      "prompt": "Specific device (optional)",
+      "type": "text",
+      "placeholder": "/dev/sda"
+    },
+    {
+      "id": "filesystem",
+      "prompt": "Show filesystem info?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "all",
+      "prompt": "Include empty devices?",
+      "type": "toggle",
+      "flag": "-a"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Tree (default)", "flag": null },
+        { "label": "List", "flag": "-l" },
+        { "label": "JSON", "flag": "-J" },
+        { "label": "Key=value pairs", "flag": "-P" },
+        { "label": "Raw", "flag": "-r" }
+      ]
+    },
+    {
+      "id": "columns",
+      "prompt": "Columns to display",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Name, Size, Type, Mount", "flag": "-o NAME,SIZE,TYPE,MOUNTPOINT" },
+        { "label": "With filesystem", "flag": "-o NAME,SIZE,FSTYPE,MOUNTPOINT,LABEL" },
+        { "label": "With UUID", "flag": "-o NAME,SIZE,UUID,FSTYPE,MOUNTPOINT" },
+        { "label": "All columns", "flag": "-o +UUID,LABEL,FSTYPE,FSVER,PARTUUID" }
+      ]
+    },
+    {
+      "id": "paths",
+      "prompt": "Show full device paths?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "bytes",
+      "prompt": "Show size in bytes?",
+      "type": "toggle",
+      "flag": "-b"
+    },
+    {
+      "id": "nodeps",
+      "prompt": "Hide slaves (partitions)?",
+      "type": "toggle",
+      "flag": "-d"
+    },
+    {
+      "id": "scsi",
+      "prompt": "SCSI devices only?",
+      "type": "toggle",
+      "flag": "-S"
+    }
+  ]
+}

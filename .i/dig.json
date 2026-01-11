@@ -1,0 +1,105 @@
+{
+  "command": "dig",
+  "description": "DNS lookup utility",
+  "presets": [
+    { "label": "A record lookup", "flags": "<domain>" },
+    { "label": "MX records", "flags": "<domain> MX" },
+    { "label": "All records", "flags": "<domain> ANY" },
+    { "label": "Nameservers", "flags": "<domain> NS" },
+    { "label": "TXT records", "flags": "<domain> TXT" },
+    { "label": "Reverse lookup", "flags": "-x <ip>" },
+    { "label": "Short answer", "flags": "+short <domain>" },
+    { "label": "Trace resolution", "flags": "+trace <domain>" },
+    { "label": "Use specific DNS", "flags": "@<dns_server> <domain>" },
+    { "label": "DNSSEC validation", "flags": "+dnssec <domain>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Lookup type",
+      "type": "choice",
+      "options": [
+        { "label": "Forward lookup (domain to IP)", "flag": null },
+        { "label": "Reverse lookup (IP to domain)", "flag": "-x" }
+      ]
+    },
+    {
+      "id": "domain",
+      "prompt": "Domain name",
+      "type": "text",
+      "placeholder": "example.com",
+      "when": { "mode": "Forward lookup (domain to IP)" }
+    },
+    {
+      "id": "ip",
+      "prompt": "IP address",
+      "type": "text",
+      "placeholder": "8.8.8.8",
+      "when": { "mode": "Reverse lookup (IP to domain)" }
+    },
+    {
+      "id": "record_type",
+      "prompt": "Record type",
+      "type": "choice",
+      "options": [
+        { "label": "A (IPv4 address)", "flag": "A" },
+        { "label": "AAAA (IPv6 address)", "flag": "AAAA" },
+        { "label": "MX (mail servers)", "flag": "MX" },
+        { "label": "NS (nameservers)", "flag": "NS" },
+        { "label": "TXT (text records)", "flag": "TXT" },
+        { "label": "CNAME (canonical name)", "flag": "CNAME" },
+        { "label": "SOA (start of authority)", "flag": "SOA" },
+        { "label": "PTR (pointer)", "flag": "PTR" },
+        { "label": "SRV (service)", "flag": "SRV" },
+        { "label": "CAA (certificate authority)", "flag": "CAA" },
+        { "label": "ANY (all records)", "flag": "ANY" }
+      ],
+      "when": { "mode": "Forward lookup (domain to IP)" }
+    },
+    {
+      "id": "server",
+      "prompt": "DNS server (optional)",
+      "type": "text",
+      "placeholder": "8.8.8.8 or 1.1.1.1"
+    },
+    {
+      "id": "output",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Full output", "flag": null },
+        { "label": "Short (answer only)", "flag": "+short" },
+        { "label": "No comments", "flag": "+nocomments" },
+        { "label": "No stats", "flag": "+nostats" },
+        { "label": "Minimal", "flag": "+noall +answer" }
+      ]
+    },
+    {
+      "id": "trace",
+      "prompt": "Trace resolution path?",
+      "type": "toggle",
+      "flag": "+trace"
+    },
+    {
+      "id": "dnssec",
+      "prompt": "Show DNSSEC records?",
+      "type": "toggle",
+      "flag": "+dnssec"
+    },
+    {
+      "id": "tcp",
+      "prompt": "Use TCP instead of UDP?",
+      "type": "toggle",
+      "flag": "+tcp"
+    },
+    {
+      "id": "recurse",
+      "prompt": "Recursion",
+      "type": "choice",
+      "options": [
+        { "label": "Recursive (default)", "flag": null },
+        { "label": "Non-recursive", "flag": "+norecurse" }
+      ]
+    }
+  ]
+}

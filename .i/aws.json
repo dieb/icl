@@ -1,0 +1,28 @@
+{
+  "command": "aws",
+  "description": "Amazon Web Services CLI",
+  "placeholder_options": {
+    "<profile>": "aws configure list-profiles 2>/dev/null | head -10"
+  },
+  "presets": [
+    { "label": "List S3 buckets", "flags": "s3 ls" },
+    { "label": "List EC2 instances", "flags": "ec2 describe-instances --query 'Reservations[].Instances[].{ID:InstanceId,State:State.Name,Type:InstanceType}' --output table" },
+    { "label": "Get caller identity", "flags": "sts get-caller-identity" },
+    { "label": "List IAM users", "flags": "iam list-users" },
+    { "label": "Configure credentials", "flags": "configure" }
+  ],
+  "steps": [
+    {
+      "id": "service",
+      "prompt": "AWS Service",
+      "type": "choice",
+      "options": [
+        { "label": "S3 (Storage)", "chain": "aws-s3" },
+        { "label": "EC2 (Compute)", "chain": "aws-ec2" },
+        { "label": "STS (Security Token)", "flag": "sts get-caller-identity" },
+        { "label": "IAM (Identity)", "flag": "iam list-users" },
+        { "label": "Configure credentials", "flag": "configure" }
+      ]
+    }
+  ]
+}

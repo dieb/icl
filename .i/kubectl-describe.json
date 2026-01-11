@@ -1,0 +1,58 @@
+{
+  "command": "kubectl describe",
+  "description": "Show detailed resource information",
+  "placeholder_options": {
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<deployment>": "kubectl get deployments --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<service>": "kubectl get svc --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Describe pod", "flags": "pod <pod>" },
+    { "label": "Describe deployment", "flags": "deployment <deployment>" },
+    { "label": "Describe service", "flags": "service <service>" },
+    { "label": "Describe node", "flags": "node <node>" }
+  ],
+  "steps": [
+    {
+      "id": "resource",
+      "prompt": "Resource type",
+      "type": "choice",
+      "options": [
+        { "label": "Pod", "flag": "pod" },
+        { "label": "Deployment", "flag": "deployment" },
+        { "label": "Service", "flag": "service" },
+        { "label": "Node", "flag": "node" },
+        { "label": "Ingress", "flag": "ingress" },
+        { "label": "ConfigMap", "flag": "configmap" },
+        { "label": "Secret", "flag": "secret" },
+        { "label": "PersistentVolumeClaim", "flag": "pvc" },
+        { "label": "StatefulSet", "flag": "statefulset" },
+        { "label": "DaemonSet", "flag": "daemonset" }
+      ]
+    },
+    {
+      "id": "name",
+      "prompt": "Resource name",
+      "type": "text",
+      "placeholder": "my-resource"
+    },
+    {
+      "id": "namespace_scope",
+      "prompt": "Namespace",
+      "type": "choice",
+      "options": [
+        { "label": "Current namespace", "flag": null },
+        { "label": "Specific namespace", "flag": null }
+      ]
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace name",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default",
+      "when": { "namespace_scope": "Specific namespace" }
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "command": "systemctl",
+  "description": "Control the systemd system and service manager",
+  "placeholder_options": {
+    "<service>": "systemctl list-units --type=service --no-legend 2>/dev/null | awk '{print $1}' | head -30",
+    "<unit>": "systemctl list-units --no-legend 2>/dev/null | awk '{print $1}' | head -30"
+  },
+  "presets": [
+    { "label": "List running services", "flags": "list-units --type=service --state=running" },
+    { "label": "List failed services", "flags": "list-units --type=service --state=failed" },
+    { "label": "List all services", "flags": "list-units --type=service --all" },
+    { "label": "Status of service", "flags": "status <service>" },
+    { "label": "Restart service", "flags": "restart <service>" },
+    { "label": "List timers", "flags": "list-timers" },
+    { "label": "System status", "flags": "status" },
+    { "label": "Daemon reload", "flags": "daemon-reload" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "Action to perform",
+      "type": "choice",
+      "options": [
+        { "label": "status", "flag": "status" },
+        { "label": "start", "flag": "start" },
+        { "label": "stop", "flag": "stop" },
+        { "label": "restart", "flag": "restart" },
+        { "label": "reload", "flag": "reload" },
+        { "label": "enable", "flag": "enable" },
+        { "label": "disable", "flag": "disable" },
+        { "label": "is-active", "flag": "is-active" },
+        { "label": "is-enabled", "flag": "is-enabled" },
+        { "label": "mask", "flag": "mask" },
+        { "label": "unmask", "flag": "unmask" },
+        { "label": "list-units", "flag": "list-units" },
+        { "label": "list-unit-files", "flag": "list-unit-files" },
+        { "label": "daemon-reload", "flag": "daemon-reload" },
+        { "label": "show", "flag": "show" }
+      ]
+    },
+    {
+      "id": "unit",
+      "prompt": "Unit/service name",
+      "type": "text",
+      "placeholder": "nginx.service"
+    },
+    {
+      "id": "unit_type",
+      "prompt": "Filter by unit type",
+      "type": "choice",
+      "options": [
+        { "label": "All types", "flag": null },
+        { "label": "Services", "flag": "--type=service" },
+        { "label": "Sockets", "flag": "--type=socket" },
+        { "label": "Timers", "flag": "--type=timer" },
+        { "label": "Targets", "flag": "--type=target" },
+        { "label": "Mounts", "flag": "--type=mount" }
+      ],
+      "when": { "action": "list-units" }
+    },
+    {
+      "id": "state",
+      "prompt": "Filter by state",
+      "type": "choice",
+      "options": [
+        { "label": "All states", "flag": null },
+        { "label": "Running", "flag": "--state=running" },
+        { "label": "Failed", "flag": "--state=failed" },
+        { "label": "Active", "flag": "--state=active" },
+        { "label": "Inactive", "flag": "--state=inactive" }
+      ],
+      "when": { "action": "list-units" }
+    },
+    {
+      "id": "all",
+      "prompt": "Show all units (including inactive)?",
+      "type": "toggle",
+      "flag": "--all",
+      "when": { "action": "list-units" }
+    },
+    {
+      "id": "now",
+      "prompt": "Also start/stop the unit now?",
+      "type": "toggle",
+      "flag": "--now"
+    },
+    {
+      "id": "no_block",
+      "prompt": "Don't wait for operation to complete?",
+      "type": "toggle",
+      "flag": "--no-block"
+    },
+    {
+      "id": "user",
+      "prompt": "User mode (instead of system)?",
+      "type": "toggle",
+      "flag": "--user"
+    }
+  ]
+}

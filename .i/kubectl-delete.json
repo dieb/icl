@@ -1,0 +1,85 @@
+{
+  "command": "kubectl delete",
+  "description": "Delete Kubernetes resources",
+  "placeholder_options": {
+    "<pod>": "kubectl get pods --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<deployment>": "kubectl get deployments --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20",
+    "<namespace>": "kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | head -20"
+  },
+  "presets": [
+    { "label": "Delete pod", "flags": "pod <pod>" },
+    { "label": "Delete deployment", "flags": "deployment <deployment>" },
+    { "label": "Delete from file", "flags": "-f <file>" },
+    { "label": "Delete all pods in namespace", "flags": "pods --all -n <namespace>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Delete by",
+      "type": "choice",
+      "options": [
+        { "label": "Resource type and name", "flag": null },
+        { "label": "Manifest file", "flag": null },
+        { "label": "Label selector", "flag": null }
+      ]
+    },
+    {
+      "id": "resource",
+      "prompt": "Resource type",
+      "type": "choice",
+      "options": [
+        { "label": "Pod", "flag": "pod" },
+        { "label": "Deployment", "flag": "deployment" },
+        { "label": "Service", "flag": "service" },
+        { "label": "ConfigMap", "flag": "configmap" },
+        { "label": "Secret", "flag": "secret" },
+        { "label": "Ingress", "flag": "ingress" },
+        { "label": "Job", "flag": "job" },
+        { "label": "CronJob", "flag": "cronjob" }
+      ],
+      "when": { "mode": "Resource type and name" }
+    },
+    {
+      "id": "name",
+      "prompt": "Resource name (or --all)",
+      "type": "text",
+      "placeholder": "my-pod",
+      "when": { "mode": "Resource type and name" }
+    },
+    {
+      "id": "file",
+      "prompt": "Manifest file",
+      "type": "text",
+      "flag": "-f",
+      "placeholder": "deployment.yaml",
+      "when": { "mode": "Manifest file" }
+    },
+    {
+      "id": "selector",
+      "prompt": "Label selector",
+      "type": "text",
+      "flag": "-l",
+      "placeholder": "app=nginx",
+      "when": { "mode": "Label selector" }
+    },
+    {
+      "id": "namespace",
+      "prompt": "Namespace (optional)",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "default"
+    },
+    {
+      "id": "force",
+      "prompt": "Force delete (immediate)?",
+      "type": "toggle",
+      "flag": "--force --grace-period=0"
+    },
+    {
+      "id": "wait",
+      "prompt": "Wait for deletion?",
+      "type": "toggle",
+      "flag": "--wait=true"
+    }
+  ]
+}
