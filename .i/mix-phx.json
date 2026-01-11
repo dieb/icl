@@ -1,0 +1,66 @@
+{
+  "command": "mix phx",
+  "description": "Phoenix framework commands",
+  "presets": [
+    { "label": "Start server", "flags": "phx.server" },
+    { "label": "Show routes", "flags": "phx.routes" },
+    { "label": "Create new Phoenix app", "flags": "phx.new <name>" },
+    { "label": "Digest assets", "flags": "phx.digest" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Start server", "chain": "mix-phx-server" },
+        { "label": "Generate code", "chain": "mix-phx-gen" },
+        { "label": "Create new Phoenix app", "flag": "phx.new" },
+        { "label": "Show routes", "flag": "phx.routes" },
+        { "label": "Digest assets", "flag": "phx.digest" },
+        { "label": "Clean digests", "flag": "phx.digest.clean" }
+      ]
+    },
+    {
+      "id": "app_name",
+      "prompt": "Application name",
+      "type": "text",
+      "placeholder": "my_app",
+      "when": { "action": "Create new Phoenix app" }
+    },
+    {
+      "id": "no_ecto",
+      "prompt": "Skip Ecto (no database)?",
+      "type": "toggle",
+      "flag": "--no-ecto",
+      "when": { "action": "Create new Phoenix app" }
+    },
+    {
+      "id": "no_html",
+      "prompt": "Skip HTML views (API only)?",
+      "type": "toggle",
+      "flag": "--no-html",
+      "when": { "action": "Create new Phoenix app" }
+    },
+    {
+      "id": "no_live",
+      "prompt": "Skip LiveView?",
+      "type": "toggle",
+      "flag": "--no-live",
+      "when": { "action": "Create new Phoenix app" }
+    },
+    {
+      "id": "database",
+      "prompt": "Database adapter",
+      "type": "choice",
+      "flag": "--database",
+      "options": [
+        { "label": "PostgreSQL (default)", "flag": null },
+        { "label": "MySQL", "flag": "--database mysql" },
+        { "label": "SQLite", "flag": "--database sqlite3" },
+        { "label": "MS SQL", "flag": "--database mssql" }
+      ],
+      "when": { "action": "Create new Phoenix app" }
+    }
+  ]
+}

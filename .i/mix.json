@@ -1,0 +1,32 @@
+{
+  "command": "mix",
+  "description": "Elixir build tool and task runner",
+  "presets": [
+    { "label": "Get dependencies", "flags": "deps.get" },
+    { "label": "Run tests", "flags": "test" },
+    { "label": "Format code", "flags": "format" },
+    { "label": "Compile", "flags": "compile" },
+    { "label": "Start Phoenix server", "flags": "phx.server" },
+    { "label": "Run IEx with project", "flags": "run --no-halt" }
+  ],
+  "steps": [
+    {
+      "id": "subcommand",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Create new project", "chain": "mix-new" },
+        { "label": "Run tests", "chain": "mix-test" },
+        { "label": "Manage dependencies", "chain": "mix-deps" },
+        { "label": "Database (Ecto)", "chain": "mix-ecto" },
+        { "label": "Phoenix commands", "chain": "mix-phx" },
+        { "label": "Static analysis (Credo)", "chain": "mix-credo" },
+        { "label": "Type checking (Dialyzer)", "chain": "mix-dialyzer" },
+        { "label": "Format code", "flag": "format" },
+        { "label": "Compile project", "flag": "compile" },
+        { "label": "Clean build", "flag": "clean" },
+        { "label": "Show help", "flag": "help" }
+      ]
+    }
+  ]
+}

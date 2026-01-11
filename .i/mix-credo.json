@@ -1,0 +1,64 @@
+{
+  "command": "mix credo",
+  "description": "Static code analysis for Elixir",
+  "presets": [
+    { "label": "Run analysis", "flags": "" },
+    { "label": "Strict mode", "flags": "--strict" },
+    { "label": "Only errors", "flags": "--min-priority=high" },
+    { "label": "Suggest fixes", "flags": "suggest" },
+    { "label": "Explain issue", "flags": "explain <issue>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "Analysis mode",
+      "type": "choice",
+      "options": [
+        { "label": "Standard analysis", "flag": null },
+        { "label": "Strict mode (all checks)", "flag": "--strict" },
+        { "label": "Suggest improvements", "flag": "suggest" },
+        { "label": "List all checks", "flag": "list" },
+        { "label": "Show categories", "flag": "categories" }
+      ]
+    },
+    {
+      "id": "priority",
+      "prompt": "Minimum priority",
+      "type": "choice",
+      "options": [
+        { "label": "All priorities", "flag": null },
+        { "label": "Normal and above", "flag": "--min-priority=normal" },
+        { "label": "High only", "flag": "--min-priority=high" }
+      ]
+    },
+    {
+      "id": "checks",
+      "prompt": "Check categories to include",
+      "type": "multi",
+      "options": [
+        { "label": "Consistency", "flag": "--checks=consistency" },
+        { "label": "Readability", "flag": "--checks=readability" },
+        { "label": "Refactoring opportunities", "flag": "--checks=refactor" },
+        { "label": "Design issues", "flag": "--checks=design" },
+        { "label": "Warnings", "flag": "--checks=warning" }
+      ]
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default (detailed)", "flag": null },
+        { "label": "One line per issue", "flag": "--format=oneline" },
+        { "label": "Flycheck (Emacs)", "flag": "--format=flycheck" },
+        { "label": "JSON", "flag": "--format=json" }
+      ]
+    },
+    {
+      "id": "all",
+      "prompt": "Check all files (ignore .credo.exs)?",
+      "type": "toggle",
+      "flag": "--all"
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "command": "mix phx.gen",
+  "description": "Phoenix code generators",
+  "presets": [
+    { "label": "HTML resource", "flags": "phx.gen.html <context> <schema> <table> <fields>" },
+    { "label": "JSON API", "flags": "phx.gen.json <context> <schema> <table> <fields>" },
+    { "label": "LiveView", "flags": "phx.gen.live <context> <schema> <table> <fields>" },
+    { "label": "Context", "flags": "phx.gen.context <context> <schema> <table> <fields>" },
+    { "label": "Schema", "flags": "phx.gen.schema <schema> <table> <fields>" },
+    { "label": "Authentication", "flags": "phx.gen.auth <context> <schema> <table>" }
+  ],
+  "steps": [
+    {
+      "id": "generator",
+      "prompt": "What do you want to generate?",
+      "type": "choice",
+      "options": [
+        { "label": "HTML resource (controller + views + templates)", "flag": "phx.gen.html" },
+        { "label": "JSON API resource", "flag": "phx.gen.json" },
+        { "label": "LiveView resource", "flag": "phx.gen.live" },
+        { "label": "Context (business logic module)", "flag": "phx.gen.context" },
+        { "label": "Schema only", "flag": "phx.gen.schema" },
+        { "label": "Embedded schema", "flag": "phx.gen.embedded" },
+        { "label": "Authentication system", "flag": "phx.gen.auth" },
+        { "label": "Notifier (email)", "flag": "phx.gen.notifier" },
+        { "label": "Channel", "flag": "phx.gen.channel" },
+        { "label": "Presence", "flag": "phx.gen.presence" },
+        { "label": "Socket", "flag": "phx.gen.socket" },
+        { "label": "Secret key", "flag": "phx.gen.secret" },
+        { "label": "Certificate", "flag": "phx.gen.cert" },
+        { "label": "Release config", "flag": "phx.gen.release" }
+      ]
+    },
+    {
+      "id": "context",
+      "prompt": "Context module name (e.g., Accounts, Blog)",
+      "type": "text",
+      "placeholder": "Accounts",
+      "when": { "generator": "HTML resource (controller + views + templates)" }
+    },
+    {
+      "id": "schema",
+      "prompt": "Schema name (e.g., User, Post)",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "HTML resource (controller + views + templates)" }
+    },
+    {
+      "id": "table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "users",
+      "when": { "generator": "HTML resource (controller + views + templates)" }
+    },
+    {
+      "id": "fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string email:string age:integer",
+      "when": { "generator": "HTML resource (controller + views + templates)" }
+    },
+    {
+      "id": "json_context",
+      "prompt": "Context module name",
+      "type": "text",
+      "placeholder": "Accounts",
+      "when": { "generator": "JSON API resource" }
+    },
+    {
+      "id": "json_schema",
+      "prompt": "Schema name",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "JSON API resource" }
+    },
+    {
+      "id": "json_table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "users",
+      "when": { "generator": "JSON API resource" }
+    },
+    {
+      "id": "json_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string email:string",
+      "when": { "generator": "JSON API resource" }
+    },
+    {
+      "id": "live_context",
+      "prompt": "Context module name",
+      "type": "text",
+      "placeholder": "Catalog",
+      "when": { "generator": "LiveView resource" }
+    },
+    {
+      "id": "live_schema",
+      "prompt": "Schema name",
+      "type": "text",
+      "placeholder": "Product",
+      "when": { "generator": "LiveView resource" }
+    },
+    {
+      "id": "live_table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "products",
+      "when": { "generator": "LiveView resource" }
+    },
+    {
+      "id": "live_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string price:decimal",
+      "when": { "generator": "LiveView resource" }
+    },
+    {
+      "id": "ctx_context",
+      "prompt": "Context module name",
+      "type": "text",
+      "placeholder": "Accounts",
+      "when": { "generator": "Context (business logic module)" }
+    },
+    {
+      "id": "ctx_schema",
+      "prompt": "Schema name",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "Context (business logic module)" }
+    },
+    {
+      "id": "ctx_table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "users",
+      "when": { "generator": "Context (business logic module)" }
+    },
+    {
+      "id": "ctx_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string email:string",
+      "when": { "generator": "Context (business logic module)" }
+    },
+    {
+      "id": "schema_name",
+      "prompt": "Schema module name (e.g., Accounts.User)",
+      "type": "text",
+      "placeholder": "Accounts.User",
+      "when": { "generator": "Schema only" }
+    },
+    {
+      "id": "schema_table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "users",
+      "when": { "generator": "Schema only" }
+    },
+    {
+      "id": "schema_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "name:string email:string",
+      "when": { "generator": "Schema only" }
+    },
+    {
+      "id": "embedded_name",
+      "prompt": "Embedded schema name",
+      "type": "text",
+      "placeholder": "Address",
+      "when": { "generator": "Embedded schema" }
+    },
+    {
+      "id": "embedded_fields",
+      "prompt": "Fields (name:type name:type)",
+      "type": "text",
+      "placeholder": "street:string city:string zip:string",
+      "when": { "generator": "Embedded schema" }
+    },
+    {
+      "id": "auth_context",
+      "prompt": "Context module name",
+      "type": "text",
+      "placeholder": "Accounts",
+      "when": { "generator": "Authentication system" }
+    },
+    {
+      "id": "auth_schema",
+      "prompt": "Schema name",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "Authentication system" }
+    },
+    {
+      "id": "auth_table",
+      "prompt": "Database table name (plural)",
+      "type": "text",
+      "placeholder": "users",
+      "when": { "generator": "Authentication system" }
+    },
+    {
+      "id": "notifier_name",
+      "prompt": "Notifier module name",
+      "type": "text",
+      "placeholder": "UserNotifier",
+      "when": { "generator": "Notifier (email)" }
+    },
+    {
+      "id": "notifier_messages",
+      "prompt": "Message functions (space-separated)",
+      "type": "text",
+      "placeholder": "welcome reset_password",
+      "when": { "generator": "Notifier (email)" }
+    },
+    {
+      "id": "channel_name",
+      "prompt": "Channel name",
+      "type": "text",
+      "placeholder": "Room",
+      "when": { "generator": "Channel" }
+    },
+    {
+      "id": "socket_name",
+      "prompt": "Socket module name",
+      "type": "text",
+      "placeholder": "User",
+      "when": { "generator": "Socket" }
+    },
+    {
+      "id": "no_context",
+      "prompt": "Skip context generation?",
+      "type": "toggle",
+      "flag": "--no-context"
+    },
+    {
+      "id": "no_schema",
+      "prompt": "Skip schema generation?",
+      "type": "toggle",
+      "flag": "--no-schema"
+    }
+  ]
+}

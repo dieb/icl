@@ -1,0 +1,65 @@
+{
+  "command": "mix test",
+  "description": "Run Elixir tests",
+  "presets": [
+    { "label": "Run all tests", "flags": "" },
+    { "label": "With coverage", "flags": "--cover" },
+    { "label": "Verbose (trace)", "flags": "--trace" },
+    { "label": "Only stale tests", "flags": "--stale" },
+    { "label": "Failed tests only", "flags": "--failed" },
+    { "label": "Specific file", "flags": "<file>" }
+  ],
+  "steps": [
+    {
+      "id": "scope",
+      "prompt": "What to test?",
+      "type": "choice",
+      "options": [
+        { "label": "All tests", "flag": null },
+        { "label": "Specific file", "flag": null },
+        { "label": "Only stale tests", "flag": "--stale" },
+        { "label": "Only failed tests", "flag": "--failed" }
+      ]
+    },
+    {
+      "id": "file",
+      "prompt": "Test file path",
+      "type": "text",
+      "placeholder": "test/my_app_test.exs",
+      "when": { "scope": "Specific file" }
+    },
+    {
+      "id": "line",
+      "prompt": "Specific line number (optional)",
+      "type": "text",
+      "placeholder": "",
+      "when": { "scope": "Specific file" }
+    },
+    {
+      "id": "trace",
+      "prompt": "Verbose output (trace)?",
+      "type": "toggle",
+      "flag": "--trace"
+    },
+    {
+      "id": "cover",
+      "prompt": "Show coverage?",
+      "type": "toggle",
+      "flag": "--cover"
+    },
+    {
+      "id": "seed",
+      "prompt": "Specific seed (optional)",
+      "type": "text",
+      "flag": "--seed",
+      "placeholder": ""
+    },
+    {
+      "id": "max_failures",
+      "prompt": "Max failures before stopping (optional)",
+      "type": "text",
+      "flag": "--max-failures",
+      "placeholder": ""
+    }
+  ]
+}

@@ -77,6 +77,7 @@ Supported tools:
 - **Node.js**: [npm](.i/npm.json), [yarn](.i/yarn.json), [pnpm](.i/pnpm.json)
 - **Python**: [pip](.i/pip.json), [uv](.i/uv.json), [poetry](.i/poetry.json), [pytest](.i/pytest.json), [ruff](.i/ruff.json)
 - **Ruby/Rails**: [rails](.i/rails.json), [bundle](.i/bundle.json), [rake](.i/rake.json), [rspec](.i/rspec.json), [rubocop](.i/rubocop.json)
+- **Elixir/Phoenix**: [mix](.i/mix.json), [iex](.i/iex.json), [elixir](.i/elixir.json)
 - **Rust**: [cargo](.i/cargo.json)
 - **Go**: [go](.i/go.json)
 - **Crystal**: [crystal](.i/crystal.json), [shards](.i/shards.json)

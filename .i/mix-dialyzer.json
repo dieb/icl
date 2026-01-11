@@ -1,0 +1,62 @@
+{
+  "command": "mix dialyzer",
+  "description": "Static type analysis using Dialyzer",
+  "presets": [
+    { "label": "Run analysis", "flags": "" },
+    { "label": "Quiet mode", "flags": "--quiet" },
+    { "label": "Show PLT path", "flags": "--plt" },
+    { "label": "Explain warning", "flags": "--explain <warning>" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run type analysis", "flag": null },
+        { "label": "Explain a warning code", "flag": "--explain" },
+        { "label": "Show PLT info", "flag": "--plt" }
+      ]
+    },
+    {
+      "id": "warning_code",
+      "prompt": "Warning code to explain",
+      "type": "text",
+      "placeholder": "call_without_opaque",
+      "when": { "action": "Explain a warning code" }
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default (dialyzer)", "flag": null },
+        { "label": "Dialyxir (readable)", "flag": "--format=dialyxir" },
+        { "label": "Short", "flag": "--format=short" },
+        { "label": "Raw", "flag": "--format=raw" },
+        { "label": "GitHub Actions", "flag": "--format=github" }
+      ]
+    },
+    {
+      "id": "quiet",
+      "prompt": "Quiet mode (less output)?",
+      "type": "toggle",
+      "flag": "--quiet"
+    },
+    {
+      "id": "force_check",
+      "prompt": "Force check even if PLT is stale?",
+      "type": "toggle",
+      "flag": "--force-check"
+    },
+    {
+      "id": "ignore_warnings",
+      "prompt": "Warnings to ignore",
+      "type": "multi",
+      "options": [
+        { "label": "No return", "flag": "--ignore-exit-status" },
+        { "label": "Unknown functions", "flag": null }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "command": "mix new",
+  "description": "Create a new Elixir project",
+  "presets": [
+    { "label": "Basic project", "flags": "<name>" },
+    { "label": "With supervision tree", "flags": "--sup <name>" },
+    { "label": "Umbrella project", "flags": "--umbrella <name>" }
+  ],
+  "steps": [
+    {
+      "id": "name",
+      "prompt": "Project name",
+      "type": "text",
+      "placeholder": "my_app"
+    },
+    {
+      "id": "sup",
+      "prompt": "Include supervision tree?",
+      "type": "toggle",
+      "flag": "--sup"
+    },
+    {
+      "id": "umbrella",
+      "prompt": "Create umbrella project?",
+      "type": "toggle",
+      "flag": "--umbrella"
+    },
+    {
+      "id": "app",
+      "prompt": "Custom app name (optional)",
+      "type": "text",
+      "flag": "--app",
+      "placeholder": ""
+    },
+    {
+      "id": "module",
+      "prompt": "Custom module name (optional)",
+      "type": "text",
+      "flag": "--module",
+      "placeholder": ""
+    }
+  ]
+}

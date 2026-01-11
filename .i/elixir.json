@@ -1,0 +1,61 @@
+{
+  "command": "elixir",
+  "description": "Run Elixir scripts and expressions",
+  "presets": [
+    { "label": "Run script", "flags": "<script.exs>" },
+    { "label": "Evaluate expression", "flags": "-e '<expression>'" },
+    { "label": "Run with warnings as errors", "flags": "--warnings-as-errors <script.exs>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Run a script file", "flag": null },
+        { "label": "Evaluate an expression", "flag": "-e" },
+        { "label": "Show version", "flag": "--version" }
+      ]
+    },
+    {
+      "id": "script",
+      "prompt": "Script file path",
+      "type": "text",
+      "placeholder": "script.exs",
+      "when": { "mode": "Run a script file" }
+    },
+    {
+      "id": "expression",
+      "prompt": "Expression to evaluate",
+      "type": "text",
+      "placeholder": "IO.puts(1 + 2)",
+      "when": { "mode": "Evaluate an expression" }
+    },
+    {
+      "id": "warnings",
+      "prompt": "Treat warnings as errors?",
+      "type": "toggle",
+      "flag": "--warnings-as-errors"
+    },
+    {
+      "id": "no_halt",
+      "prompt": "Keep VM running after script?",
+      "type": "toggle",
+      "flag": "--no-halt"
+    },
+    {
+      "id": "require",
+      "prompt": "Files to require before running (optional)",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": ""
+    },
+    {
+      "id": "parallel_require",
+      "prompt": "Files to parallel-require (optional)",
+      "type": "text",
+      "flag": "-pr",
+      "placeholder": ""
+    }
+  ]
+}

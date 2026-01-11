@@ -1,0 +1,25 @@
+{
+  "command": "mix phx.server",
+  "description": "Start Phoenix web server",
+  "presets": [
+    { "label": "Start server", "flags": "" },
+    { "label": "Start in IEx", "flags": "-S mix phx.server" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "How to start the server?",
+      "type": "choice",
+      "options": [
+        { "label": "Normal start", "flag": null },
+        { "label": "With IEx shell", "flag": null }
+      ]
+    },
+    {
+      "id": "open",
+      "prompt": "Open browser automatically?",
+      "type": "toggle",
+      "flag": "--open"
+    }
+  ]
+}

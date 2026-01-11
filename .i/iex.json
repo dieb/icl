@@ -1,0 +1,67 @@
+{
+  "command": "iex",
+  "description": "Interactive Elixir shell",
+  "presets": [
+    { "label": "Start IEx", "flags": "" },
+    { "label": "With Mix project", "flags": "-S mix" },
+    { "label": "With Phoenix server", "flags": "-S mix phx.server" },
+    { "label": "Remote shell", "flags": "--remsh <node>" },
+    { "label": "Named node", "flags": "--sname <name>" }
+  ],
+  "steps": [
+    {
+      "id": "mode",
+      "prompt": "How to start IEx?",
+      "type": "choice",
+      "options": [
+        { "label": "Plain IEx", "flag": null },
+        { "label": "With Mix project", "flag": "-S mix" },
+        { "label": "With Phoenix server", "flag": "-S mix phx.server" },
+        { "label": "Connect to remote node", "flag": "--remsh" },
+        { "label": "Run expression", "flag": "-e" }
+      ]
+    },
+    {
+      "id": "node",
+      "prompt": "Remote node name (name@host)",
+      "type": "text",
+      "placeholder": "myapp@localhost",
+      "when": { "mode": "Connect to remote node" }
+    },
+    {
+      "id": "expression",
+      "prompt": "Expression to evaluate",
+      "type": "text",
+      "placeholder": "IO.puts(\"Hello\")",
+      "when": { "mode": "Run expression" }
+    },
+    {
+      "id": "sname",
+      "prompt": "Short node name (optional)",
+      "type": "text",
+      "flag": "--sname",
+      "placeholder": ""
+    },
+    {
+      "id": "name",
+      "prompt": "Full node name (optional)",
+      "type": "text",
+      "flag": "--name",
+      "placeholder": ""
+    },
+    {
+      "id": "cookie",
+      "prompt": "Erlang cookie (optional)",
+      "type": "text",
+      "flag": "--cookie",
+      "placeholder": ""
+    },
+    {
+      "id": "dot_iex",
+      "prompt": "Custom .iex.exs path (optional)",
+      "type": "text",
+      "flag": "--dot-iex",
+      "placeholder": ""
+    }
+  ]
+}

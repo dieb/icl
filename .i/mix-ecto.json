@@ -1,0 +1,61 @@
+{
+  "command": "mix ecto",
+  "description": "Ecto database tasks",
+  "presets": [
+    { "label": "Create database", "flags": "ecto.create" },
+    { "label": "Run migrations", "flags": "ecto.migrate" },
+    { "label": "Rollback last migration", "flags": "ecto.rollback" },
+    { "label": "Reset database", "flags": "ecto.reset" },
+    { "label": "Setup (create + migrate + seed)", "flags": "ecto.setup" },
+    { "label": "Generate migration", "flags": "ecto.gen.migration <name>" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Create database", "flag": "ecto.create" },
+        { "label": "Drop database", "flag": "ecto.drop" },
+        { "label": "Run migrations", "flag": "ecto.migrate" },
+        { "label": "Rollback migration", "flag": "ecto.rollback" },
+        { "label": "Reset (drop + create + migrate)", "flag": "ecto.reset" },
+        { "label": "Setup (create + migrate + seed)", "flag": "ecto.setup" },
+        { "label": "Generate migration", "flag": "ecto.gen.migration" },
+        { "label": "Show migrations status", "flag": "ecto.migrations" },
+        { "label": "Dump schema", "flag": "ecto.dump" },
+        { "label": "Load schema", "flag": "ecto.load" }
+      ]
+    },
+    {
+      "id": "migration_name",
+      "prompt": "Migration name",
+      "type": "text",
+      "placeholder": "add_users_table",
+      "when": { "action": "Generate migration" }
+    },
+    {
+      "id": "rollback_step",
+      "prompt": "Number of migrations to rollback",
+      "type": "text",
+      "flag": "--step",
+      "placeholder": "1",
+      "when": { "action": "Rollback migration" }
+    },
+    {
+      "id": "migrate_to",
+      "prompt": "Migrate to specific version (optional)",
+      "type": "text",
+      "flag": "--to",
+      "placeholder": "",
+      "when": { "action": "Run migrations" }
+    },
+    {
+      "id": "repo",
+      "prompt": "Specific repo (for multi-repo apps)",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": ""
+    }
+  ]
+}

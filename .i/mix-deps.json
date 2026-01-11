@@ -1,0 +1,55 @@
+{
+  "command": "mix deps",
+  "description": "Manage Elixir dependencies",
+  "presets": [
+    { "label": "Get dependencies", "flags": "deps.get" },
+    { "label": "Update all", "flags": "deps.update --all" },
+    { "label": "Show dependency tree", "flags": "deps.tree" },
+    { "label": "Clean deps", "flags": "deps.clean --all" },
+    { "label": "Compile deps", "flags": "deps.compile" }
+  ],
+  "steps": [
+    {
+      "id": "action",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Get dependencies", "flag": "deps.get" },
+        { "label": "Update dependencies", "flag": "deps.update" },
+        { "label": "Compile dependencies", "flag": "deps.compile" },
+        { "label": "Clean dependencies", "flag": "deps.clean" },
+        { "label": "Show dependency tree", "flag": "deps.tree" },
+        { "label": "Unlock dependencies", "flag": "deps.unlock" },
+        { "label": "List outdated", "flag": "hex.outdated" }
+      ]
+    },
+    {
+      "id": "update_all",
+      "prompt": "Update all dependencies?",
+      "type": "toggle",
+      "flag": "--all",
+      "when": { "action": "Update dependencies" }
+    },
+    {
+      "id": "update_dep",
+      "prompt": "Specific dependency to update (if not all)",
+      "type": "text",
+      "placeholder": "phoenix",
+      "when": { "action": "Update dependencies" }
+    },
+    {
+      "id": "clean_all",
+      "prompt": "Clean all dependencies?",
+      "type": "toggle",
+      "flag": "--all",
+      "when": { "action": "Clean dependencies" }
+    },
+    {
+      "id": "unlock_all",
+      "prompt": "Unlock all dependencies?",
+      "type": "toggle",
+      "flag": "--all",
+      "when": { "action": "Unlock dependencies" }
+    }
+  ]
+}
