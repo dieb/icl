@@ -1,0 +1,47 @@
+{
+  "command": "ln",
+  "description": "Create links between files",
+  "presets": [
+    { "label": "Create symbolic link", "flags": "-s <target> <link>" },
+    { "label": "Force symbolic link (overwrite)", "flags": "-sf <target> <link>" },
+    { "label": "Verbose symbolic link", "flags": "-sv <target> <link>" },
+    { "label": "Create hard link", "flags": "<target> <link>" }
+  ],
+  "steps": [
+    {
+      "id": "type",
+      "prompt": "Type of link?",
+      "type": "choice",
+      "options": [
+        { "label": "Symbolic link (soft link)", "flag": "-s" },
+        { "label": "Hard link", "flag": null }
+      ]
+    },
+    {
+      "id": "force",
+      "prompt": "Overwrite existing destination?",
+      "type": "toggle",
+      "flag": "-f"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show links being created?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "target",
+      "prompt": "Target (what the link points to)",
+      "type": "text",
+      "flag": null,
+      "placeholder": "target-file"
+    },
+    {
+      "id": "link",
+      "prompt": "Link name",
+      "type": "text",
+      "flag": null,
+      "placeholder": "link-name"
+    }
+  ]
+}

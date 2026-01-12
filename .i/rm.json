@@ -1,0 +1,42 @@
+{
+  "command": "rm",
+  "description": "Remove files and directories",
+  "presets": [
+    { "label": "Remove directory recursively", "flags": "-r <path>" },
+    { "label": "Force remove", "flags": "-f <path>" },
+    { "label": "Interactive remove", "flags": "-i <path>" },
+    { "label": "Force remove directory", "flags": "-rf <path>" },
+    { "label": "Verbose remove", "flags": "-v <path>" }
+  ],
+  "steps": [
+    {
+      "id": "recursive",
+      "prompt": "Remove directories and contents recursively?",
+      "type": "toggle",
+      "flag": "-r"
+    },
+    {
+      "id": "mode",
+      "prompt": "Confirmation mode?",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "Ask before each removal", "flag": "-i" },
+        { "label": "Force (ignore nonexistent, never prompt)", "flag": "-f" }
+      ]
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show files being removed?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "path",
+      "prompt": "File(s) or directory to remove",
+      "type": "text",
+      "flag": null,
+      "placeholder": "file-or-directory"
+    }
+  ]
+}

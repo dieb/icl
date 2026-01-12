@@ -1,0 +1,43 @@
+{
+  "command": "mkdir",
+  "description": "Create directories",
+  "presets": [
+    { "label": "Create with parents", "flags": "-p <directory>" },
+    { "label": "Verbose create", "flags": "-pv <directory>" }
+  ],
+  "steps": [
+    {
+      "id": "parents",
+      "prompt": "Create parent directories if needed?",
+      "type": "toggle",
+      "flag": "-p"
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show each directory created?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "mode",
+      "prompt": "Set specific permissions?",
+      "type": "toggle",
+      "flag": null
+    },
+    {
+      "id": "mode_value",
+      "prompt": "Permission mode",
+      "type": "text",
+      "flag": "-m",
+      "placeholder": "755",
+      "when": { "mode": "true" }
+    },
+    {
+      "id": "directory",
+      "prompt": "Directory name(s)",
+      "type": "text",
+      "flag": null,
+      "placeholder": "new-directory"
+    }
+  ]
+}

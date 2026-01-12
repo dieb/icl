@@ -1,0 +1,46 @@
+{
+  "command": "cat",
+  "description": "Concatenate and display files",
+  "presets": [
+    { "label": "Show file", "flags": "<file>" },
+    { "label": "Show with line numbers", "flags": "-n <file>" },
+    { "label": "Show non-blank line numbers", "flags": "-b <file>" },
+    { "label": "Show tabs and special chars", "flags": "-A <file>" }
+  ],
+  "steps": [
+    {
+      "id": "numbers",
+      "prompt": "Show line numbers?",
+      "type": "choice",
+      "options": [
+        { "label": "No", "flag": null },
+        { "label": "All lines", "flag": "-n" },
+        { "label": "Non-blank lines only", "flag": "-b" }
+      ]
+    },
+    {
+      "id": "squeeze",
+      "prompt": "Squeeze multiple blank lines?",
+      "type": "toggle",
+      "flag": "-s"
+    },
+    {
+      "id": "special",
+      "prompt": "Show special characters?",
+      "type": "choice",
+      "options": [
+        { "label": "No", "flag": null },
+        { "label": "Show all (tabs, line ends, non-printing)", "flag": "-A" },
+        { "label": "Show line ends ($)", "flag": "-E" },
+        { "label": "Show tabs (^I)", "flag": "-T" }
+      ]
+    },
+    {
+      "id": "file",
+      "prompt": "File(s) to display",
+      "type": "text",
+      "flag": null,
+      "placeholder": "file"
+    }
+  ]
+}

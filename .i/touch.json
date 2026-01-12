@@ -1,0 +1,52 @@
+{
+  "command": "touch",
+  "description": "Create files or update timestamps",
+  "presets": [
+    { "label": "Create file", "flags": "<file>" },
+    { "label": "Update access time only", "flags": "-a <file>" },
+    { "label": "Update modification time only", "flags": "-m <file>" },
+    { "label": "Don't create if missing", "flags": "-c <file>" }
+  ],
+  "steps": [
+    {
+      "id": "create",
+      "prompt": "Create file if it doesn't exist?",
+      "type": "choice",
+      "options": [
+        { "label": "Yes (default)", "flag": null },
+        { "label": "No, only update existing", "flag": "-c" }
+      ]
+    },
+    {
+      "id": "timestamp",
+      "prompt": "Which timestamp to update?",
+      "type": "choice",
+      "options": [
+        { "label": "Both (default)", "flag": null },
+        { "label": "Access time only", "flag": "-a" },
+        { "label": "Modification time only", "flag": "-m" }
+      ]
+    },
+    {
+      "id": "reference",
+      "prompt": "Use another file's timestamp?",
+      "type": "toggle",
+      "flag": null
+    },
+    {
+      "id": "reference_file",
+      "prompt": "Reference file",
+      "type": "text",
+      "flag": "-r",
+      "placeholder": "reference-file",
+      "when": { "reference": "true" }
+    },
+    {
+      "id": "file",
+      "prompt": "File(s) to touch",
+      "type": "text",
+      "flag": null,
+      "placeholder": "filename"
+    }
+  ]
+}

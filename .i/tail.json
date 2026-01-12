@@ -1,0 +1,62 @@
+{
+  "command": "tail",
+  "description": "Display last lines of files",
+  "presets": [
+    { "label": "Last 10 lines", "flags": "<file>" },
+    { "label": "Last 20 lines", "flags": "-n 20 <file>" },
+    { "label": "Last 50 lines", "flags": "-n 50 <file>" },
+    { "label": "Last 100 lines", "flags": "-n 100 <file>" },
+    { "label": "Follow file (live)", "flags": "-f <file>" },
+    { "label": "Follow with retry", "flags": "-F <file>" }
+  ],
+  "steps": [
+    {
+      "id": "follow",
+      "prompt": "Follow file for new content?",
+      "type": "choice",
+      "options": [
+        { "label": "No", "flag": null },
+        { "label": "Yes (-f)", "flag": "-f" },
+        { "label": "Yes with retry (-F)", "flag": "-F" }
+      ]
+    },
+    {
+      "id": "mode",
+      "prompt": "Limit by?",
+      "type": "choice",
+      "options": [
+        { "label": "Number of lines", "flag": null },
+        { "label": "Number of bytes", "flag": null }
+      ]
+    },
+    {
+      "id": "lines",
+      "prompt": "Number of lines",
+      "type": "text",
+      "flag": "-n",
+      "placeholder": "10",
+      "when": { "mode": "Number of lines" }
+    },
+    {
+      "id": "bytes",
+      "prompt": "Number of bytes",
+      "type": "text",
+      "flag": "-c",
+      "placeholder": "1024",
+      "when": { "mode": "Number of bytes" }
+    },
+    {
+      "id": "quiet",
+      "prompt": "Suppress filename headers (multiple files)?",
+      "type": "toggle",
+      "flag": "-q"
+    },
+    {
+      "id": "file",
+      "prompt": "File(s) to display",
+      "type": "text",
+      "flag": null,
+      "placeholder": "file"
+    }
+  ]
+}

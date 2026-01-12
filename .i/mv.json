@@ -1,0 +1,43 @@
+{
+  "command": "mv",
+  "description": "Move or rename files and directories",
+  "presets": [
+    { "label": "Safe move (no overwrite)", "flags": "-n <source> <destination>" },
+    { "label": "Interactive (ask before overwrite)", "flags": "-i <source> <destination>" },
+    { "label": "Force move", "flags": "-f <source> <destination>" },
+    { "label": "Verbose move", "flags": "-v <source> <destination>" }
+  ],
+  "steps": [
+    {
+      "id": "overwrite",
+      "prompt": "What to do if destination exists?",
+      "type": "choice",
+      "options": [
+        { "label": "Overwrite (default)", "flag": null },
+        { "label": "Ask before overwriting", "flag": "-i" },
+        { "label": "Never overwrite", "flag": "-n" },
+        { "label": "Force overwrite", "flag": "-f" }
+      ]
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show files being moved?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "source",
+      "prompt": "Source file(s) or directory",
+      "type": "text",
+      "flag": null,
+      "placeholder": "source"
+    },
+    {
+      "id": "destination",
+      "prompt": "Destination",
+      "type": "text",
+      "flag": null,
+      "placeholder": "destination"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "command": "cp",
+  "description": "Copy files and directories",
+  "presets": [
+    { "label": "Copy directory recursively", "flags": "-r <source> <destination>" },
+    { "label": "Preserve attributes", "flags": "-p <source> <destination>" },
+    { "label": "Safe copy (no overwrite)", "flags": "-n <source> <destination>" },
+    { "label": "Interactive copy", "flags": "-i <source> <destination>" },
+    { "label": "Archive (preserve everything)", "flags": "-a <source> <destination>" }
+  ],
+  "steps": [
+    {
+      "id": "recursive",
+      "prompt": "Copy directories recursively?",
+      "type": "toggle",
+      "flag": "-r"
+    },
+    {
+      "id": "preserve",
+      "prompt": "Preserve file attributes?",
+      "type": "choice",
+      "options": [
+        { "label": "No (default)", "flag": null },
+        { "label": "Preserve mode, ownership, timestamps", "flag": "-p" },
+        { "label": "Archive (preserve everything)", "flag": "-a" }
+      ]
+    },
+    {
+      "id": "overwrite",
+      "prompt": "What to do if destination exists?",
+      "type": "choice",
+      "options": [
+        { "label": "Overwrite (default)", "flag": null },
+        { "label": "Ask before overwriting", "flag": "-i" },
+        { "label": "Never overwrite", "flag": "-n" },
+        { "label": "Force overwrite", "flag": "-f" }
+      ]
+    },
+    {
+      "id": "verbose",
+      "prompt": "Show files being copied?",
+      "type": "toggle",
+      "flag": "-v"
+    },
+    {
+      "id": "source",
+      "prompt": "Source file(s) or directory",
+      "type": "text",
+      "flag": null,
+      "placeholder": "source"
+    },
+    {
+      "id": "destination",
+      "prompt": "Destination",
+      "type": "text",
+      "flag": null,
+      "placeholder": "destination"
+    }
+  ]
+}
