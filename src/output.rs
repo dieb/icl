@@ -18,6 +18,7 @@ pub fn handle_output(command: &str, mode: OutputMode) -> Result<(), Box<dyn std:
             eprintln!("Command copied to clipboard");
         }
         OutputMode::Execute => {
+            eprintln!("{}", command);
             let status = if cfg!(target_os = "windows") {
                 Command::new("cmd").args(["/C", command]).status()?
             } else {
