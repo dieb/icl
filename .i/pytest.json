@@ -148,7 +148,7 @@
         { "label": "HTML", "flag": "--cov-report=html" },
         { "label": "XML", "flag": "--cov-report=xml" }
       ],
-      "when": { "coverage": true }
+      "when": { "coverage": "true" }
     },
     {
       "id": "duration",

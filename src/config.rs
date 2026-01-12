@@ -456,4 +456,26 @@ mod tests {
         let result: Result<Config, _> = serde_json::from_str(json);
         assert!(result.is_err());
     }
+
+    #[test]
+    fn test_all_bundled_configs_are_valid() {
+        let config_dir = std::path::Path::new(".i");
+        assert!(config_dir.exists(), ".i directory should exist");
+
+        let mut errors = Vec::new();
+
+        for entry in std::fs::read_dir(config_dir).unwrap() {
+            let entry = entry.unwrap();
+            let path = entry.path();
+
+            if path.extension().map(|e| e == "json").unwrap_or(false) {
+                let content = std::fs::read_to_string(&path).unwrap();
+                if let Err(e) = serde_json::from_str::<Config>(&content) {
+                    errors.push(format!("{}: {}", path.display(), e));
+                }
+            }
+        }
+
+        assert!(errors.is_empty(), "Invalid configs:\n{}", errors.join("\n"));
+    }
 }

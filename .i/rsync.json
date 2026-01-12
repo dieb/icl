@@ -96,7 +96,7 @@
       "type": "text",
       "flag": "--backup-dir",
       "placeholder": "./backups",
-      "when": { "backup": true }
+      "when": { "backup": "true" }
     },
     {
       "id": "checksum",

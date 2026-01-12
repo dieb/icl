@@ -70,7 +70,7 @@ i docker run      # Jump directly to docker run
 
 Supported tools:
 
-- **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [find](.i/find.json), [make](.i/make.json), [tar](.i/tar.json), [chmod](.i/chmod.json), [ps](.i/ps.json)
+- **UNIX**: [ls](.i/ls.json), [grep](.i/grep.json), [find](.i/find.json), [make](.i/make.json), [tar](.i/tar.json), [chmod](.i/chmod.json), [ps](.i/ps.json), [mkdir](.i/mkdir.json), [mv](.i/mv.json), [cp](.i/cp.json), [rm](.i/rm.json), [touch](.i/touch.json), [ln](.i/ln.json), [cat](.i/cat.json), [head](.i/head.json), [tail](.i/tail.json)
 - **System Admin**: [systemctl](.i/systemctl.json), [journalctl](.i/journalctl.json), [chown](.i/chown.json), [lsblk](.i/lsblk.json), [mount](.i/mount.json), [umount](.i/umount.json)
 - **Networking**: [curl](.i/curl.json), [wget](.i/wget.json), [ssh](.i/ssh.json), [scp](.i/scp.json), [rsync](.i/rsync.json)
 - **Network Diagnostics**: [ss](.i/ss.json), [lsof](.i/lsof.json), [nmap](.i/nmap.json), [dig](.i/dig.json), [tcpdump](.i/tcpdump.json), [iftop](.i/iftop.json)
