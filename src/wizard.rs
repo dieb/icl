@@ -50,6 +50,17 @@ pub struct Wizard {
     preset_placeholders: Vec<String>, // List of placeholders to fill
     preset_placeholder_values: HashMap<String, String>, // Filled values
     preset_placeholder_index: usize,  // Current placeholder being edited
+    // Whether the CLI tool is found in PATH
+    command_found: bool,
+}
+
+/// Check if a command exists in PATH
+fn command_exists(cmd: &str) -> bool {
+    std::process::Command::new("which")
+        .arg(cmd)
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false)
 }
 
 impl Wizard {
@@ -60,6 +71,12 @@ impl Wizard {
         } else {
             Phase::Menu
         };
+
+        // Check if the base command exists in PATH
+        let command_found = base_command
+            .first()
+            .map(|cmd| command_exists(cmd))
+            .unwrap_or(false);
 
         Self {
             config,
@@ -78,6 +95,7 @@ impl Wizard {
             preset_placeholders: Vec::new(),
             preset_placeholder_values: HashMap::new(),
             preset_placeholder_index: 0,
+            command_found,
         }
     }
 
@@ -708,18 +726,21 @@ fn centered_rect(width: u16, height: u16, area: Rect) -> Rect {
 }
 
 fn calculate_content_height(wizard: &Wizard) -> u16 {
+    // Add 2 lines for warning if command not found (empty line + warning)
+    let warning_lines = if wizard.command_found { 0 } else { 2 };
+
     let content_lines = match wizard.phase {
         Phase::Menu => {
-            // 1 empty line + 1 wizard option + separator lines + preset count
+            // 1 empty line + 1 wizard option + separator lines + preset count + warning
             let preset_lines = if wizard.config.presets.is_empty() {
                 0
             } else {
                 2 + wizard.config.presets.len() // 2 for empty + "Quick presets:" label
             };
-            1 + 1 + preset_lines
+            1 + 1 + preset_lines + warning_lines
         }
         Phase::Steps => {
-            if let Some(step) = wizard.current_step() {
+            let step_lines = if let Some(step) = wizard.current_step() {
                 match step.step_type {
                     StepType::Choice | StepType::Multi => step.options.len(),
                     StepType::Toggle => 1,
@@ -727,11 +748,12 @@ fn calculate_content_height(wizard: &Wizard) -> u16 {
                 }
             } else {
                 1
-            }
+            };
+            step_lines + warning_lines
         }
         Phase::PresetInput => {
             // Prompt + input + progress indicator
-            4
+            4 + warning_lines
         }
         Phase::Confirm => {
             // 5 base lines + placeholder options if any
@@ -739,12 +761,24 @@ fn calculate_content_height(wizard: &Wizard) -> u16 {
                 1 + wizard.placeholder_values.len().max(1)
             } else {
                 0
-            }
+            } + warning_lines
         }
     };
 
     // Add: 2 for borders, 2 for prompt, 1 for breadcrumb, 3 for help box
     (content_lines as u16) + 8
+}
+
+fn command_not_found_warning(wizard: &Wizard) -> Option<Line<'static>> {
+    if wizard.command_found {
+        None
+    } else {
+        let cmd = wizard.base_command.first().cloned().unwrap_or_default();
+        Some(Line::from(Span::styled(
+            format!("'{}' not found in PATH", cmd),
+            Style::default().fg(Color::Yellow),
+        )))
+    }
 }
 
 fn ui(f: &mut Frame, wizard: &Wizard) {
@@ -812,6 +846,12 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 ]));
             }
 
+            // Show warning at the bottom if command not found
+            if let Some(warning) = command_not_found_warning(wizard) {
+                lines.push(Line::from(""));
+                lines.push(warning);
+            }
+
             let block = Block::default().borders(Borders::ALL).title(title);
             let paragraph = Paragraph::new(lines).block(block);
             f.render_widget(paragraph, chunks[0]);
@@ -858,7 +898,7 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 Span::styled(&wizard.text_buffer, Style::default())
             };
 
-            let content = vec![
+            let mut content = vec![
                 Line::from(""),
                 Line::from(vec![
                     Span::styled(prompt_text, Style::default().bold()),
@@ -870,6 +910,12 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 Line::from(""),
                 Line::from(vec![display, Span::raw("█")]),
             ];
+
+            // Show warning at the bottom if command not found
+            if let Some(warning) = command_not_found_warning(wizard) {
+                content.push(Line::from(""));
+                content.push(warning);
+            }
 
             let block = Block::default().borders(Borders::ALL).title(title);
             let paragraph = Paragraph::new(content).block(block);
@@ -923,6 +969,12 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
                 }
             }
 
+            // Show warning at the bottom if command not found
+            if let Some(warning) = command_not_found_warning(wizard) {
+                content.push(Line::from(""));
+                content.push(warning);
+            }
+
             let block = Block::default().borders(Borders::ALL).title(title);
             let paragraph = Paragraph::new(content).block(block);
             f.render_widget(paragraph, chunks[0]);
@@ -941,13 +993,17 @@ fn ui(f: &mut Frame, wizard: &Wizard) {
 }
 
 fn render_step(f: &mut Frame, area: Rect, step: &Step, wizard: &Wizard, title: &str) {
+    // Warning takes 2 lines (empty + warning text)
+    let warning_height = if wizard.command_found { 0 } else { 2 };
+
     let inner_chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
         .constraints([
-            Constraint::Length(2), // Prompt
-            Constraint::Min(1),    // Options
-            Constraint::Length(1), // Breadcrumb
+            Constraint::Length(2),              // Prompt
+            Constraint::Min(1),                 // Options
+            Constraint::Length(1),              // Breadcrumb
+            Constraint::Length(warning_height), // Warning (if any)
         ])
         .split(area);
 
@@ -964,7 +1020,7 @@ fn render_step(f: &mut Frame, area: Rect, step: &Step, wizard: &Wizard, title: &
     )));
     f.render_widget(prompt, inner_chunks[0]);
 
-    // Breadcrumb at the bottom
+    // Breadcrumb
     let crumbs = wizard.build_breadcrumb();
     if !crumbs.is_empty() {
         let breadcrumb_text = crumbs.join(" › ");
@@ -973,6 +1029,13 @@ fn render_step(f: &mut Frame, area: Rect, step: &Step, wizard: &Wizard, title: &
             Style::default().fg(Color::DarkGray),
         )));
         f.render_widget(breadcrumb, inner_chunks[2]);
+    }
+
+    // Warning at the bottom (if command not found)
+    if let Some(warning) = command_not_found_warning(wizard) {
+        let warning_content = vec![Line::from(""), warning];
+        let warning_widget = Paragraph::new(warning_content);
+        f.render_widget(warning_widget, inner_chunks[3]);
     }
 
     // Widget based on type
@@ -1973,5 +2036,51 @@ mod tests {
             wizard.preset_placeholder_values.get("<url>"),
             Some(&"https://api.example.com".to_string())
         );
+    }
+
+    // ====================
+    // Command exists tests
+    // ====================
+
+    #[test]
+    fn test_command_exists_for_common_command() {
+        // 'ls' should exist on all Unix systems
+        assert!(command_exists("ls"));
+    }
+
+    #[test]
+    fn test_command_exists_for_nonexistent_command() {
+        // This command should not exist
+        assert!(!command_exists(
+            "this_command_definitely_does_not_exist_12345"
+        ));
+    }
+
+    #[test]
+    fn test_wizard_command_found_for_existing_command() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert!(wizard.command_found);
+    }
+
+    #[test]
+    fn test_wizard_command_found_for_nonexistent_command() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["nonexistent_cmd_xyz".to_string()]);
+        assert!(!wizard.command_found);
+    }
+
+    #[test]
+    fn test_command_not_found_warning_returns_none_when_found() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["ls".to_string()]);
+        assert!(command_not_found_warning(&wizard).is_none());
+    }
+
+    #[test]
+    fn test_command_not_found_warning_returns_some_when_not_found() {
+        let config = make_config(vec![make_toggle_step("a", "-a")]);
+        let wizard = Wizard::new(config, vec!["nonexistent_cmd_xyz".to_string()]);
+        assert!(command_not_found_warning(&wizard).is_some());
     }
 }
