@@ -1,0 +1,62 @@
+{
+  "command": "ffprobe",
+  "description": "Analyze media file information",
+  "presets": [
+    { "label": "Show all info", "flags": "<input>" },
+    { "label": "JSON format (full)", "flags": "-v quiet -print_format json -show_format -show_streams <input>" },
+    { "label": "Duration only", "flags": "-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 <input>" },
+    { "label": "Video resolution", "flags": "-v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 <input>" },
+    { "label": "Codec info", "flags": "-v error -select_streams v:0 -show_entries stream=codec_name,codec_long_name -of default=noprint_wrappers=1 <input>" },
+    { "label": "Bitrate info", "flags": "-v error -show_entries format=bit_rate -of default=noprint_wrappers=1:nokey=1 <input>" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "video.mp4"
+    },
+    {
+      "id": "output_format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "Default", "flag": null },
+        { "label": "JSON", "flag": "-print_format json" },
+        { "label": "CSV", "flag": "-print_format csv" },
+        { "label": "Flat", "flag": "-print_format flat" },
+        { "label": "Compact", "flag": "-print_format compact" }
+      ]
+    },
+    {
+      "id": "info_type",
+      "prompt": "What information to show?",
+      "type": "multi",
+      "options": [
+        { "label": "Format/container", "flag": "-show_format" },
+        { "label": "Streams (video/audio)", "flag": "-show_streams" },
+        { "label": "Chapters", "flag": "-show_chapters" },
+        { "label": "Packets", "flag": "-show_packets" },
+        { "label": "Frames", "flag": "-show_frames" }
+      ]
+    },
+    {
+      "id": "stream_select",
+      "prompt": "Select specific stream?",
+      "type": "choice",
+      "options": [
+        { "label": "All streams", "flag": null },
+        { "label": "Video only", "flag": "-select_streams v" },
+        { "label": "Audio only", "flag": "-select_streams a" },
+        { "label": "Subtitles only", "flag": "-select_streams s" }
+      ]
+    },
+    {
+      "id": "verbosity",
+      "prompt": "Hide banner and warnings?",
+      "type": "toggle",
+      "flag": "-v quiet"
+    }
+  ]
+}

@@ -89,6 +89,7 @@ Supported tools:
 - **Crystal**: [crystal](.i/crystal.json), [shards](.i/shards.json)
 - **AI Tools**: [claude](.i/claude.json)
 - **ML/AI**: [hf](.i/hf.json)
+- **Audio/Video**: [ffmpeg](.i/ffmpeg.json), [ffprobe](.i/ffprobe.json)
 
 See the [.i](.i/) directory for included configs:
 

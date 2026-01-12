@@ -1,0 +1,61 @@
+{
+  "command": "ffmpeg",
+  "description": "Create GIF from video",
+  "presets": [
+    { "label": "Quick GIF (480px, 10fps)", "flags": "-i <input> -vf 'fps=10,scale=480:-1' <output>.gif" },
+    { "label": "High quality GIF", "flags": "-i <input> -vf 'fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse' <output>.gif" },
+    { "label": "Small GIF (320px, 10fps)", "flags": "-i <input> -vf 'fps=10,scale=320:-1' <output>.gif" },
+    { "label": "First 5 seconds", "flags": "-i <input> -t 5 -vf 'fps=10,scale=480:-1' <output>.gif" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "video.mp4"
+    },
+    {
+      "id": "start",
+      "prompt": "Start time (leave empty for beginning)",
+      "type": "text",
+      "flag": "-ss",
+      "placeholder": "00:00:05"
+    },
+    {
+      "id": "duration",
+      "prompt": "Duration (leave empty for full length)",
+      "type": "text",
+      "flag": "-t",
+      "placeholder": "10"
+    },
+    {
+      "id": "width",
+      "prompt": "Width (height auto-calculated)",
+      "type": "choice",
+      "options": [
+        { "label": "320px (small)", "flag": "-vf fps=10,scale=320:-1" },
+        { "label": "480px (medium)", "flag": "-vf fps=10,scale=480:-1" },
+        { "label": "640px (large)", "flag": "-vf fps=10,scale=640:-1" },
+        { "label": "Original size", "flag": "-vf fps=10" }
+      ]
+    },
+    {
+      "id": "fps",
+      "prompt": "Frame rate",
+      "type": "choice",
+      "options": [
+        { "label": "10 fps (smaller file)", "flag": null },
+        { "label": "15 fps", "flag": null },
+        { "label": "24 fps (smoother)", "flag": null }
+      ]
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "output.gif"
+    }
+  ]
+}

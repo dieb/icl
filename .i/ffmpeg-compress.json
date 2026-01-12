@@ -1,0 +1,75 @@
+{
+  "command": "ffmpeg",
+  "description": "Compress video for web or sharing",
+  "presets": [
+    { "label": "Web optimized (CRF 28)", "flags": "-i <input> -c:v libx264 -crf 28 -c:a aac -b:a 128k <output>.mp4" },
+    { "label": "High quality (CRF 18)", "flags": "-i <input> -c:v libx264 -crf 18 -c:a aac -b:a 192k <output>.mp4" },
+    { "label": "Small file (CRF 33)", "flags": "-i <input> -c:v libx264 -crf 33 -c:a aac -b:a 96k <output>.mp4" },
+    { "label": "720p web optimized", "flags": "-i <input> -c:v libx264 -crf 28 -vf scale=-2:720 -c:a aac -b:a 128k <output>.mp4" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "input.mp4"
+    },
+    {
+      "id": "quality",
+      "prompt": "Quality level (CRF - lower is better)",
+      "type": "choice",
+      "options": [
+        { "label": "High (CRF 18)", "flag": "-crf 18" },
+        { "label": "Good (CRF 23)", "flag": "-crf 23" },
+        { "label": "Medium (CRF 28)", "flag": "-crf 28" },
+        { "label": "Low (CRF 33)", "flag": "-crf 33" }
+      ]
+    },
+    {
+      "id": "resolution",
+      "prompt": "Resolution",
+      "type": "choice",
+      "options": [
+        { "label": "Keep original", "flag": null },
+        { "label": "1080p", "flag": "-vf scale=-2:1080" },
+        { "label": "720p", "flag": "-vf scale=-2:720" },
+        { "label": "480p", "flag": "-vf scale=-2:480" }
+      ]
+    },
+    {
+      "id": "audio",
+      "prompt": "Audio handling",
+      "type": "choice",
+      "options": [
+        { "label": "Re-encode 128k", "flag": "-c:a aac -b:a 128k" },
+        { "label": "Re-encode 192k", "flag": "-c:a aac -b:a 192k" },
+        { "label": "Copy (no change)", "flag": "-c:a copy" },
+        { "label": "Remove audio", "flag": "-an" }
+      ]
+    },
+    {
+      "id": "preset",
+      "prompt": "Encoding speed",
+      "type": "choice",
+      "options": [
+        { "label": "Fast", "flag": "-preset fast" },
+        { "label": "Medium", "flag": null },
+        { "label": "Slow (better compression)", "flag": "-preset slow" }
+      ]
+    },
+    {
+      "id": "overwrite",
+      "prompt": "Overwrite output without asking?",
+      "type": "toggle",
+      "flag": "-y"
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "-c:v libx264",
+      "placeholder": "output.mp4"
+    }
+  ]
+}

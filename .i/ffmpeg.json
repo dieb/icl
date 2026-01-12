@@ -1,0 +1,26 @@
+{
+  "command": "ffmpeg",
+  "description": "Multimedia processing toolkit",
+  "presets": [
+    { "label": "Quick MP4 convert", "flags": "-i <input> <output>.mp4" },
+    { "label": "Extract audio to MP3", "flags": "-i <input> -vn -acodec mp3 <output>.mp3" },
+    { "label": "Compress for web", "flags": "-i <input> -vcodec libx264 -crf 28 <output>.mp4" },
+    { "label": "Create GIF", "flags": "-i <input> -vf 'fps=10,scale=480:-1' <output>.gif" }
+  ],
+  "steps": [
+    {
+      "id": "operation",
+      "prompt": "What do you want to do?",
+      "type": "choice",
+      "options": [
+        { "label": "Convert format", "chain": "ffmpeg-convert" },
+        { "label": "Extract/convert audio", "chain": "ffmpeg-audio" },
+        { "label": "Compress video", "chain": "ffmpeg-compress" },
+        { "label": "Create GIF", "chain": "ffmpeg-gif" },
+        { "label": "Cut/trim video", "chain": "ffmpeg-cut" },
+        { "label": "Resize video", "chain": "ffmpeg-scale" },
+        { "label": "Join files", "chain": "ffmpeg-concat" }
+      ]
+    }
+  ]
+}

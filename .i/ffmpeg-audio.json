@@ -1,0 +1,69 @@
+{
+  "command": "ffmpeg",
+  "description": "Extract or convert audio",
+  "presets": [
+    { "label": "Extract to MP3 320k", "flags": "-i <input> -vn -acodec libmp3lame -ab 320k <output>.mp3" },
+    { "label": "Extract to AAC 256k", "flags": "-i <input> -vn -acodec aac -ab 256k <output>.m4a" },
+    { "label": "Extract to FLAC", "flags": "-i <input> -vn -acodec flac <output>.flac" },
+    { "label": "Extract to WAV", "flags": "-i <input> -vn -acodec pcm_s16le <output>.wav" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "video.mp4"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "MP3", "flag": "-acodec libmp3lame" },
+        { "label": "AAC (M4A)", "flag": "-acodec aac" },
+        { "label": "FLAC (lossless)", "flag": "-acodec flac" },
+        { "label": "WAV (uncompressed)", "flag": "-acodec pcm_s16le" },
+        { "label": "OGG Vorbis", "flag": "-acodec libvorbis" }
+      ]
+    },
+    {
+      "id": "bitrate",
+      "prompt": "Audio bitrate (for lossy formats)",
+      "type": "choice",
+      "options": [
+        { "label": "128 kbps", "flag": "-ab 128k" },
+        { "label": "192 kbps", "flag": "-ab 192k" },
+        { "label": "256 kbps", "flag": "-ab 256k" },
+        { "label": "320 kbps", "flag": "-ab 320k" }
+      ]
+    },
+    {
+      "id": "sample_rate",
+      "prompt": "Sample rate",
+      "type": "choice",
+      "options": [
+        { "label": "Keep original", "flag": null },
+        { "label": "44100 Hz (CD quality)", "flag": "-ar 44100" },
+        { "label": "48000 Hz", "flag": "-ar 48000" }
+      ]
+    },
+    {
+      "id": "channels",
+      "prompt": "Audio channels",
+      "type": "choice",
+      "options": [
+        { "label": "Keep original", "flag": null },
+        { "label": "Stereo", "flag": "-ac 2" },
+        { "label": "Mono", "flag": "-ac 1" }
+      ]
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "-vn",
+      "placeholder": "audio.mp3"
+    }
+  ]
+}

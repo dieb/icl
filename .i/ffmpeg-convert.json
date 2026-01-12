@@ -1,0 +1,77 @@
+{
+  "command": "ffmpeg",
+  "description": "Convert video to different formats",
+  "presets": [
+    { "label": "To MP4 (H.264)", "flags": "-i <input> -c:v libx264 -c:a aac <output>.mp4" },
+    { "label": "To WebM (VP9)", "flags": "-i <input> -c:v libvpx-vp9 -c:a libopus <output>.webm" },
+    { "label": "To MKV (copy)", "flags": "-i <input> -c copy <output>.mkv" },
+    { "label": "To MOV (ProRes)", "flags": "-i <input> -c:v prores_ks -c:a pcm_s16le <output>.mov" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "input.mp4"
+    },
+    {
+      "id": "format",
+      "prompt": "Output format",
+      "type": "choice",
+      "options": [
+        { "label": "MP4", "flag": null },
+        { "label": "WebM", "flag": null },
+        { "label": "MKV", "flag": null },
+        { "label": "AVI", "flag": null },
+        { "label": "MOV", "flag": null }
+      ]
+    },
+    {
+      "id": "video_codec",
+      "prompt": "Video codec",
+      "type": "choice",
+      "options": [
+        { "label": "Copy (no re-encode)", "flag": "-c:v copy" },
+        { "label": "H.264 (libx264)", "flag": "-c:v libx264" },
+        { "label": "H.265 (libx265)", "flag": "-c:v libx265" },
+        { "label": "VP9 (libvpx-vp9)", "flag": "-c:v libvpx-vp9" }
+      ]
+    },
+    {
+      "id": "audio_codec",
+      "prompt": "Audio codec",
+      "type": "choice",
+      "options": [
+        { "label": "Copy (no re-encode)", "flag": "-c:a copy" },
+        { "label": "AAC", "flag": "-c:a aac" },
+        { "label": "MP3", "flag": "-c:a libmp3lame" },
+        { "label": "Opus", "flag": "-c:a libopus" }
+      ]
+    },
+    {
+      "id": "preset",
+      "prompt": "Encoding speed (slower = better quality)",
+      "type": "choice",
+      "options": [
+        { "label": "Ultrafast", "flag": "-preset ultrafast" },
+        { "label": "Fast", "flag": "-preset fast" },
+        { "label": "Medium (default)", "flag": null },
+        { "label": "Slow", "flag": "-preset slow" }
+      ]
+    },
+    {
+      "id": "overwrite",
+      "prompt": "Overwrite output without asking?",
+      "type": "toggle",
+      "flag": "-y"
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "output.mp4"
+    }
+  ]
+}

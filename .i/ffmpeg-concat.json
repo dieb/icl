@@ -1,0 +1,76 @@
+{
+  "command": "ffmpeg",
+  "description": "Join multiple video files",
+  "presets": [
+    { "label": "Concat from file list", "flags": "-f concat -safe 0 -i <filelist> -c copy <output>" },
+    { "label": "Concat two files", "flags": "-i <input1> -i <input2> -filter_complex '[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1' <output>" },
+    { "label": "Concat with re-encode", "flags": "-f concat -safe 0 -i <filelist> -c:v libx264 -c:a aac <output>" }
+  ],
+  "steps": [
+    {
+      "id": "method",
+      "prompt": "Concatenation method",
+      "type": "choice",
+      "options": [
+        { "label": "File list (same codec)", "flag": "-f concat -safe 0" },
+        { "label": "Filter (different codecs)", "flag": null }
+      ]
+    },
+    {
+      "id": "filelist",
+      "prompt": "Path to file list (one 'file path' per line)",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "files.txt",
+      "when": { "method": "File list (same codec)" }
+    },
+    {
+      "id": "input1",
+      "prompt": "First input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "video1.mp4",
+      "when": { "method": "Filter (different codecs)" }
+    },
+    {
+      "id": "input2",
+      "prompt": "Second input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "video2.mp4",
+      "when": { "method": "Filter (different codecs)" }
+    },
+    {
+      "id": "codec",
+      "prompt": "Codec handling",
+      "type": "choice",
+      "options": [
+        { "label": "Copy (fast, requires same codec)", "flag": "-c copy" },
+        { "label": "Re-encode H.264", "flag": "-c:v libx264 -c:a aac" }
+      ],
+      "when": { "method": "File list (same codec)" }
+    },
+    {
+      "id": "filter",
+      "prompt": "Using filter_complex for different codecs",
+      "type": "choice",
+      "options": [
+        { "label": "Concat 2 files", "flag": "-filter_complex '[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1'" }
+      ],
+      "when": { "method": "Filter (different codecs)" }
+    },
+    {
+      "id": "overwrite",
+      "prompt": "Overwrite output without asking?",
+      "type": "toggle",
+      "flag": "-y"
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "combined.mp4"
+    }
+  ]
+}

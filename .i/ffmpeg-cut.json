@@ -1,0 +1,73 @@
+{
+  "command": "ffmpeg",
+  "description": "Cut or trim video clips",
+  "presets": [
+    { "label": "Cut with copy (fast)", "flags": "-i <input> -ss <start> -t <duration> -c copy <output>" },
+    { "label": "Cut with re-encode", "flags": "-i <input> -ss <start> -t <duration> -c:v libx264 -c:a aac <output>" },
+    { "label": "Extract first 30 seconds", "flags": "-i <input> -t 30 -c copy <output>" },
+    { "label": "Skip first 60 seconds", "flags": "-i <input> -ss 60 -c copy <output>" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "input.mp4"
+    },
+    {
+      "id": "start",
+      "prompt": "Start time (HH:MM:SS or seconds)",
+      "type": "text",
+      "flag": "-ss",
+      "placeholder": "00:01:30"
+    },
+    {
+      "id": "end_type",
+      "prompt": "Specify end point as",
+      "type": "choice",
+      "options": [
+        { "label": "Duration", "flag": null },
+        { "label": "End time", "flag": null }
+      ]
+    },
+    {
+      "id": "duration",
+      "prompt": "Duration (seconds or HH:MM:SS)",
+      "type": "text",
+      "flag": "-t",
+      "placeholder": "30",
+      "when": { "end_type": "Duration" }
+    },
+    {
+      "id": "end_time",
+      "prompt": "End time (HH:MM:SS)",
+      "type": "text",
+      "flag": "-to",
+      "placeholder": "00:02:00",
+      "when": { "end_type": "End time" }
+    },
+    {
+      "id": "codec",
+      "prompt": "Codec handling",
+      "type": "choice",
+      "options": [
+        { "label": "Copy (fast, may have artifacts at cut points)", "flag": "-c copy" },
+        { "label": "Re-encode (slower, precise cuts)", "flag": "-c:v libx264 -c:a aac" }
+      ]
+    },
+    {
+      "id": "overwrite",
+      "prompt": "Overwrite output without asking?",
+      "type": "toggle",
+      "flag": "-y"
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "clip.mp4"
+    }
+  ]
+}

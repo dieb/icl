@@ -1,0 +1,73 @@
+{
+  "command": "ffmpeg",
+  "description": "Resize video resolution",
+  "presets": [
+    { "label": "Scale to 1080p", "flags": "-i <input> -vf scale=-2:1080 -c:a copy <output>" },
+    { "label": "Scale to 720p", "flags": "-i <input> -vf scale=-2:720 -c:a copy <output>" },
+    { "label": "Scale to 480p", "flags": "-i <input> -vf scale=-2:480 -c:a copy <output>" },
+    { "label": "Scale to 50%", "flags": "-i <input> -vf scale=iw/2:ih/2 -c:a copy <output>" }
+  ],
+  "steps": [
+    {
+      "id": "input",
+      "prompt": "Input file",
+      "type": "text",
+      "flag": "-i",
+      "placeholder": "input.mp4"
+    },
+    {
+      "id": "resolution",
+      "prompt": "Target resolution",
+      "type": "choice",
+      "options": [
+        { "label": "1080p (1920x1080)", "flag": "-vf scale=-2:1080" },
+        { "label": "720p (1280x720)", "flag": "-vf scale=-2:720" },
+        { "label": "480p (854x480)", "flag": "-vf scale=-2:480" },
+        { "label": "360p (640x360)", "flag": "-vf scale=-2:360" },
+        { "label": "Half size", "flag": "-vf scale=iw/2:ih/2" },
+        { "label": "Custom", "flag": null }
+      ]
+    },
+    {
+      "id": "custom_width",
+      "prompt": "Custom width (height auto-calculated)",
+      "type": "text",
+      "flag": "-vf scale=",
+      "placeholder": "1280",
+      "when": { "resolution": "Custom" }
+    },
+    {
+      "id": "video_codec",
+      "prompt": "Video codec",
+      "type": "choice",
+      "options": [
+        { "label": "H.264 (libx264)", "flag": "-c:v libx264" },
+        { "label": "H.265 (libx265)", "flag": "-c:v libx265" },
+        { "label": "VP9", "flag": "-c:v libvpx-vp9" }
+      ]
+    },
+    {
+      "id": "audio",
+      "prompt": "Audio handling",
+      "type": "choice",
+      "options": [
+        { "label": "Copy (no change)", "flag": "-c:a copy" },
+        { "label": "Re-encode AAC", "flag": "-c:a aac" },
+        { "label": "Remove audio", "flag": "-an" }
+      ]
+    },
+    {
+      "id": "overwrite",
+      "prompt": "Overwrite output without asking?",
+      "type": "toggle",
+      "flag": "-y"
+    },
+    {
+      "id": "output",
+      "prompt": "Output file",
+      "type": "text",
+      "flag": "",
+      "placeholder": "resized.mp4"
+    }
+  ]
+}
